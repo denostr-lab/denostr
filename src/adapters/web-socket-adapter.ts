@@ -1,7 +1,7 @@
 import cluster from 'node:cluster'
 import { EventEmitter } from 'node:events'
-import { IncomingMessage as IncomingHttpMessage } from 'node:http'
-import { WebSocket } from 'ws'
+import { WebSocketAcceptedClient as WebSocket, WebSocketState, } from 'websocket'
+import { ServerRequest } from "https://deno.land/std@0.92.0/http/server.ts";
 
 import { ContextMetadata, Factory } from '../@types/base.ts'
 import { createNoticeMessage, createOutgoingEventMessage } from '../utils/messages.ts'
@@ -30,30 +30,28 @@ const abortableMessageHandlers: WeakMap<WebSocket, IAbortable[]> = new WeakMap()
 
 export class WebSocketAdapter extends EventEmitter implements IWebSocketAdapter {
   public clientId: string
-  private clientAddress: net.SocketAddress
+  private clientAddress: object
   private alive: boolean
   private subscriptions: Map<SubscriptionId, SubscriptionFilter[]>
 
   public constructor(
     private readonly client: WebSocket,
-    private readonly request: IncomingHttpMessage,
+    private readonly request: ServerRequest,
     private readonly webSocketServer: IWebSocketServerAdapter,
     private readonly createMessageHandler: Factory<IMessageHandler, [IncomingMessage, IWebSocketAdapter]>,
-    private readonly slidingWindowRateLimiter: Factory<IRateLimiter>,
+    private readonly slidingWindowRateLimiter: Factory<Promise<IRateLimiter>>,
     private readonly settings: Factory<Settings>,
   ) {
     super()
     this.alive = true
     this.subscriptions = new Map()
 
-    this.clientId = Buffer.from(this.request.headers['sec-websocket-key'] as string, 'base64').toString('hex')
-
+    this.clientId = Buffer.from(this.request.headers.get('sec-websocket-key') as string, 'base64').toString('hex')
     const address = getRemoteAddress(this.request, this.settings())
-
-    this.clientAddress = new net.SocketAddress({
+    this.clientAddress = {
       address: address,
       family: address.indexOf(':') >= 0 ? 'ipv6' : 'ipv4',
-    })
+    }
 
     this.client
       .on('error', (error) => {
@@ -123,7 +121,7 @@ export class WebSocketAdapter extends EventEmitter implements IWebSocketAdapter 
   }
 
   private sendMessage(message: OutgoingMessage): void {
-    if (this.client.readyState !== WebSocket.OPEN) {
+    if (this.client.state !== WebSocketState.OPEN) {
       return
     }
     this.client.send(JSON.stringify(message))
@@ -154,9 +152,10 @@ export class WebSocketAdapter extends EventEmitter implements IWebSocketAdapter 
         this.sendMessage(createNoticeMessage('rate limited'))
         return
       }
+      console.info(JSON.parse(raw.toString('utf8')), 'a阿萨斯')
 
       const message = attemptValidation(messageSchema)(JSON.parse(raw.toString('utf8')))
-
+      console.info(message, '消息')
       message[ContextMetadataKey] = {
         remoteAddress: this.clientAddress,
       } as ContextMetadata
@@ -177,6 +176,7 @@ export class WebSocketAdapter extends EventEmitter implements IWebSocketAdapter 
 
       await messageHandler.handleMessage(message)
     } catch (error) {
+      console.info('有错我妈', error)
       if (error instanceof Error) {
         if (error.name === 'AbortError') {
           console.error(`web-socket-adapter: abort from client ${this.clientId} (${this.getClientAddress()})`)
@@ -213,8 +213,7 @@ export class WebSocketAdapter extends EventEmitter implements IWebSocketAdapter 
     if (!Array.isArray(rateLimits) || !rateLimits.length || ipWhitelist.includes(client)) {
       return false
     }
-
-    const rateLimiter = this.slidingWindowRateLimiter()
+    const rateLimiter = await this.slidingWindowRateLimiter()
 
     const hit = (period: number, rate: number) =>
       rateLimiter.hit(
@@ -245,7 +244,7 @@ export class WebSocketAdapter extends EventEmitter implements IWebSocketAdapter 
 
   private onClientPing(data: any) {
     debugHeartbeat('client %s ping', this.clientId)
-    this.client.pong(data)
+    this.client.send(data)
     this.alive = true
   }
 

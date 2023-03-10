@@ -1,5 +1,5 @@
-import { IncomingMessage } from 'node:http'
-import { WebSocket } from 'ws'
+import { WebSocketAcceptedClient as WebSocket } from 'websocket'
+import { ServerRequest } from "https://deno.land/std@0.92.0/http/server.ts";
 
 import { IEventRepository, IUserRepository } from '../@types/repositories.ts'
 import { createSettings } from './settings-factory.ts'
@@ -12,7 +12,7 @@ import { WebSocketAdapter } from '../adapters/web-socket-adapter.ts'
 export const webSocketAdapterFactory = (
   eventRepository: IEventRepository,
   userRepository: IUserRepository,
-) => ([client, request, webSocketServerAdapter]: [WebSocket, IncomingMessage, IWebSocketServerAdapter]) =>
+) => ([client, request, webSocketServerAdapter]: [WebSocket, ServerRequest, IWebSocketServerAdapter]) =>
     new WebSocketAdapter(
       client,
       request,

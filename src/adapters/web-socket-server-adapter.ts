@@ -1,7 +1,7 @@
-import { IncomingMessage, Server } from 'node:http'
+import {  Server } from 'node:http'
 import WebSocket, { WebSocketServer } from 'ws'
 import { propEq } from 'ramda'
-
+import { ServerRequest } from "https://deno.land/std@0.92.0/http/server.ts";
 import { IWebSocketAdapter, IWebSocketServerAdapter } from '../@types/adapters.ts'
 import { WebSocketAdapterEvent, WebSocketServerAdapterEvent } from '../constants/adapter.ts'
 import { createLogger } from '../factories/logger-factory.ts'
@@ -26,7 +26,7 @@ export class WebSocketServerAdapter extends WebServerAdapter implements IWebSock
     private readonly webSocketServer: WebSocketServer,
     private readonly createWebSocketAdapter: Factory<
       IWebSocketAdapter,
-      [WebSocket, IncomingMessage, IWebSocketServerAdapter]
+      [WebSocket, ServerRequest, IWebSocketServerAdapter]
     >,
     private readonly settings: () => Settings,
   ) {
@@ -40,7 +40,7 @@ export class WebSocketServerAdapter extends WebServerAdapter implements IWebSock
 
     this.webSocketServer
       .on(WebSocketServerAdapterEvent.Connection, this.onConnection.bind(this))
-      .on('error', (error) => {
+      .on('error', (error: any) => {
         debug('error: %o', error)
       })
     this.heartbeatInterval = setInterval(this.onHeartbeat.bind(this), WSS_CLIENT_HEALTH_PROBE_INTERVAL)
@@ -48,6 +48,8 @@ export class WebSocketServerAdapter extends WebServerAdapter implements IWebSock
 
   public close(callback?: () => void): void {
     super.close(() => {
+      console.info('断开连接诶了')
+
       debug('closing')
       clearInterval(this.heartbeatInterval)
       this.webSocketServer.clients.forEach((webSocket: WebSocket) => {
@@ -70,6 +72,7 @@ export class WebSocketServerAdapter extends WebServerAdapter implements IWebSock
   }
 
   private onBroadcast(event: Event) {
+    console.info(' 有广播吗')
     this.webSocketServer.clients.forEach((webSocket: WebSocket) => {
       if (!propEq('readyState', WebSocket.OPEN)(webSocket)) {
         return
@@ -86,19 +89,24 @@ export class WebSocketServerAdapter extends WebServerAdapter implements IWebSock
     return Array.from(this.webSocketServer.clients).filter(propEq('readyState', WebSocket.OPEN)).length
   }
 
-  private async onConnection(client: WebSocket, req: IncomingMessage) {
-    const currentSettings = this.settings()
-    const remoteAddress = getRemoteAddress(req, currentSettings)
-
-    debug('client %s connected: %o', remoteAddress, req.headers)
-
-    if (await isRateLimited(remoteAddress, currentSettings)) {
-      debug('client %s terminated: rate-limited', remoteAddress)
-      client.terminate()
-      return
+  private async onConnection(client: WebSocket, req: ServerRequest) {
+    try {
+      const currentSettings = this.settings()
+      const remoteAddress = getRemoteAddress(req, currentSettings)
+      // const remoteAddress = '192.168.0.126'
+      debug('client %s connected: %o', remoteAddress, req.headers)
+  
+      if (await isRateLimited(remoteAddress, currentSettings)) {
+        debug('client %s terminated: rate-limited', remoteAddress)
+        client.terminate()
+        return
+      }
+  
+      this.webSocketsAdapters.set(client, this.createWebSocketAdapter([client, req, this]))
+    } catch (e) {
+      console.info('链接错误的', e)
     }
-
-    this.webSocketsAdapters.set(client, this.createWebSocketAdapter([client, req, this]))
+ 
   }
 
   private onHeartbeat() {

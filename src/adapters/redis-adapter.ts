@@ -65,9 +65,9 @@ export class RedisAdapter implements ICacheAdapter {
     debug('add %o to sorted set %s', set, key)
     const members = Object
         .entries(set)
-        .map(([value, score]) => ({ score: Number(score), value }))
+        .map(([value, score]) => ([Number(score), value]))
 
-    return this.client.zadd(key, members)
+    return this.client.zadd(key, members, {})
   }
 
 }

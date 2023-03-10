@@ -22,11 +22,13 @@ export class WebServerAdapter extends EventEmitter implements IWebServerAdapter 
   }
 
   public listen(port: number): void {
+    console.info('开始监听', port)
     debug('attempt to listen on port %d', port)
-    this.webServer.listen(port)
+    // this.webServer.listen(port)
   }
 
   private onListening() {
+    debug('olistening for incoming connections')
     debug('listening for incoming connections')
   }
 
@@ -35,6 +37,8 @@ export class WebServerAdapter extends EventEmitter implements IWebServerAdapter 
   }
 
   private onClientError(error: Error, socket: Duplex) {
+    debug('onClientError',error, socket)
+
     console.error('web-server-adapter: client socket error:', error)
     if (error['code'] === 'ECONNRESET' || !socket.writable) {
       return
@@ -44,6 +48,8 @@ export class WebServerAdapter extends EventEmitter implements IWebServerAdapter 
 
   public close(callback?: () => void): void {
     debug('closing')
+    debug('主动关闭')
+
     this.webServer.close(() => {
       this.webServer.removeAllListeners()
       this.removeAllListeners()
@@ -54,7 +60,9 @@ export class WebServerAdapter extends EventEmitter implements IWebServerAdapter 
     debug('closed')
   }
 
-  protected onClose() {
+  protected onClose(e) {
+    debug('stopped listening to incoming connections', e)
+
     debug('stopped listening to incoming connections')
   }
 }

@@ -1,4 +1,4 @@
-import { Cluster, Worker } from 'node:cluster'
+import { Cluster, Worker } from 'cluster'
 import { cpus, hostname } from 'node:os'
 import { path, pathEq } from 'ramda'
 import { FSWatcher } from 'node:fs'
@@ -10,6 +10,12 @@ import packageJson from '../../package.json' assert { type: 'json' }
 import { Serializable } from 'node:child_process'
 import { Settings } from '../@types/settings.ts'
 import { SettingsStatic } from '../utils/settings.ts'
+
+import {
+  readableStreamFromReader,
+  writableStreamFromWriter,
+} from 'https://deno.land/std@0.171.0/streams/conversion.ts'
+import { mergeReadableStreams } from 'https://deno.land/std@0.171.0/streams/merge.ts'
 
 const debug = createLogger('app-primary')
 
@@ -23,20 +29,19 @@ export class App implements IRunnable {
     private readonly settings: () => Settings,
   ) {
     debug('starting')
-
     this.workers = new WeakMap()
 
-    this.cluster
-      .on('message', this.onClusterMessage.bind(this))
-      .on('exit', this.onClusterExit.bind(this))
+    // this.cluster
+    //   .on('message', this.onClusterMessage.bind(this))
+    //   .on('exit', this.onClusterExit.bind(this))
 
-    this.process
-      .on('SIGTERM', this.onExit.bind(this))
+    // this.process
+    //   .on('SIGTERM', this.onExit.bind(this))
 
     debug('started')
   }
 
-  public run(): void {
+  public async run(): Promise<void> {
     const settings = this.settings()
     this.watchers = SettingsStatic.watchSettings()
     console.log(`
@@ -64,19 +69,44 @@ export class App implements IRunnable {
     if (paymentsEnabled) {
       logCentered(`Payments provider: ${path(['payments', 'processor'], settings)}`, width)
     }
-
+    const file = await Deno.open('./process_output.txt', {
+      read: true,
+      write: true,
+      create: true,
+    })
+    const fileWriter = await writableStreamFromWriter(file)
     if (paymentsEnabled && (typeof this.process.env.SECRET !== 'string' || this.process.env.SECRET === '' || this.process.env.SECRET === 'changeme')) {
       console.error('Please configure the secret using the SECRET environment variable.')
       this.process.exit(1)
     }
 
-    const workerCount = process.env.WORKER_COUNT
+    let workerCount = process.env.WORKER_COUNT
       ? Number(process.env.WORKER_COUNT)
       : this.settings().workers?.count || cpus().length
-
+      workerCount = 1
     const createWorker = (env: Record<string, string>) => {
-      const worker = this.cluster.fork(env)
-      this.workers.set(worker, env)
+      // const worker = this.cluster.fork(env)
+      console.info('喀什跑再说', env)
+      const p = Deno.run({
+        cmd: [
+          'npm',
+          'run',
+          'deno_dev',
+
+        ],
+        env,
+        stdout: 'piped',
+        stderr: 'piped',
+      })
+      // example of combining stdout and stderr while sending to a file
+const stdout = readableStreamFromReader(p.stdout)
+const stderr = readableStreamFromReader(p.stderr)
+const joined = mergeReadableStreams(stdout, stderr)
+// returns a promise that resolves when the process is killed/closed
+joined.pipeTo(fileWriter).then((e) => console.log('pipe join done', e))
+      console.info('喀什跑再说', p)
+
+      this.workers.set(p, env)
     }
 
     for (let i = 0; i < workerCount; i++) {
@@ -87,22 +117,22 @@ export class App implements IRunnable {
     }
     logCentered(`${workerCount} client workers started`, width)
 
-    createWorker({
-      WORKER_TYPE: 'maintenance',
-    })
+    // createWorker({
+    //   WORKER_TYPE: 'maintenance',
+    // })
 
     logCentered('1 maintenance worker started', width)
     const mirrors = settings?.mirroring?.static
 
-    if (Array.isArray(mirrors) && mirrors.length) {
-      for (let i = 0; i < mirrors.length; i++) {
-        createWorker({
-          WORKER_TYPE: 'static-mirroring',
-          MIRROR_INDEX: i.toString(),
-        })
-      }
-      logCentered(`${mirrors.length} static-mirroring worker started`, width)
-    }
+    // if (Array.isArray(mirrors) && mirrors.length) {
+    //   for (let i = 0; i < mirrors.length; i++) {
+    //     createWorker({
+    //       WORKER_TYPE: 'static-mirroring',
+    //       MIRROR_INDEX: i.toString(),
+    //     })
+    //   }
+    //   logCentered(`${mirrors.length} static-mirroring worker started`, width)
+    // }
 
     debug('settings: %O', settings)
 
