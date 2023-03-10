@@ -1,5 +1,5 @@
-import { CreateInvoiceRequest, CreateInvoiceResponse, GetInvoiceResponse, IPaymentsProcessor } from '../@types/clients'
-import { InvoiceStatus, InvoiceUnit } from '../@types/invoice'
+import { CreateInvoiceRequest, CreateInvoiceResponse, GetInvoiceResponse, IPaymentsProcessor } from '../@types/clients.ts'
+import { InvoiceStatus, InvoiceUnit } from '../@types/invoice.ts'
 
 export class NullPaymentsProcessor implements IPaymentsProcessor {
   public async getInvoice(invoiceId: string): Promise<GetInvoiceResponse> {

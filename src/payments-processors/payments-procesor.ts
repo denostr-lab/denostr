@@ -1,5 +1,5 @@
-import { CreateInvoiceRequest, CreateInvoiceResponse, IPaymentsProcessor } from '../@types/clients'
-import { Invoice } from '../@types/invoice'
+import { CreateInvoiceRequest, CreateInvoiceResponse, IPaymentsProcessor } from '../@types/clients.ts'
+import { Invoice } from '../@types/invoice.ts'
 
 export class PaymentsProcessor implements IPaymentsProcessor {
   public constructor(

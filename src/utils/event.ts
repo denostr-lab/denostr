@@ -1,20 +1,20 @@
 import * as secp256k1 from '@noble/secp256k1'
 
 import { applySpec, converge, curry, mergeLeft, nth, omit, pipe, prop, reduceBy } from 'ramda'
-import { CanonicalEvent, DBEvent, Event, UnidentifiedEvent, UnsignedEvent } from '../@types/event'
-import { createCipheriv, getRandomValues } from 'crypto'
-import { EventId, Pubkey, Tag } from '../@types/base'
-import { EventKinds, EventTags } from '../constants/base'
+import { CanonicalEvent, DBEvent, Event, UnidentifiedEvent, UnsignedEvent } from '../@types/event.ts'
+import { createCipheriv } from 'node:crypto'
+import { EventId, Pubkey, Tag } from '../@types/base.ts'
+import { EventKinds, EventTags } from '../constants/base.ts'
 
-import cluster from 'cluster'
-import { deriveFromSecret } from './secret'
-import { EventKindsRange } from '../@types/settings'
-import { fromBuffer } from './transform'
-import { getLeadingZeroBits } from './proof-of-work'
-import { isGenericTagQuery } from './filter'
-import { RuneLike } from './runes/rune-like'
-import { SubscriptionFilter } from '../@types/subscription'
-import { WebSocketServerAdapterEvent } from '../constants/adapter'
+import cluster from 'node:cluster'
+import { deriveFromSecret } from './secret.ts'
+import { EventKindsRange } from '../@types/settings.ts'
+import { fromBuffer } from './transform.ts'
+import { getLeadingZeroBits } from './proof-of-work.ts'
+import { isGenericTagQuery } from './filter.ts'
+import { RuneLike } from './runes/rune-like.ts'
+import { SubscriptionFilter } from '../@types/subscription.ts'
+import { WebSocketServerAdapterEvent } from '../constants/adapter.ts'
 
 export const serializeEvent = (event: UnidentifiedEvent): CanonicalEvent => [
   0,
@@ -195,7 +195,7 @@ export const signEvent = (privkey: string | Buffer | undefined) => async (event:
   const sig = await secp256k1.schnorr.sign(event.id, privkey as any)
   return { ...event, sig: Buffer.from(sig).toString('hex') }
 }
-
+const getRandomValues = ()=>{}
 export const encryptKind4Event = (
   senderPrivkey: string | Buffer,
   receiverPubkey: Pubkey,

@@ -1,11 +1,11 @@
 import { expect } from 'chai'
 import { range } from 'ramda'
 
-import { Event } from '../../../src/@types/event'
-import { getEvents } from '../data/events'
-import { IncomingMessage } from '../../../src/@types/messages'
-import { messageSchema } from '../../../src/schemas/message-schema'
-import { validateSchema } from '../../../src/utils/validation'
+import { Event } from '../../../src/@types/event.ts'
+import { getEvents } from '../data/node:events'
+import { IncomingMessage } from '../../../src/@types/messages.ts'
+import { messageSchema } from '../../../src/schemas/message-schema.ts'
+import { validateSchema } from '../../../src/utils/validation.ts'
 
 describe('NIP-01', () => {
   let message: IncomingMessage

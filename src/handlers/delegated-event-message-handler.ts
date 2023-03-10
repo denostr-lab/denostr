@@ -1,12 +1,12 @@
-import { EventDelegatorMetadataKey, EventTags } from '../constants/base'
-import { createCommandResult } from '../utils/messages'
-import { createLogger } from '../factories/logger-factory'
-import { DelegatedEvent } from '../@types/event'
-import { EventMessageHandler } from './event-message-handler'
-import { IMessageHandler } from '../@types/message-handlers'
-import { IncomingEventMessage } from '../@types/messages'
-import { isDelegatedEventValid } from '../utils/event'
-import { WebSocketAdapterEvent } from '../constants/adapter'
+import { EventDelegatorMetadataKey, EventTags } from '../constants/base.ts'
+import { createCommandResult } from '../utils/messages.ts'
+import { createLogger } from '../factories/logger-factory.ts'
+import { DelegatedEvent } from '../@types/event.ts'
+import { EventMessageHandler } from './event-message-handler.ts'
+import { IMessageHandler } from '../@types/message-handlers.ts'
+import { IncomingEventMessage } from '../@types/messages.ts'
+import { isDelegatedEventValid } from '../utils/event.ts'
+import { WebSocketAdapterEvent } from '../constants/adapter.ts'
 
 const debug = createLogger('delegated-event-message-handler')
 

@@ -1,6 +1,8 @@
-import { CacheClient } from '../@types/cache'
-import { createLogger } from '../factories/logger-factory'
-import { ICacheAdapter } from '../@types/adapters'
+import { CacheClient } from '../@types/cache.ts'
+import { createLogger } from '../factories/logger-factory.ts'
+import { ICacheAdapter } from '../@types/adapters.ts'
+
+import { Bulk } from 'redis'
 
 const debug = createLogger('redis-adapter')
 
@@ -12,33 +14,6 @@ export class RedisAdapter implements ICacheAdapter {
 
     this.connection.catch((error) => this.onClientError(error))
 
-    this.client
-      .on('connect', () => debug('connecting'))
-      .on('ready', () => debug('connected'))
-      .on('error', (error) => this.onClientError(error))
-      .on('reconnecting', () => {
-        debug('reconnecting')
-        this.connection = new Promise((resolve, reject) => {
-          const cleanup = () => {
-            this.client.removeListener('ready', onReady)
-            this.client.removeListener('error', onError)
-          }
-
-          const onError = (error: Error) => {
-            cleanup()
-            reject(error)
-          }
-
-          const onReady = () => {
-            cleanup()
-            resolve()
-          }
-
-          this.client.once('ready', onReady)
-
-          this.client.once('error', onError)
-        })
-      })
   }
 
   private onClientError(error: Error) {
@@ -52,7 +27,7 @@ export class RedisAdapter implements ICacheAdapter {
     return Boolean(this.client.exists(key))
   }
 
-  public async getKey(key: string): Promise<string> {
+  public async getKey(key: string): Promise<Bulk> {
     await this.connection
     debug('get %s key', key)
     return this.client.get(key)
@@ -67,13 +42,13 @@ export class RedisAdapter implements ICacheAdapter {
   public async removeRangeByScoreFromSortedSet(key: string, min: number, max: number): Promise<number> {
     await this.connection
     debug('remove %d..%d range from sorted set %s', min, max, key)
-    return this.client.zRemRangeByScore(key, min, max)
+    return this.client.zremrangebyscore(key, min, max)
   }
 
   public async getRangeFromSortedSet(key: string, min: number, max: number): Promise<string[]> {
     await this.connection
     debug('get %d..%d range from sorted set %s', min, max, key)
-    return this.client.zRange(key, min, max)
+    return this.client.zrange(key, min, max)
   }
 
   public async setKeyExpiry(key: string, expiry: number): Promise<void> {
@@ -92,7 +67,7 @@ export class RedisAdapter implements ICacheAdapter {
         .entries(set)
         .map(([value, score]) => ({ score: Number(score), value }))
 
-    return this.client.zAdd(key, members)
+    return this.client.zadd(key, members)
   }
 
 }

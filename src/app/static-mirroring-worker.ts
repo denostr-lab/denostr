@@ -1,16 +1,16 @@
 import { anyPass, map, path } from 'ramda'
 import { RawData, WebSocket } from 'ws'
-import cluster from 'cluster'
-import { randomUUID } from 'crypto'
+import cluster from 'node:cluster'
+import { randomUUID } from 'node:crypto'
 
-import { createRelayedEventMessage, createSubscriptionMessage } from '../utils/messages'
-import { isEventIdValid, isEventMatchingFilter, isEventSignatureValid } from '../utils/event'
-import { Mirror, Settings } from '../@types/settings'
-import { createLogger } from '../factories/logger-factory'
-import { IRunnable } from '../@types/base'
-import { OutgoingEventMessage } from '../@types/messages'
-import { RelayedEvent } from '../@types/event'
-import { WebSocketServerAdapterEvent } from '../constants/adapter'
+import { createRelayedEventMessage, createSubscriptionMessage } from '../utils/messages.ts'
+import { isEventIdValid, isEventMatchingFilter, isEventSignatureValid } from '../utils/event.ts'
+import { Mirror, Settings } from '../@types/settings.ts'
+import { createLogger } from '../factories/logger-factory.ts'
+import { IRunnable } from '../@types/base.ts'
+import { OutgoingEventMessage } from '../@types/messages.ts'
+import { RelayedEvent } from '../@types/event.ts'
+import { WebSocketServerAdapterEvent } from '../constants/adapter.ts'
 
 const debug = createLogger('static-mirror-worker')
 

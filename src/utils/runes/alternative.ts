@@ -1,4 +1,4 @@
-import { IAlternative } from '../../@types/runes'
+import { IAlternative } from '../../@types/runes.ts'
 
 const punctuations = /[!"#$%&'()*+-./:;<=>?@[\\\]^`{|}~]/
 

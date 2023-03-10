@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
 import { path } from 'ramda'
 
-import { createSettings } from '../../factories/settings-factory'
-import { FeeSchedule } from '../../@types/settings'
-import packageJson from '../../../package.json'
+import { createSettings } from '../../factories/settings-factory.ts'
+import { FeeSchedule } from '../../@types/settings.ts'
+import packageJson from '../../../package.json' assert { type: 'json' }
 
 export const rootRequestHandler = (request: Request, response: Response, next: NextFunction) => {
   const settings = createSettings()

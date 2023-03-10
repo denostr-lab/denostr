@@ -1,15 +1,15 @@
 import { expect } from 'chai'
 
-import { IEventRepository, IUserRepository } from '../../../src/@types/repositories'
-import { IncomingMessage, MessageType } from '../../../src/@types/messages'
-import { DelegatedEventMessageHandler } from '../../../src/handlers/delegated-event-message-handler'
-import { Event } from '../../../src/@types/event'
-import { EventMessageHandler } from '../../../src/handlers/event-message-handler'
-import { EventTags } from '../../../src/constants/base'
-import { IWebSocketAdapter } from '../../../src/@types/adapters'
-import { messageHandlerFactory } from '../../../src/factories/message-handler-factory'
-import { SubscribeMessageHandler } from '../../../src/handlers/subscribe-message-handler'
-import { UnsubscribeMessageHandler } from '../../../src/handlers/unsubscribe-message-handler'
+import { IEventRepository, IUserRepository } from '../../../src/@types/repositories.ts'
+import { IncomingMessage, MessageType } from '../../../src/@types/messages.ts'
+import { DelegatedEventMessageHandler } from '../../../src/handlers/delegated-event-message-handler.ts'
+import { Event } from '../../../src/@types/event.ts'
+import { EventMessageHandler } from '../../../src/handlers/event-message-handler.ts'
+import { EventTags } from '../../../src/constants/base.ts'
+import { IWebSocketAdapter } from '../../../src/@types/adapters.ts'
+import { messageHandlerFactory } from '../../../src/factories/message-handler-factory.ts'
+import { SubscribeMessageHandler } from '../../../src/handlers/subscribe-message-handler.ts'
+import { UnsubscribeMessageHandler } from '../../../src/handlers/unsubscribe-message-handler.ts'
 
 describe('messageHandlerFactory', () => {
   let event: Event

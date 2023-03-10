@@ -1,4 +1,4 @@
-import { Pubkey } from './base'
+import { Pubkey } from './base.ts'
 
 export interface User {
   pubkey: Pubkey

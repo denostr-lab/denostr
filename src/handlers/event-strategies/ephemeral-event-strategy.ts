@@ -1,9 +1,9 @@
-import { createCommandResult } from '../../utils/messages'
-import { createLogger } from '../../factories/logger-factory'
-import { Event } from '../../@types/event'
-import { IEventStrategy } from '../../@types/message-handlers'
-import { IWebSocketAdapter } from '../../@types/adapters'
-import { WebSocketAdapterEvent } from '../../constants/adapter'
+import { createCommandResult } from '../../utils/messages.ts'
+import { createLogger } from '../../factories/logger-factory.ts'
+import { Event } from '../../@types/event.ts'
+import { IEventStrategy } from '../../@types/message-handlers.ts'
+import { IWebSocketAdapter } from '../../@types/adapters.ts'
+import { WebSocketAdapterEvent } from '../../constants/adapter.ts'
 
 const debug = createLogger('ephemeral-event-strategy')
 

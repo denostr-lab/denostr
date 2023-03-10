@@ -1,4 +1,4 @@
-import { Pubkey } from './base'
+import { Pubkey } from './base.ts'
 
 export enum InvoiceUnit {
   MSATS = 'msats',

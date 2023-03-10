@@ -1,4 +1,4 @@
-import { Invoice, InvoiceStatus, InvoiceUnit } from './invoice'
+import { Invoice, InvoiceStatus, InvoiceUnit } from './invoice.ts'
 
 export interface CreateInvoiceResponse {
   id: string

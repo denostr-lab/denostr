@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
-import { createLogger } from '../../factories/logger-factory'
-import { IController } from '../../@types/controllers'
-import { IInvoiceRepository } from '../../@types/repositories'
+import { createLogger } from '../../factories/logger-factory.ts'
+import { IController } from '../../@types/controllers.ts'
+import { IInvoiceRepository } from '../../@types/repositories.ts'
 
 const debug = createLogger('get-invoice-status-controller')
 

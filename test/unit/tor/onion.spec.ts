@@ -1,9 +1,9 @@
-import { addOnion, closeTorClient, createTorConfig, getTorClient } from '../../../src/tor/client'
+import { addOnion, closeTorClient, createTorConfig, getTorClient } from '../../../src/tor/client.ts'
 import { hiddenService, Tor } from 'tor-control-ts'
 
 import { expect } from 'chai'
-import fs from 'fs/promises'
-import { hostname } from 'os'
+import fs from 'node:fs/promises'
+import { hostname } from 'node:os'
 import Sinon from 'sinon'
 
 export function mockModule<T extends { [K: string]: any }>

@@ -1,6 +1,6 @@
 import Schema from 'joi'
 
-import { createdAtSchema, kindSchema, prefixSchema } from './base-schema'
+import { createdAtSchema, kindSchema, prefixSchema } from './base-schema.ts'
 
 export const filterSchema = Schema.object({
   ids: Schema.array().items(prefixSchema.label('prefixOrId')).max(1000),

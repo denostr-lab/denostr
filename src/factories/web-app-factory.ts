@@ -1,9 +1,9 @@
 import express from 'express'
 import helmet from 'helmet'
 
-import { createLogger } from './logger-factory'
-import { createSettings } from './settings-factory'
-import router from '../routes'
+import { createLogger } from './logger-factory.ts'
+import { createSettings } from './settings-factory.ts'
+import router from '../routes/index.ts'
 
 const debug = createLogger('web-app-factory')
 

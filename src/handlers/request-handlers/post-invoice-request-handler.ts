@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { createPostInvoiceController } from '../../factories/post-invoice-controller-factory'
+import { createPostInvoiceController } from '../../factories/post-invoice-controller-factory.ts'
 
 export const postInvoiceRequestHandler = async (
   req: Request,

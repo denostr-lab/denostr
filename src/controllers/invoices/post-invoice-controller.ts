@@ -1,17 +1,17 @@
-import { FeeSchedule, Settings } from '../../@types/settings'
-import { fromBech32, toBech32 } from '../../utils/transform'
-import { getPublicKey, getRelayPrivateKey } from '../../utils/event'
+import { FeeSchedule, Settings } from '../../@types/settings.ts'
+import { fromBech32, toBech32 } from '../../utils/transform.ts'
+import { getPublicKey, getRelayPrivateKey } from '../../utils/event.ts'
 import { Request, Response } from 'express'
 
-import { createLogger } from '../../factories/logger-factory'
-import { getRemoteAddress } from '../../utils/http'
-import { IController } from '../../@types/controllers'
-import { Invoice } from '../../@types/invoice'
-import { IPaymentsService } from '../../@types/services'
-import { IRateLimiter } from '../../@types/utils'
-import { IUserRepository } from '../../@types/repositories'
+import { createLogger } from '../../factories/logger-factory.ts'
+import { getRemoteAddress } from '../../utils/http.ts'
+import { IController } from '../../@types/controllers.ts'
+import { Invoice } from '../../@types/invoice.ts'
+import { IPaymentsService } from '../../@types/services.ts'
+import { IRateLimiter } from '../../@types/utils.ts'
+import { IUserRepository } from '../../@types/repositories.ts'
 import { path } from 'ramda'
-import { readFileSync } from 'fs'
+import { readFileSync } from 'node:fs'
 
 let pageCache: string
 
@@ -22,7 +22,7 @@ export class PostInvoiceController implements IController {
     private readonly userRepository: IUserRepository,
     private readonly paymentsService: IPaymentsService,
     private readonly settings: () => Settings,
-    private readonly rateLimiter: () => IRateLimiter,
+    private readonly rateLimiter: () => Promise<IRateLimiter>,
   ){}
 
   public async handleRequest(request: Request, response: Response): Promise<void> {
@@ -193,7 +193,7 @@ export class PostInvoiceController implements IController {
 
     let limited = false
     if (Array.isArray(ipWhitelist) && !ipWhitelist.includes(remoteAddress)) {
-      const rateLimiter = this.rateLimiter()
+      const rateLimiter = await this.rateLimiter()
       for (const { rate, period } of rateLimits) {
         if (await rateLimiter.hit(`${remoteAddress}:invoice:${period}`, 1, { period, rate })) {
           debug('rate limited %s: %d in %d milliseconds', remoteAddress, rate, period)

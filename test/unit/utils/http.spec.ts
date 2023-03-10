@@ -1,7 +1,7 @@
 import { expect } from 'chai'
-import { IncomingMessage } from 'http'
+import { IncomingMessage } from 'node:http'
 
-import { getRemoteAddress } from '../../../src/utils/http'
+import { getRemoteAddress } from '../../../src/utils/http.ts'
 
 describe('getRemoteAddress', () => {
   const header = 'x-forwarded-for'

@@ -7,7 +7,7 @@ import {
   pubkeySchema,
   signatureSchema,
   tagSchema,
-} from './base-schema'
+} from './base-schema.ts'
 
 
 /**

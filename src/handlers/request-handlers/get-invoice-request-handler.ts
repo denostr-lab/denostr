@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
 import { path, pathEq } from 'ramda'
-import { readFileSync } from 'fs'
+import { readFileSync } from 'node:fs'
 
-import { createSettings } from '../../factories/settings-factory'
-import { FeeSchedule } from '../../@types/settings'
+import { createSettings } from '../../factories/settings-factory.ts'
+import { FeeSchedule } from '../../@types/settings.ts'
 
 let pageCache: string
 

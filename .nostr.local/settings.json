@@ -1,6 +1,6 @@
 {
   "info": {
-    "relay_url": "wss://nostream.localtest.me",
+    "relay_url": "ws://192.168.0.132",
     "name": "nostream.localtest.me",
     "description": "A nostr relay written in Typescript.",
     "pubkey": "00000000827ffaa94bfea288c3dfce4422c794fbb96625b6b31e9049f729d700",

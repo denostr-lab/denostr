@@ -1,14 +1,14 @@
 import { expect } from 'chai'
 
-import { DefaultEventStrategy } from '../../../src/handlers/event-strategies/default-event-strategy'
-import { delegatedEventStrategyFactory } from '../../../src/factories/delegated-event-strategy-factory'
-import { EphemeralEventStrategy } from '../../../src/handlers/event-strategies/ephemeral-event-strategy'
-import { Event } from '../../../src/@types/event'
-import { EventKinds } from '../../../src/constants/base'
-import { Factory } from '../../../src/@types/base'
-import { IEventRepository } from '../../../src/@types/repositories'
-import { IEventStrategy } from '../../../src/@types/message-handlers'
-import { IWebSocketAdapter } from '../../../src/@types/adapters'
+import { DefaultEventStrategy } from '../../../src/handlers/event-strategies/default-event-strategy.ts'
+import { delegatedEventStrategyFactory } from '../../../src/factories/delegated-event-strategy-factory.ts'
+import { EphemeralEventStrategy } from '../../../src/handlers/event-strategies/ephemeral-event-strategy.ts'
+import { Event } from '../../../src/@types/event.ts'
+import { EventKinds } from '../../../src/constants/base.ts'
+import { Factory } from '../../../src/@types/base.ts'
+import { IEventRepository } from '../../../src/@types/repositories.ts'
+import { IEventStrategy } from '../../../src/@types/message-handlers.ts'
+import { IWebSocketAdapter } from '../../../src/@types/adapters.ts'
 
 describe('delegatedEventStrategyFactory', () => {
   let eventRepository: IEventRepository

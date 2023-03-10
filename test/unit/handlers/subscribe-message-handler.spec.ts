@@ -1,18 +1,18 @@
 import { always } from 'ramda'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
-import EventEmitter from 'events'
+import EventEmitter from 'node:events'
 import Sinon from 'sinon'
 
-import { IAbortable, IMessageHandler } from '../../../src/@types/message-handlers'
-import { MessageType, SubscribeMessage } from '../../../src/@types/messages'
-import { SubscriptionFilter, SubscriptionId } from '../../../src/@types/subscription'
-import { Event } from '../../../src/@types/event'
-import { IEventRepository } from '../../../src/@types/repositories'
-import { IWebSocketAdapter } from '../../../src/@types/adapters'
-import { PassThrough } from 'stream'
-import { SubscribeMessageHandler } from '../../../src/handlers/subscribe-message-handler'
-import { WebSocketAdapterEvent } from '../../../src/constants/adapter'
+import { IAbortable, IMessageHandler } from '../../../src/@types/message-handlers.ts'
+import { MessageType, SubscribeMessage } from '../../../src/@types/messages.ts'
+import { SubscriptionFilter, SubscriptionId } from '../../../src/@types/subscription.ts'
+import { Event } from '../../../src/@types/event.ts'
+import { IEventRepository } from '../../../src/@types/repositories.ts'
+import { IWebSocketAdapter } from '../../../src/@types/adapters.ts'
+import { PassThrough } from 'node:stream'
+import { SubscribeMessageHandler } from '../../../src/handlers/subscribe-message-handler.ts'
+import { WebSocketAdapterEvent } from '../../../src/constants/adapter.ts'
 
 chai.use(chaiAsPromised)
 const { expect } = chai

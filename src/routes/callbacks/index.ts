@@ -1,11 +1,11 @@
-import { deriveFromSecret, hmacSha256 } from '../../utils/secret'
+import { deriveFromSecret, hmacSha256 } from '../../utils/secret.ts'
 import { json, Router } from 'express'
 
-import { createLogger } from '../../factories/logger-factory'
-import { createSettings } from '../../factories/settings-factory'
-import { getRemoteAddress } from '../../utils/http'
-import { postLNbitsCallbackRequestHandler } from '../../handlers/request-handlers/post-lnbits-callback-request-handler'
-import { postZebedeeCallbackRequestHandler } from '../../handlers/request-handlers/post-zebedee-callback-request-handler'
+import { createLogger } from '../../factories/logger-factory.ts'
+import { createSettings } from '../../factories/settings-factory.ts'
+import { getRemoteAddress } from '../../utils/http.ts'
+import { postLNbitsCallbackRequestHandler } from '../../handlers/request-handlers/post-lnbits-callback-request-handler.ts'
+import { postZebedeeCallbackRequestHandler } from '../../handlers/request-handlers/post-zebedee-callback-request-handler.ts'
 
 const debug = createLogger('routes-callbacks')
 

@@ -1,4 +1,4 @@
-import { DatabaseTransaction } from './base'
+import { DatabaseTransaction } from './base.ts'
 
 export interface ITransaction {
   begin(): Promise<void>

@@ -1,4 +1,4 @@
-import { createHmac } from 'crypto'
+import { createHmac } from 'node:crypto'
 
 export function deriveFromSecret(purpose: string | Buffer): Buffer {
     return hmacSha256(process.env.SECRET as string, purpose)

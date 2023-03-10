@@ -1,5 +1,5 @@
 import { Knex } from 'knex'
-import { SocketAddress } from 'net'
+import net from 'node:net'
 
 export type EventId = string
 export type Pubkey = string
@@ -33,7 +33,7 @@ export type DatabaseClient = Knex
 export type DatabaseTransaction<T extends Record<string, unknown> = any> = Knex.Transaction<T, T[]>
 
 export interface ContextMetadata {
-  remoteAddress: SocketAddress
+  remoteAddress: net.SocketAddress
 }
 
 export interface IRunnable {

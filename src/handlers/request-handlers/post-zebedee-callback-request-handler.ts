@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { createZebedeeCallbackController } from '../../factories/zebedee-callback-controller-factory'
+import { createZebedeeCallbackController } from '../../factories/zebedee-callback-controller-factory.ts'
 
 export const postZebedeeCallbackRequestHandler = async (
   req: Request,

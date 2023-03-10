@@ -1,11 +1,11 @@
-import { IRunnable } from '../@types/base'
+import { IRunnable } from '../@types/base.ts'
 import { path } from 'ramda'
 
-import { createLogger } from '../factories/logger-factory'
-import { delayMs } from '../utils/misc'
-import { InvoiceStatus } from '../@types/invoice'
-import { IPaymentsService } from '../@types/services'
-import { Settings } from '../@types/settings'
+import { createLogger } from '../factories/logger-factory.ts'
+import { delayMs } from '../utils/misc.ts'
+import { InvoiceStatus } from '../@types/invoice.ts'
+import { IPaymentsService } from '../@types/services.ts'
+import { Settings } from '../@types/settings.ts'
 
 const UPDATE_INVOICE_INTERVAL = 60000
 

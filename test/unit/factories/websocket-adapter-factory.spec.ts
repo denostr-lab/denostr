@@ -1,13 +1,13 @@
 import { expect } from 'chai'
-import { IncomingMessage } from 'http'
+import { IncomingMessage } from 'node:http'
 import Sinon from 'sinon'
 import WebSocket from 'ws'
 
-import { IEventRepository, IUserRepository } from '../../../src/@types/repositories'
-import { IWebSocketServerAdapter } from '../../../src/@types/adapters'
-import { SettingsStatic } from '../../../src/utils/settings'
-import { WebSocketAdapter } from '../../../src/adapters/web-socket-adapter'
-import { webSocketAdapterFactory } from '../../../src/factories/websocket-adapter-factory'
+import { IEventRepository, IUserRepository } from '../../../src/@types/repositories.ts'
+import { IWebSocketServerAdapter } from '../../../src/@types/adapters.ts'
+import { SettingsStatic } from '../../../src/utils/settings.ts'
+import { WebSocketAdapter } from '../../../src/adapters/web-socket-adapter.ts'
+import { webSocketAdapterFactory } from '../../../src/factories/websocket-adapter-factory.ts'
 
 describe('webSocketAdapterFactory', () => {
   let onStub: Sinon.SinonStub

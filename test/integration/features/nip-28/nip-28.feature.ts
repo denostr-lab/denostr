@@ -1,8 +1,8 @@
-import { Before, Then, When, World } from '@cucumber/cucumber'
+import { Before, Then, When, World } from '@cucumber/cucumber.ts'
 import WebSocket from 'ws'
 
-import { createEvent, createSubscription, sendEvent, waitForNextEvent } from '../helpers'
-import { Event } from '../../../../src/@types/event'
+import { createEvent, createSubscription, sendEvent, waitForNextEvent } from '../helpers.ts'
+import { Event } from '../../../../src/@types/event.ts'
 import { expect } from 'chai'
 
 Before(function () {

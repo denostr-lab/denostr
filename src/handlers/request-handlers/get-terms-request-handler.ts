@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
-import { readFileSync } from 'fs'
+import { readFileSync } from 'node:fs'
 
-import { createSettings as settings } from '../../factories/settings-factory'
+import { createSettings as settings } from '../../factories/settings-factory.ts'
 
 let pageCache: string
 

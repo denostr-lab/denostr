@@ -1,17 +1,17 @@
-import { Event, ExpiringEvent  } from '../@types/event'
-import { EventRateLimit, FeeSchedule, Settings } from '../@types/settings'
-import { getEventExpiration, getEventProofOfWork, getPubkeyProofOfWork, isEventIdValid, isEventKindOrRangeMatch, isEventSignatureValid, isExpiredEvent } from '../utils/event'
-import { IEventStrategy, IMessageHandler } from '../@types/message-handlers'
-import { ContextMetadataKey } from '../constants/base'
-import { createCommandResult } from '../utils/messages'
-import { createLogger } from '../factories/logger-factory'
-import { EventExpirationTimeMetadataKey } from '../constants/base'
-import { Factory } from '../@types/base'
-import { IncomingEventMessage } from '../@types/messages'
-import { IRateLimiter } from '../@types/utils'
-import { IUserRepository } from '../@types/repositories'
-import { IWebSocketAdapter } from '../@types/adapters'
-import { WebSocketAdapterEvent } from '../constants/adapter'
+import { Event, ExpiringEvent  } from '../@types/event.ts'
+import { EventRateLimit, FeeSchedule, Settings } from '../@types/settings.ts'
+import { getEventExpiration, getEventProofOfWork, getPubkeyProofOfWork, isEventIdValid, isEventKindOrRangeMatch, isEventSignatureValid, isExpiredEvent } from '../utils/event.ts'
+import { IEventStrategy, IMessageHandler } from '../@types/message-handlers.ts'
+import { ContextMetadataKey } from '../constants/base.ts'
+import { createCommandResult } from '../utils/messages.ts'
+import { createLogger } from '../factories/logger-factory.ts'
+import { EventExpirationTimeMetadataKey } from '../constants/base.ts'
+import { Factory } from '../@types/base.ts'
+import { IncomingEventMessage } from '../@types/messages.ts'
+import { IRateLimiter } from '../@types/utils.ts'
+import { IUserRepository } from '../@types/repositories.ts'
+import { IWebSocketAdapter } from '../@types/adapters.ts'
+import { WebSocketAdapterEvent } from '../constants/adapter.ts'
 
 const debug = createLogger('event-message-handler')
 
@@ -21,7 +21,7 @@ export class EventMessageHandler implements IMessageHandler {
     protected readonly strategyFactory: Factory<IEventStrategy<Event, Promise<void>>, [Event, IWebSocketAdapter]>,
     protected readonly userRepository: IUserRepository,
     private readonly settings: () => Settings,
-    private readonly slidingWindowRateLimiter: Factory<IRateLimiter>,
+    private readonly slidingWindowRateLimiter: Factory<Promise<IRateLimiter>>,
   ) {}
 
   public async handleMessage(message: IncomingEventMessage): Promise<void> {
@@ -206,7 +206,7 @@ export class EventMessageHandler implements IMessageHandler {
       return false
     }
 
-    const rateLimiter = this.slidingWindowRateLimiter()
+    const rateLimiter = await this.slidingWindowRateLimiter()
 
     const toString = (input: any | any[]): string => {
       return Array.isArray(input) ? `[${input.map(toString)}]` : input.toString()

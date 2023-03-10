@@ -1,16 +1,16 @@
-import { IncomingMessage, Server } from 'http'
-import WebSocket, { OPEN, WebSocketServer } from 'ws'
+import { IncomingMessage, Server } from 'node:http'
+import WebSocket, { WebSocketServer } from 'ws'
 import { propEq } from 'ramda'
 
-import { IWebSocketAdapter, IWebSocketServerAdapter } from '../@types/adapters'
-import { WebSocketAdapterEvent, WebSocketServerAdapterEvent } from '../constants/adapter'
-import { createLogger } from '../factories/logger-factory'
-import { Event } from '../@types/event'
-import { Factory } from '../@types/base'
-import { getRemoteAddress } from '../utils/http'
-import { isRateLimited } from '../handlers/request-handlers/rate-limiter-middleware'
-import { Settings } from '../@types/settings'
-import { WebServerAdapter } from './web-server-adapter'
+import { IWebSocketAdapter, IWebSocketServerAdapter } from '../@types/adapters.ts'
+import { WebSocketAdapterEvent, WebSocketServerAdapterEvent } from '../constants/adapter.ts'
+import { createLogger } from '../factories/logger-factory.ts'
+import { Event } from '../@types/event.ts'
+import { Factory } from '../@types/base.ts'
+import { getRemoteAddress } from '../utils/http.ts'
+import { isRateLimited } from '../handlers/request-handlers/rate-limiter-middleware.ts'
+import { Settings } from '../@types/settings.ts'
+import { WebServerAdapter } from './web-server-adapter.ts'
 
 const debug = createLogger('web-socket-server-adapter')
 
@@ -71,7 +71,7 @@ export class WebSocketServerAdapter extends WebServerAdapter implements IWebSock
 
   private onBroadcast(event: Event) {
     this.webSocketServer.clients.forEach((webSocket: WebSocket) => {
-      if (!propEq('readyState', OPEN)(webSocket)) {
+      if (!propEq('readyState', WebSocket.OPEN)(webSocket)) {
         return
       }
       const webSocketAdapter = this.webSocketsAdapters.get(webSocket) as IWebSocketAdapter
@@ -83,7 +83,7 @@ export class WebSocketServerAdapter extends WebServerAdapter implements IWebSock
   }
 
   public getConnectedClients(): number {
-    return Array.from(this.webSocketServer.clients).filter(propEq('readyState', OPEN)).length
+    return Array.from(this.webSocketServer.clients).filter(propEq('readyState', WebSocket.OPEN)).length
   }
 
   private async onConnection(client: WebSocket, req: IncomingMessage) {

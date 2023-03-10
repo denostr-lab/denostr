@@ -1,7 +1,7 @@
 import 'pg'
 import 'pg-query-stream'
 import knex, { Knex } from 'knex'
-import { createLogger } from '../factories/logger-factory'
+import { createLogger } from '../factories/logger-factory.ts'
 
 ((knex) => {
   const lastUpdate = {}

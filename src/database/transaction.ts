@@ -1,7 +1,7 @@
 import { Knex } from 'knex'
 
-import { DatabaseClient, DatabaseTransaction } from '../@types/base'
-import { ITransaction } from '../@types/database'
+import { DatabaseClient, DatabaseTransaction } from '../@types/base.ts'
+import { ITransaction } from '../@types/database.ts'
 
 export class Transaction implements ITransaction {
   private trx: Knex.Transaction<any, any[]>

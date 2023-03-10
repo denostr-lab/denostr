@@ -1,12 +1,12 @@
-import { createCommandResult } from '../../utils/messages'
-import { createLogger } from '../../factories/logger-factory'
-import { Event } from '../../@types/event'
-import { EventTags } from '../../constants/base'
-import { IEventRepository } from '../../@types/repositories'
-import { IEventStrategy } from '../../@types/message-handlers'
-import { IWebSocketAdapter } from '../../@types/adapters'
-import { Tag } from '../../@types/base'
-import { WebSocketAdapterEvent } from '../../constants/adapter'
+import { createCommandResult } from '../../utils/messages.ts'
+import { createLogger } from '../../factories/logger-factory.ts'
+import { Event } from '../../@types/event.ts'
+import { EventTags } from '../../constants/base.ts'
+import { IEventRepository } from '../../@types/repositories.ts'
+import { IEventStrategy } from '../../@types/message-handlers.ts'
+import { IWebSocketAdapter } from '../../@types/adapters.ts'
+import { Tag } from '../../@types/base.ts'
+import { WebSocketAdapterEvent } from '../../constants/adapter.ts'
 
 const debug = createLogger('delete-event-strategy')
 

@@ -1,10 +1,10 @@
-import { PassThrough } from 'stream'
+import { PassThrough } from 'node:stream'
 
-import { DatabaseClient, EventId, Pubkey } from './base'
-import { DBEvent, Event } from './event'
-import { Invoice } from './invoice'
-import { SubscriptionFilter } from './subscription'
-import { User } from './user'
+import { DatabaseClient, EventId, Pubkey } from './base.ts'
+import { DBEvent, Event } from './event.ts'
+import { Invoice } from './invoice.ts'
+import { SubscriptionFilter } from './subscription.ts'
+import { User } from './user.ts'
 
 export type ExposedPromiseKeys = 'then' | 'catch' | 'finally'
 

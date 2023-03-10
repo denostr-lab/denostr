@@ -1,4 +1,4 @@
-import { IncomingMessage } from './messages'
+import { IncomingMessage } from './messages.ts'
 
 export interface IMessageHandler {
   handleMessage(message: IncomingMessage): Promise<void>

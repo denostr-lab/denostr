@@ -1,5 +1,5 @@
-import { IAlternative, IRestriction } from '../../@types/runes'
-import { Alternative } from './alternative'
+import { IAlternative, IRestriction } from '../../@types/runes.ts'
+import { Alternative } from './alternative.ts'
 
 
 export class Restriction implements IRestriction {

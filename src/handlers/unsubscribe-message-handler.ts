@@ -1,7 +1,7 @@
-import { IMessageHandler } from '../@types/message-handlers'
-import { IWebSocketAdapter } from '../@types/adapters'
-import { UnsubscribeMessage } from '../@types/messages'
-import { WebSocketAdapterEvent } from '../constants/adapter'
+import { IMessageHandler } from '../@types/message-handlers.ts'
+import { IWebSocketAdapter } from '../@types/adapters.ts'
+import { UnsubscribeMessage } from '../@types/messages.ts'
+import { WebSocketAdapterEvent } from '../constants/adapter.ts'
 
 export class UnsubscribeMessageHandler implements IMessageHandler {
   public constructor(

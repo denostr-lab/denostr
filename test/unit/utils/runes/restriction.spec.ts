@@ -1,8 +1,8 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
 
-import { Alternative } from '../../../../src/utils/runes/alternative'
-import { Restriction } from '../../../../src/utils/runes/restriction'
+import { Alternative } from '../../../../src/utils/runes/alternative.ts'
+import { Restriction } from '../../../../src/utils/runes/restriction.ts'
 
 describe('Restriction', () => {
   describe('constructor', () => {

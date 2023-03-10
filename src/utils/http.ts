@@ -1,6 +1,6 @@
-import { IncomingMessage } from 'http'
+import { IncomingMessage } from 'node:http'
 
-import { Settings } from '../@types/settings'
+import { Settings } from '../@types/settings.ts'
 
 export const getRemoteAddress = (request: IncomingMessage, settings: Settings): string => {
   let header: string | undefined

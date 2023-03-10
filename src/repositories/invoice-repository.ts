@@ -11,12 +11,12 @@ import {
   toString,
 } from 'ramda'
 
-import { DBInvoice, Invoice, InvoiceStatus } from '../@types/invoice'
-import { fromDBInvoice, toBuffer } from '../utils/transform'
-import { createLogger } from '../factories/logger-factory'
-import { DatabaseClient } from '../@types/base'
-import { IInvoiceRepository } from '../@types/repositories'
-import { randomUUID } from 'crypto'
+import { DBInvoice, Invoice, InvoiceStatus } from '../@types/invoice.ts'
+import { fromDBInvoice, toBuffer } from '../utils/transform.ts'
+import { createLogger } from '../factories/logger-factory.ts'
+import { DatabaseClient } from '../@types/base.ts'
+import { IInvoiceRepository } from '../@types/repositories.ts'
+import { randomUUID } from 'node:crypto'
 
 const debug = createLogger('invoice-repository')
 

@@ -1,11 +1,12 @@
-import cluster from 'cluster'
+import cluster from 'node:cluster'
+
 import dotenv from 'dotenv'
 dotenv.config()
 
-import { appFactory } from './factories/app-factory'
-import { maintenanceWorkerFactory } from './factories/maintenance-worker-factory'
-import { staticMirroringWorkerFactory } from './factories/static-mirroring.worker-factory'
-import { workerFactory } from './factories/worker-factory'
+import { appFactory } from './factories/app-factory.ts'
+import { maintenanceWorkerFactory } from './factories/maintenance-worker-factory.ts'
+import { staticMirroringWorkerFactory } from './factories/static-mirroring.worker-factory.ts'
+import { workerFactory } from './factories/worker-factory.ts'
 
 export const getRunner = () => {
   if (cluster.isPrimary) {
@@ -24,6 +25,6 @@ export const getRunner = () => {
   }
 }
 
-if (require.main === module) {
-  getRunner().run()
-}
+// if (require.main === module) {
+//   getRunner().run()
+// }

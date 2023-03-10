@@ -3,17 +3,17 @@ import * as sinon from 'sinon'
 import knex from 'knex'
 import sinonChai from 'sinon-chai'
 
-import { Event, ParameterizedReplaceableEvent } from '../../../src/@types/event'
-import { IEventRepository } from '../../../src/@types/repositories'
-import { SubscriptionFilter } from '../../../src/@types/subscription'
+import { Event, ParameterizedReplaceableEvent } from '../../../src/@types/event.ts'
+import { IEventRepository } from '../../../src/@types/repositories.ts'
+import { SubscriptionFilter } from '../../../src/@types/subscription.ts'
 
 chai.use(sinonChai)
 
 const { expect } = chai
 
-import { ContextMetadataKey, EventDeduplicationMetadataKey } from '../../../src/constants/base'
-import { DatabaseClient } from '../../../src/@types/base'
-import { EventRepository } from '../../../src/repositories/event-repository'
+import { ContextMetadataKey, EventDeduplicationMetadataKey } from '../../../src/constants/base.ts'
+import { DatabaseClient } from '../../../src/@types/base.ts'
+import { EventRepository } from '../../../src/repositories/event-repository.ts'
 
 describe('EventRepository', () => {
   let repository: IEventRepository
@@ -41,7 +41,7 @@ describe('EventRepository', () => {
 
   describe('.findByFilters', () => {
     it('returns a function with stream and then', () => {
-      expect(repository.findByFilters([{}])).to.have.property('stream')
+      expect(repository.findByFilters([{}])).to.have.property('node:stream')
       expect(repository.findByFilters([{}])).to.have.property('then')
       expect(repository.findByFilters([{}])).to.have.property('catch')
       expect(repository.findByFilters([{}])).to.have.property('finally')

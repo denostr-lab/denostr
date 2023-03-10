@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
-import { createLogger } from '../../factories/logger-factory'
-import { createSettings } from '../../factories/settings-factory'
-import { getRemoteAddress } from '../../utils/http'
-import { Settings } from '../../@types/settings'
-import { slidingWindowRateLimiterFactory } from '../../factories/rate-limiter-factory'
+import { createLogger } from '../../factories/logger-factory.ts'
+import { createSettings } from '../../factories/settings-factory.ts'
+import { getRemoteAddress } from '../../utils/http.ts'
+import { Settings } from '../../@types/settings.ts'
+import { slidingWindowRateLimiterFactory } from '../../factories/rate-limiter-factory.ts'
 
 const debug = createLogger('rate-limiter-middleware')
 
@@ -36,8 +36,7 @@ export async function isRateLimited(remoteAddress: string, settings: Settings): 
   if (ipWhitelist.includes(remoteAddress)) {
     return false
   }
-
-  const rateLimiter = slidingWindowRateLimiterFactory()
+  const rateLimiter = await slidingWindowRateLimiterFactory()
 
   const hit = (period: number, rate: number) =>
     rateLimiter.hit(

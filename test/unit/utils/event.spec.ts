@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import { CanonicalEvent, Event } from '../../../src/@types/event'
+import { CanonicalEvent, Event } from '../../../src/@types/event.ts'
 import {
   getEventExpiration,
   isDelegatedEvent,
@@ -14,8 +14,8 @@ import {
   isParameterizedReplaceableEvent,
   isReplaceableEvent,
   serializeEvent,
-} from '../../../src/utils/event'
-import { EventKinds } from '../../../src/constants/base'
+} from '../../../src/utils/event.ts'
+import { EventKinds } from '../../../src/constants/base.ts'
 
 describe('NIP-01', () => {
   describe('serializeEvent', () => {

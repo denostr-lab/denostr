@@ -1,10 +1,10 @@
 import { AxiosInstance } from 'axios'
-import { Factory } from '../@types/base'
+import { Factory } from '../@types/base.ts'
 
-import { CreateInvoiceRequest, CreateInvoiceResponse, GetInvoiceResponse, IPaymentsProcessor } from '../@types/clients'
-import { createLogger } from '../factories/logger-factory'
-import { fromZebedeeInvoice } from '../utils/transform'
-import { Settings } from '../@types/settings'
+import { CreateInvoiceRequest, CreateInvoiceResponse, GetInvoiceResponse, IPaymentsProcessor } from '../@types/clients.ts'
+import { createLogger } from '../factories/logger-factory.ts'
+import { fromZebedeeInvoice } from '../utils/transform.ts'
+import { Settings } from '../@types/settings.ts'
 
 const debug = createLogger('zebedee-payments-processor')
 

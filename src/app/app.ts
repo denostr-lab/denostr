@@ -1,15 +1,15 @@
-import { Cluster, Worker } from 'cluster'
-import { cpus, hostname } from 'os'
+import { Cluster, Worker } from 'node:cluster'
+import { cpus, hostname } from 'node:os'
 import { path, pathEq } from 'ramda'
-import { FSWatcher } from 'fs'
+import { FSWatcher } from 'node:fs'
 
-import { addOnion } from '../tor/client'
-import { createLogger } from '../factories/logger-factory'
-import { IRunnable } from '../@types/base'
-import packageJson from '../../package.json'
-import { Serializable } from 'child_process'
-import { Settings } from '../@types/settings'
-import { SettingsStatic } from '../utils/settings'
+import { addOnion } from '../tor/client.ts'
+import { createLogger } from '../factories/logger-factory.ts'
+import { IRunnable } from '../@types/base.ts'
+import packageJson from '../../package.json' assert { type: 'json' }
+import { Serializable } from 'node:child_process'
+import { Settings } from '../@types/settings.ts'
+import { SettingsStatic } from '../utils/settings.ts'
 
 const debug = createLogger('app-primary')
 

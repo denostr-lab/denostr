@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 
-import { createLNbitsCallbackController } from '../../factories/lnbits-callback-controller-factory'
+import { createLNbitsCallbackController } from '../../factories/lnbits-callback-controller-factory.ts'
 
 export const postLNbitsCallbackRequestHandler = async (
   req: Request,

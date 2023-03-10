@@ -1,7 +1,7 @@
-import { Pubkey, Secret } from './base'
-import { EventKinds } from '../constants/base'
-import { MessageType } from './messages'
-import { SubscriptionFilter } from './subscription'
+import { Pubkey, Secret } from './base.ts'
+import { EventKinds } from '../constants/base.ts'
+import { MessageType } from './messages.ts'
+import { SubscriptionFilter } from './subscription.ts'
 
 export interface Info {
   relay_url: string

@@ -1,5 +1,5 @@
-import { IRestriction, IRuneLike } from '../../@types/runes'
-import { Restriction } from './restriction'
+import { IRestriction, IRuneLike } from '../../@types/runes.ts'
+import { Restriction } from './restriction.ts'
 
 
 export class RuneLike implements IRuneLike {

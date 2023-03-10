@@ -1,13 +1,13 @@
 import * as secp256k1 from '@noble/secp256k1'
-import { createHash, createHmac, Hash } from 'crypto'
+import { createHash, createHmac, Hash } from 'node:crypto'
 import { Observable } from 'rxjs'
 import WebSocket from 'ws'
 
-import { CommandResult, MessageType, OutgoingMessage } from '../../../src/@types/messages'
-import { Event } from '../../../src/@types/event'
-import { serializeEvent } from '../../../src/utils/event'
-import { streams } from './shared'
-import { SubscriptionFilter } from '../../../src/@types/subscription'
+import { CommandResult, MessageType, OutgoingMessage } from '../../../src/@types/messages.ts'
+import { Event } from '../../../src/@types/event.ts'
+import { serializeEvent } from '../../../src/utils/event.ts'
+import { streams } from './shared.ts'
+import { SubscriptionFilter } from '../../../src/@types/subscription.ts'
 
 
 secp256k1.utils.sha256Sync = (...messages: Uint8Array[]) =>

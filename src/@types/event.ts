@@ -1,5 +1,5 @@
-import { ContextMetadata, EventId, Pubkey, Tag } from './base'
-import { ContextMetadataKey, EventDeduplicationMetadataKey, EventDelegatorMetadataKey, EventExpirationTimeMetadataKey, EventKinds } from '../constants/base'
+import { ContextMetadata, EventId, Pubkey, Tag } from './base.ts'
+import { ContextMetadataKey, EventDeduplicationMetadataKey, EventDelegatorMetadataKey, EventExpirationTimeMetadataKey, EventKinds } from '../constants/base.ts'
 
 export interface BaseEvent {
   id: EventId

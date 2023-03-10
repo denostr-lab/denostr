@@ -7,21 +7,21 @@ import {
   Then,
   When,
   World,
-} from '@cucumber/cucumber'
+} from '@cucumber/cucumber.ts'
 import { assocPath, pipe } from 'ramda'
 import { fromEvent, map, Observable, ReplaySubject, Subject, takeUntil } from 'rxjs'
 import WebSocket, { MessageEvent } from 'ws'
 import Sinon from 'sinon'
 
-import { connect, createIdentity, createSubscription, sendEvent } from './helpers'
-import { getMasterDbClient, getReadReplicaDbClient } from '../../../src/database/client'
-import { AppWorker } from '../../../src/app/worker'
-import { CacheClient } from '../../../src/@types/cache'
-import { DatabaseClient } from '../../../src/@types/base'
-import { Event } from '../../../src/@types/event'
-import { getCacheClient } from '../../../src/cache/client'
-import { SettingsStatic } from '../../../src/utils/settings'
-import { workerFactory } from '../../../src/factories/worker-factory'
+import { connect, createIdentity, createSubscription, sendEvent } from './helpers.ts'
+import { getMasterDbClient, getReadReplicaDbClient } from '../../../src/database/client.ts'
+import { AppWorker } from '../../../src/app/worker.ts'
+import { CacheClient } from '../../../src/@types/cache.ts'
+import { DatabaseClient } from '../../../src/@types/base.ts'
+import { Event } from '../../../src/@types/event.ts'
+import { getCacheClient } from '../../../src/cache/client.ts'
+import { SettingsStatic } from '../../../src/utils/settings.ts'
+import { workerFactory } from '../../../src/factories/worker-factory.ts'
 
 export const isDraft = Symbol('draft')
 

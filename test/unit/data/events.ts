@@ -1,4 +1,4 @@
-import { Event } from '../../../src/@types/event'
+import { Event } from '../../../src/@types/event.ts'
 
 export const getEvents = (): Event[] => [
   {

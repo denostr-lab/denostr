@@ -1,4 +1,4 @@
-import { PassThrough, Transform } from 'stream'
+import { PassThrough, Transform } from 'node:stream'
 
 export const streamMap = (fn: (chunk) => any) => new Transform({
   objectMode: true,

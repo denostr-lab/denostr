@@ -1,16 +1,16 @@
 import { is, path, pathSatisfies } from 'ramda'
-import http from 'http'
-import process from 'process'
+import http from 'node:http'
+import process from 'node:process'
 import { WebSocketServer } from 'ws'
 
-import { getMasterDbClient, getReadReplicaDbClient } from '../database/client'
-import { AppWorker } from '../app/worker'
-import { createSettings } from '../factories/settings-factory'
-import { createWebApp } from './web-app-factory'
-import { EventRepository } from '../repositories/event-repository'
-import { UserRepository } from '../repositories/user-repository'
-import { webSocketAdapterFactory } from './websocket-adapter-factory'
-import { WebSocketServerAdapter } from '../adapters/web-socket-server-adapter'
+import { getMasterDbClient, getReadReplicaDbClient } from '../database/client.ts'
+import { AppWorker } from '../app/worker.ts'
+import { createSettings } from '../factories/settings-factory.ts'
+import { createWebApp } from './web-app-factory.ts'
+import { EventRepository } from '../repositories/event-repository.ts'
+import { UserRepository } from '../repositories/user-repository.ts'
+import { webSocketAdapterFactory } from './websocket-adapter-factory.ts'
+import { WebSocketServerAdapter } from '../adapters/web-socket-server-adapter.ts'
 
 export const workerFactory = (): AppWorker => {
   const dbClient = getMasterDbClient()

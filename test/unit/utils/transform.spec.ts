@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import { fromBuffer, toBuffer, toJSON } from '../../../src/utils/transform'
+import { fromBuffer, toBuffer, toJSON } from '../../../src/utils/transform.ts'
 
 
 describe('toJSON', () => {

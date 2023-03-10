@@ -1,12 +1,12 @@
-import { IncomingMessage } from 'http'
+import { IncomingMessage } from 'node:http'
 import { WebSocket } from 'ws'
 
-import { IEventRepository, IUserRepository } from '../@types/repositories'
-import { createSettings } from './settings-factory'
-import { IWebSocketServerAdapter } from '../@types/adapters'
-import { messageHandlerFactory } from './message-handler-factory'
-import { slidingWindowRateLimiterFactory } from './rate-limiter-factory'
-import { WebSocketAdapter } from '../adapters/web-socket-adapter'
+import { IEventRepository, IUserRepository } from '../@types/repositories.ts'
+import { createSettings } from './settings-factory.ts'
+import { IWebSocketServerAdapter } from '../@types/adapters.ts'
+import { messageHandlerFactory } from './message-handler-factory.ts'
+import { slidingWindowRateLimiterFactory } from './rate-limiter-factory.ts'
+import { WebSocketAdapter } from '../adapters/web-socket-adapter.ts'
 
 
 export const webSocketAdapterFactory = (

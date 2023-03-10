@@ -1,25 +1,26 @@
-import cluster from 'cluster'
-import { EventEmitter } from 'stream'
-import { IncomingMessage as IncomingHttpMessage } from 'http'
+import cluster from 'node:cluster'
+import { EventEmitter } from 'node:events'
+import { IncomingMessage as IncomingHttpMessage } from 'node:http'
 import { WebSocket } from 'ws'
 
-import { ContextMetadata, Factory } from '../@types/base'
-import { createNoticeMessage, createOutgoingEventMessage } from '../utils/messages'
-import { IAbortable, IMessageHandler } from '../@types/message-handlers'
-import { IncomingMessage, OutgoingMessage } from '../@types/messages'
-import { IWebSocketAdapter, IWebSocketServerAdapter } from '../@types/adapters'
-import { SubscriptionFilter, SubscriptionId } from '../@types/subscription'
-import { WebSocketAdapterEvent, WebSocketServerAdapterEvent } from '../constants/adapter'
-import { attemptValidation } from '../utils/validation'
-import { ContextMetadataKey } from '../constants/base'
-import { createLogger } from '../factories/logger-factory'
-import { Event } from '../@types/event'
-import { getRemoteAddress } from '../utils/http'
-import { IRateLimiter } from '../@types/utils'
-import { isEventMatchingFilter } from '../utils/event'
-import { messageSchema } from '../schemas/message-schema'
-import { Settings } from '../@types/settings'
-import { SocketAddress } from 'net'
+import { ContextMetadata, Factory } from '../@types/base.ts'
+import { createNoticeMessage, createOutgoingEventMessage } from '../utils/messages.ts'
+import { IAbortable, IMessageHandler } from '../@types/message-handlers.ts'
+import { IncomingMessage, OutgoingMessage } from '../@types/messages.ts'
+import { IWebSocketAdapter, IWebSocketServerAdapter } from '../@types/adapters.ts'
+import { SubscriptionFilter, SubscriptionId } from '../@types/subscription.ts'
+import { WebSocketAdapterEvent, WebSocketServerAdapterEvent } from '../constants/adapter.ts'
+import { attemptValidation } from '../utils/validation.ts'
+import { ContextMetadataKey } from '../constants/base.ts'
+import { createLogger } from '../factories/logger-factory.ts'
+import { Event } from '../@types/event.ts'
+import { getRemoteAddress } from '../utils/http.ts'
+import { IRateLimiter } from '../@types/utils.ts'
+import { isEventMatchingFilter } from '../utils/event.ts'
+import { messageSchema } from '../schemas/message-schema.ts'
+import { Settings } from '../@types/settings.ts'
+
+import net from 'node:net'
 
 
 const debug = createLogger('web-socket-adapter')
@@ -29,7 +30,7 @@ const abortableMessageHandlers: WeakMap<WebSocket, IAbortable[]> = new WeakMap()
 
 export class WebSocketAdapter extends EventEmitter implements IWebSocketAdapter {
   public clientId: string
-  private clientAddress: SocketAddress
+  private clientAddress: net.SocketAddress
   private alive: boolean
   private subscriptions: Map<SubscriptionId, SubscriptionFilter[]>
 
@@ -49,7 +50,7 @@ export class WebSocketAdapter extends EventEmitter implements IWebSocketAdapter 
 
     const address = getRemoteAddress(this.request, this.settings())
 
-    this.clientAddress = new SocketAddress({
+    this.clientAddress = new net.SocketAddress({
       address: address,
       family: address.indexOf(':') >= 0 ? 'ipv6' : 'ipv4',
     })

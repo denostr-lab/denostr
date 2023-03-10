@@ -4,12 +4,12 @@ import Sinon from 'sinon'
 
 chai.use(chaiAsPromised)
 
-import { EphemeralEventStrategy } from '../../../../src/handlers/event-strategies/ephemeral-event-strategy'
-import { Event } from '../../../../src/@types/event'
-import { IEventStrategy } from '../../../../src/@types/message-handlers'
-import { IWebSocketAdapter } from '../../../../src/@types/adapters'
-import { MessageType } from '../../../../src/@types/messages'
-import { WebSocketAdapterEvent } from '../../../../src/constants/adapter'
+import { EphemeralEventStrategy } from '../../../../src/handlers/event-strategies/ephemeral-event-strategy.ts'
+import { Event } from '../../../../src/@types/event.ts'
+import { IEventStrategy } from '../../../../src/@types/message-handlers.ts'
+import { IWebSocketAdapter } from '../../../../src/@types/adapters.ts'
+import { MessageType } from '../../../../src/@types/messages.ts'
+import { WebSocketAdapterEvent } from '../../../../src/constants/adapter.ts'
 
 const { expect } = chai
 

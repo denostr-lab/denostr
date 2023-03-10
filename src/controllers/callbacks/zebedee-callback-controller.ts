@@ -1,10 +1,10 @@
 import { Request, Response } from 'express'
 
-import { createLogger } from '../../factories/logger-factory'
-import { fromZebedeeInvoice } from '../../utils/transform'
-import { IController } from '../../@types/controllers'
-import { InvoiceStatus } from '../../@types/invoice'
-import { IPaymentsService } from '../../@types/services'
+import { createLogger } from '../../factories/logger-factory.ts'
+import { fromZebedeeInvoice } from '../../utils/transform.ts'
+import { IController } from '../../@types/controllers.ts'
+import { InvoiceStatus } from '../../@types/invoice.ts'
+import { IPaymentsService } from '../../@types/services.ts'
 
 const debug = createLogger('zebedee-callback-controller')
 

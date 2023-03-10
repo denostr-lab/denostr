@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import Joi from 'joi'
 
-import { attemptValidation, validateSchema } from '../../../src/utils/validation'
+import { attemptValidation, validateSchema } from '../../../src/utils/validation.ts'
 
 describe('attemptValidation', () => {
   it('returns value if given value matches schema', () => {

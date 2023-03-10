@@ -1,11 +1,11 @@
-import { isDeleteEvent, isEphemeralEvent, isReplaceableEvent } from '../utils/event'
-import { DefaultEventStrategy } from '../handlers/event-strategies/default-event-strategy'
-import { EphemeralEventStrategy } from '../handlers/event-strategies/ephemeral-event-strategy'
-import { Event } from '../@types/event'
-import { Factory } from '../@types/base'
-import { IEventRepository } from '../@types/repositories'
-import { IEventStrategy } from '../@types/message-handlers'
-import { IWebSocketAdapter } from '../@types/adapters'
+import { isDeleteEvent, isEphemeralEvent, isReplaceableEvent } from '../utils/event.ts'
+import { DefaultEventStrategy } from '../handlers/event-strategies/default-event-strategy.ts'
+import { EphemeralEventStrategy } from '../handlers/event-strategies/ephemeral-event-strategy.ts'
+import { Event } from '../@types/event.ts'
+import { Factory } from '../@types/base.ts'
+import { IEventRepository } from '../@types/repositories.ts'
+import { IEventStrategy } from '../@types/message-handlers.ts'
+import { IWebSocketAdapter } from '../@types/adapters.ts'
 
 export const delegatedEventStrategyFactory = (
   eventRepository: IEventRepository,

@@ -1,5 +1,6 @@
-import { EventEmitter } from 'node:stream'
-import { SubscriptionFilter } from './subscription'
+import { EventEmitter } from 'node:events'
+import { SubscriptionFilter } from './subscription.ts'
+import { Bulk } from 'redis'
 
 export interface IWebSocketServerAdapter extends EventEmitter, IWebServerAdapter {
   getConnectedClients(): number
@@ -19,7 +20,7 @@ export type IWebSocketAdapter = EventEmitter & {
 }
 
 export interface ICacheAdapter {
-  getKey(key: string): Promise<string>
+  getKey(key: string): Promise<Bulk>
   hasKey(key: string): Promise<boolean>
   setKey(key: string, value: string): Promise<boolean>
   addToSortedSet(key: string, set: Record<string, string> | Record<string, string>[]): Promise<number>

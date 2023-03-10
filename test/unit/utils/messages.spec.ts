@@ -1,8 +1,8 @@
 import { expect } from 'chai'
 
-import { createEndOfStoredEventsNoticeMessage, createNoticeMessage, createOutgoingEventMessage } from '../../../src/utils/messages'
-import { Event } from '../../../src/@types/event'
-import { MessageType } from '../../../src/@types/messages'
+import { createEndOfStoredEventsNoticeMessage, createNoticeMessage, createOutgoingEventMessage } from '../../../src/utils/messages.ts'
+import { Event } from '../../../src/@types/event.ts'
+import { MessageType } from '../../../src/@types/messages.ts'
 
 describe('createNotice', () => {
   it('returns a notice message', () => {

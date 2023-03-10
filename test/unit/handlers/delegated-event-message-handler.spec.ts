@@ -1,18 +1,18 @@
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
-import EventEmitter from 'events'
+import EventEmitter from 'node:events'
 import Sinon from 'sinon'
 import sinonChai from 'sinon-chai'
 
 chai.use(sinonChai)
 chai.use(chaiAsPromised)
 
-import { IncomingEventMessage, MessageType } from '../../../src/@types/messages'
-import { DelegatedEventMessageHandler } from '../../../src/handlers/delegated-event-message-handler'
-import { Event } from '../../../src/@types/event'
-import { EventMessageHandler } from '../../../src/handlers/event-message-handler'
-import { IUserRepository } from '../../../src/@types/repositories'
-import { WebSocketAdapterEvent } from '../../../src/constants/adapter'
+import { IncomingEventMessage, MessageType } from '../../../src/@types/messages.ts'
+import { DelegatedEventMessageHandler } from '../../../src/handlers/delegated-event-message-handler.ts'
+import { Event } from '../../../src/@types/event.ts'
+import { EventMessageHandler } from '../../../src/handlers/event-message-handler.ts'
+import { IUserRepository } from '../../../src/@types/repositories.ts'
+import { WebSocketAdapterEvent } from '../../../src/constants/adapter.ts'
 
 const { expect } = chai
 

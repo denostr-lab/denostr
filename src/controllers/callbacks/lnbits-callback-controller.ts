@@ -1,10 +1,10 @@
 import { Request, Response } from 'express'
 
-import { createLogger } from '../../factories/logger-factory'
-import { IController } from '../../@types/controllers'
-import { IInvoiceRepository } from '../../@types/repositories'
-import { InvoiceStatus } from '../../@types/invoice'
-import { IPaymentsService } from '../../@types/services'
+import { createLogger } from '../../factories/logger-factory.ts'
+import { IController } from '../../@types/controllers.ts'
+import { IInvoiceRepository } from '../../@types/repositories.ts'
+import { InvoiceStatus } from '../../@types/invoice.ts'
+import { IPaymentsService } from '../../@types/services.ts'
 
 const debug = createLogger('lnbits-callback-controller')
 
