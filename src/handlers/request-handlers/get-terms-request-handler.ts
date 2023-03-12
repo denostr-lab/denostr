@@ -6,7 +6,7 @@ import { createSettings as settings } from '../../factories/settings-factory.ts'
 
 let pageCache: string
 
-export const getTermsRequestHandler = async (ctx: RouterContext<string>, next: NextFunction) => {
+export const getTermsRequestHandler = async (ctx: RouterContext, next: NextFunction) => {
   const { info: { name } } = settings()
   const res : Response = ctx.response
   if (!pageCache) {

@@ -1,8 +1,12 @@
 import {  Server } from 'node:http'
+
 import WebSocket, { WebSocketServer } from 'ws'
+
 import { propEq } from 'ramda'
-import { ServerRequest } from "https://deno.land/std@0.92.0/http/server.ts";
+import { ServerRequest } from 'https://deno.land/std@0.92.0/http/server.ts'
+
 import { IWebSocketAdapter, IWebSocketServerAdapter } from '../@types/adapters.ts'
+
 import { WebSocketAdapterEvent, WebSocketServerAdapterEvent } from '../constants/adapter.ts'
 import { createLogger } from '../factories/logger-factory.ts'
 import { Event } from '../@types/event.ts'

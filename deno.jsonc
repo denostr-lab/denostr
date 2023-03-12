@@ -10,7 +10,7 @@
     "debug": "https://deno.land/x/debuglog@v1.0.0/debug.ts",
     "websocket": "./vendor/deno.land/x/websocket@v0.1.4/mod.ts",
     "jest": "https://deno.land/x/stej@0.0.1/mod.ts",
-    "koa": "https://deno.land/x/oak@v12.1.0/mod.ts"
+    "oak": "https://deno.land/x/oak@v12.1.0/mod.ts"
   },
   "importMap": "./vendor/import_map.json"
 }

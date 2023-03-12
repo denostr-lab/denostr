@@ -13,7 +13,7 @@ export const getRemoteAddress = (request: ServerRequest, settings: Settings): st
     header = settings.network.remoteIpHeader as string
   }
 
-  const result = (request.headers.get(header) ?? (request.conn.remoteAddr?.hostname || request.conn.remoteAddr?.path)) as string
+  const result = (request.headers.get(header) ?? (request?.remoteAddr || request?.conn?.remoteAddr?.hostname || request?.conn?.remoteAddr?.path)) as string
 
   return result.split(',')[0]
 }

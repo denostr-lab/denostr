@@ -1,7 +1,7 @@
 
 import { createLogger } from '../../factories/logger-factory.ts'
 import { fromZebedeeInvoice } from '../../utils/transform.ts'
-import { IController, Request, Response } from '../../@types/controllers.ts'
+import { IController, Request, Response, Status } from '../../@types/controllers.ts'
 import { InvoiceStatus } from '../../@types/invoice.ts'
 import { IPaymentsService } from '../../@types/services.ts'
 
@@ -38,10 +38,8 @@ export class ZebedeeCallbackController implements IController {
       invoice.status !== InvoiceStatus.COMPLETED
       && !invoice.confirmedAt
     ) {
-      response
-        .status(200)
-        .send()
-
+      response.status = Status.OK
+      response.body = ''
       return
     }
 
@@ -55,10 +53,8 @@ export class ZebedeeCallbackController implements IController {
 
       throw error
     }
-
-    response
-      .status(200)
-      .setHeader('content-type', 'text/plain; charset=utf8')
-      .send('OK')
+    response.status = Status.OK
+    response.headers.set('content-type', 'text/plain; charset=utf8')
+    response.body = 'OK'
   }
 }

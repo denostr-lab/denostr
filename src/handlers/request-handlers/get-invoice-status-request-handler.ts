@@ -2,7 +2,7 @@ import { Request, Response, RouterContext, NextFunction } from '../../@types/con
 
 import { createGetInvoiceStatusController } from '../../factories/get-invoice-status-controller-factory.ts'
 
-export const getInvoiceStatusRequestHandler = async (ctx: RouterContext<string>, next: NextFunction) => {
+export const getInvoiceStatusRequestHandler = async (ctx: RouterContext, next: NextFunction) => {
   const req : Request = ctx.request
   const res : Response = ctx.response
   const controller = createGetInvoiceStatusController()

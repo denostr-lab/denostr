@@ -1,4 +1,4 @@
-import { Router } from "https://deno.land/x/oak/mod.ts";
+import { Router } from "oak";
 
 import callbacksRouter from './callbacks/index.ts'
 import { getHealthRequestHandler } from '../handlers/request-handlers/get-health-request-handler.ts'
@@ -10,10 +10,31 @@ import { rootRequestHandler } from '../handlers/request-handlers/root-request-ha
 const router = new Router()
 
 router.get('/', rootRequestHandler)
+router.get('/favicon.ico', async (context, next) => {
+    try {
+        await context.send({
+            root: `${Deno.cwd()}/resources/`,
+            index: "favicon.ico",
+        });
+    } catch {
+
+        await next();
+    }
+})
+router.get('/css/:name', async (context, next) => {
+    try {
+        await context.send({
+            root: `${Deno.cwd()}/resources/`,
+        });
+    } catch (e){
+        console.info(e, 'asdasdasd')
+        await next();
+    }
+})
 router.get('/healthz', getHealthRequestHandler)
 router.get('/terms', getTermsRequestHandler)
 
-router.use('/invoices', rateLimiterMiddleware, invoiceRouter, invoiceRouter)
-router.use('/callbacks', rateLimiterMiddleware, callbacksRouter)
+router.use('/invoices', rateLimiterMiddleware, invoiceRouter.routes(), invoiceRouter.allowedMethods())
+router.use('/callbacks', rateLimiterMiddleware, callbacksRouter.routes(), callbacksRouter.allowedMethods())
 
 export default router

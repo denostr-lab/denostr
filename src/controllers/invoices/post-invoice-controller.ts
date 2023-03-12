@@ -24,7 +24,7 @@ export class PostInvoiceController implements IController {
     private readonly rateLimiter: () => Promise<IRateLimiter>,
   ){}
 
-  public async handleRequest(request: Request, response: Response, ctx: RouterContext<string>): Promise<void> {
+  public async handleRequest(request: Request, response: Response, ctx: RouterContext): Promise<void> {
     if (!pageCache) {
       pageCache = readFileSync('./resources/invoices.html', 'utf8')
     }
@@ -45,20 +45,17 @@ export class PostInvoiceController implements IController {
 
     if (!request.body || typeof request.body !== 'object') {
       ctx.throw(Status.BadRequest, 'Invalid request')
-      return
     }
 
     const tosAccepted = request.body?.tosAccepted === 'yes'
 
     if (!tosAccepted) {
       ctx.throw(Status.BadRequest, 'ToS agreement: not accepted')
-      return
     }
 
     const isAdmissionInvoice = request.body?.feeSchedule === 'admission'
     if (!isAdmissionInvoice) {
       ctx.throw(Status.BadRequest, 'Invalid fee')
-      return
     }
 
     const pubkeyRaw = path(['body', 'pubkey'], request)

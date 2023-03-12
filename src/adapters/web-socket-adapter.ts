@@ -1,7 +1,8 @@
 import cluster from 'node:cluster'
 import { EventEmitter } from 'node:events'
-import { WebSocketAcceptedClient as WebSocket, WebSocketState, } from 'websocket'
-import { ServerRequest } from "https://deno.land/std@0.92.0/http/server.ts";
+import { ServerRequest } from 'https://deno.land/std@0.92.0/http/server.ts'
+
+import { WebSocketAcceptedClient as WebSocket, WebSocketState } from 'websocket'
 
 import { ContextMetadata, Factory } from '../@types/base.ts'
 import { createNoticeMessage, createOutgoingEventMessage } from '../utils/messages.ts'
@@ -19,8 +20,6 @@ import { IRateLimiter } from '../@types/utils.ts'
 import { isEventMatchingFilter } from '../utils/event.ts'
 import { messageSchema } from '../schemas/message-schema.ts'
 import { Settings } from '../@types/settings.ts'
-
-import net from 'node:net'
 
 
 const debug = createLogger('web-socket-adapter')

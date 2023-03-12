@@ -3,7 +3,7 @@ import { Request, Response, Status, RouterContext, NextFunction } from '../../@t
 import { createPostInvoiceController } from '../../factories/post-invoice-controller-factory.ts'
 
 export const postInvoiceRequestHandler = async (
-  ctx: RouterContext<string>,
+  ctx: RouterContext,
   next: NextFunction,
 ) => {
   const req : Request = ctx.request

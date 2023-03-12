@@ -12,7 +12,7 @@ export class GetInvoiceStatusController implements IController {
   public async handleRequest(
     _request: Request,
     response: Response,
-    ctx: RouterContext<string>
+    ctx: RouterContext
   ): Promise<void> {
     const params = ctx.params
     const invoiceId = params.invoiceId

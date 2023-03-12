@@ -1,15 +1,16 @@
-import { Request, Response, Status } from '../../@types/controllers.ts'
+import { Request, Response, Status, RouterContext } from '../../@types/controllers.ts'
 
 import { createLNbitsCallbackController } from '../../factories/lnbits-callback-controller-factory.ts'
 
 export const postLNbitsCallbackRequestHandler = async (
   req: Request,
   res: Response,
+  ctx: RouterContext
 ) => {
   const controller = createLNbitsCallbackController()
 
   try {
-    await controller.handleRequest(req, res)
+    await controller.handleRequest(req, res, ctx)
   } catch (error) {
     console.error('error while handling LNbits request: %o', error)
     res.status = Status.InternalServerError

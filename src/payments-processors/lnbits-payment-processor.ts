@@ -23,6 +23,9 @@ export class LNbitsInvoice implements Invoice {
   expiresAt: Date | null
   updatedAt: Date
   createdAt: Date
+  constructor (){
+    
+  }
 }
 
 export class LNbitsCreateInvoiceResponse implements CreateInvoiceResponse {
@@ -48,11 +51,9 @@ export class LNbitsPaymentsProcesor implements IPaymentsProcessor {
   public async getInvoice(invoiceId: string): Promise<GetInvoiceResponse> {
     debug('get invoice: %s', invoiceId)
     try {
-      const response = await this.httpClient.get(`/api/v1/payments/${invoiceId}`, {
-        maxRedirects: 1,
-      })
+      const response = await fetch(`/api/v1/payments/${invoiceId}`)
+      const data = await response.json()
       const invoice = new LNbitsInvoice()
-      const data = response.data
       invoice.id = data.details.payment_hash
       invoice.pubkey = data.details.extra.internalId
       invoice.bolt11 = data.details.bolt11
@@ -81,7 +82,7 @@ export class LNbitsPaymentsProcesor implements IPaymentsProcessor {
       requestId: internalId,
     } = request
 
-    const callbackURL = new URL(this.settings().paymentsProcessors?.lnbits?.callbackBaseURL)
+    const callbackURL = new URL(this.settings().paymentsProcessors?.lnbits?.callbackBaseURL as string)
     const hmacExpiry = (Date.now() + (1 * 24 * 60 * 60 * 1000)).toString()
     callbackURL.searchParams.set('hmac', hmacExpiry + ':' + 
       hmacSha256(deriveFromSecret('lnbits-callback-hmac-key'), hmacExpiry).toString('hex'))
@@ -98,19 +99,29 @@ export class LNbitsPaymentsProcesor implements IPaymentsProcessor {
 
     try {
       debug('request body: %o', body)
-      const response = await this.httpClient.post('/api/v1/payments', body, {
-        maxRedirects: 1,
+      const response = await fetch('/api/v1/payments', {
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        mode: 'cors', // no-cors, *cors, same-origin
+        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: 'same-origin', // include, *same-origin, omit
+        headers: {
+          'Content-Type': 'application/json',
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        redirect: 'follow', // manual, *follow, error
+        referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        body: JSON.stringify(body), // body data type must match "Content-Type" header
       })
+      const responseData = await response.json()
 
-      debug('response: %o', response.data)
 
-      const invoiceResponse = await this.httpClient.get(`/api/v1/payments/${encodeURIComponent(response.data.payment_hash)}`, {
-        maxRedirects: 1,
-      })
-      debug('invoice data response: %o', invoiceResponse.data)
+      // debug('response: %o', response.data)
+      const invoiceResponse = await fetch(`/api/v1/payments/${encodeURIComponent(responseData.payment_hash)}`)
 
       const invoice = new LNbitsCreateInvoiceResponse()
-      const data = invoiceResponse.data
+      const data = await invoiceResponse.json()
+      debug('invoice data response: %o', data)
+
       invoice.id = data.details.payment_hash
       invoice.pubkey = data.details.extra.internalId
       invoice.bolt11 = data.details.bolt11
@@ -122,8 +133,8 @@ export class LNbitsPaymentsProcesor implements IPaymentsProcessor {
       invoice.expiresAt = new Date(data.details.expiry * 1000)
       invoice.createdAt = new Date(data.details.time * 1000)
       invoice.rawResponse = JSON.stringify({
-        invoiceResponse: invoiceResponse.data,
-        createData: response.data,
+        invoiceResponse: invoiceResponse,
+        createData: responseData,
       })
 
       return invoice

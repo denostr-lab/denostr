@@ -1,6 +1,8 @@
 
 import { createLogger } from '../../factories/logger-factory.ts'
-import { IController, Request, Response } from '../../@types/controllers.ts'
+
+import { IController, Request, Response, RouterContext, Status } from '../../@types/controllers.ts'
+
 import { IInvoiceRepository } from '../../@types/repositories.ts'
 import { InvoiceStatus } from '../../@types/invoice.ts'
 import { IPaymentsService } from '../../@types/services.ts'
@@ -17,35 +19,27 @@ export class LNbitsCallbackController implements IController {
   public async handleRequest(
     request: Request,
     response: Response,
+    ctx: RouterContext,
   ) {
     debug('request headers: %o', request.headers)
     debug('request body: %o', request.body)
 
     const body = request.body
     if (!body || typeof body !== 'object' || typeof body.payment_hash !== 'string' || body.payment_hash.length !== 64) {
-      response
-        .status(400)
-        .setHeader('content-type', 'text/plain; charset=utf8')
-        .send('Malformed body')
-      return
+      ctx.throw(Status.BadRequest, 'Malformed body')
     }
 
     const invoice = await this.paymentsService.getInvoiceFromPaymentsProcessor(body.payment_hash)
     const storedInvoice = await this.invoiceRepository.findById(body.payment_hash)
 
     if (!storedInvoice) {
-      response
-        .status(404)
-        .setHeader('content-type', 'text/plain; charset=utf8')
-        .send('No such invoice')
-      return
+      ctx.throw(Status.NotFound, 'No such invoice')
     }
 
     try {
       await this.paymentsService.updateInvoice(invoice)
     } catch (error) {
       console.error(`Unable to persist invoice ${invoice.id}`, error)
-
       throw error
     }
 
@@ -53,19 +47,14 @@ export class LNbitsCallbackController implements IController {
       invoice.status !== InvoiceStatus.COMPLETED
       && !invoice.confirmedAt
     ) {
-      response
-        .status(200)
-        .send()
-
+      response.status = Status.OK
+      response.headers.set('content-type', 'text/plain; charset=utf8')
+      response.body = ''
       return
     }
 
     if (storedInvoice.status === InvoiceStatus.COMPLETED) {
-      response
-        .status(409)
-        .setHeader('content-type', 'text/plain; charset=utf8')
-        .send('Invoice is already marked paid')
-      return
+      ctx.throw(Status.Conflict, 'Invoice is already marked paid')
     }
 
     invoice.amountPaid = invoice.amountRequested
@@ -78,10 +67,8 @@ export class LNbitsCallbackController implements IController {
 
       throw error
     }
-
-    response
-      .status(200)
-      .setHeader('content-type', 'text/plain; charset=utf8')
-      .send('OK')
+    response.status = Status.OK
+    response.headers.set('content-type', 'text/plain; charset=utf8')
+    response.body = 'OK'
   }
 }

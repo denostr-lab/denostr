@@ -17,6 +17,7 @@ declare global {
   }
 }
 window.Buffer = Buffer
+
 window.process = {
   cwd: Deno.cwd,
   env: new Proxy({}, {

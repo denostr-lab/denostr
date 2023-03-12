@@ -42,6 +42,7 @@ export const workerFactory = (): AppWorker => {
   // } else {
   //   maxPayloadSize = path(['network', 'maxPayloadSize'], settings)
   // }
+  app.listen({port: 8085})
   const webSocketServer = new WebSocketServer(8008)
   const server = webSocketServer.server
   const adapter = new WebSocketServerAdapter(

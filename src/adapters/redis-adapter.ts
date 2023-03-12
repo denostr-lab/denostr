@@ -1,7 +1,10 @@
+import { Bulk } from 'redis'
+
 import { CacheClient } from '../@types/cache.ts'
 import { createLogger } from '../factories/logger-factory.ts'
 import { ICacheAdapter } from '../@types/adapters.ts'
-import { Bulk } from 'redis'
+
+
 const debug = createLogger('redis-adapter')
 
 export class RedisAdapter implements ICacheAdapter {

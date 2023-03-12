@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response, RouterContext } from '../../@types/controllers.ts'
+import { NextFunction, Request, Response, RouterContext, Status } from '../../@types/controllers.ts'
 
 import { path } from 'ramda'
 
@@ -6,7 +6,7 @@ import { createSettings } from '../../factories/settings-factory.ts'
 import { FeeSchedule } from '../../@types/settings.ts'
 import packageJson from '../../../package.json' assert { type: 'json' }
 
-export const rootRequestHandler = async(ctx: RouterContext<string>, next: NextFunction) => {
+export const rootRequestHandler = async(ctx: RouterContext, next: NextFunction) => {
   const settings = createSettings()
   const request: Request = ctx.request
   const response: Response = ctx.response
@@ -43,9 +43,9 @@ export const rootRequestHandler = async(ctx: RouterContext<string>, next: NextFu
       },
       payments_url: paymentsUrl.toString(),
       fees: Object
-        .getOwnPropertyNames(settings.payments.feeSchedules)
+        .getOwnPropertyNames(settings.payments?.feeSchedules)
         .reduce((prev, feeName) => {
-          const feeSchedules = settings.payments.feeSchedules[feeName] as FeeSchedule[]
+          const feeSchedules = settings.payments?.feeSchedules?.[feeName] as FeeSchedule[]
 
           return {
             ...prev,
@@ -56,22 +56,24 @@ export const rootRequestHandler = async(ctx: RouterContext<string>, next: NextFu
 
         }, {} as Record<string, { amount: number, unit: string }>),
     }
+    response.status = Status.OK
 
-    response
-      .setHeader('content-type', 'application/nostr+json')
-      .setHeader('access-control-allow-origin', '*')
-      .status(200)
-      .send(relayInformationDocument)
-
+    response.headers.set('content-type', 'application/nostr+json')
+    response.headers.set('access-control-allow-origin', '*')
+    response.body = relayInformationDocument
+    await next();
     return
   }
 
   const admissionFeeEnabled = path(['payments','feeSchedules','admission', '0', 'enabled'])(settings)
 
   if (admissionFeeEnabled) {
-    response.redirect(301, '/invoices')
+    response.status = Status.MovedPermanently
+    response.redirect('/invoices')
   } else {
-    response.status(200).setHeader('content-type', 'text/plain; charset=utf8').send('Please use a Nostr client to connect.')
+    response.status = Status.OK
+    response.headers.set('content-type', 'text/plain; charset=utf8')
+    response.body = 'Please use a Nostr client to connect.'
+    await next();
   }
-  next()
 }

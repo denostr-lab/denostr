@@ -1,5 +1,5 @@
 import { deriveFromSecret, hmacSha256 } from '../../utils/secret.ts'
-import { Router , helpers} from 'koa'
+import { Router , helpers} from 'oak'
 import { Request, Response, Status, NextFunction } from '../../@types/controllers.ts'
 import type { RouterContext } from '../../@types/controllers.ts'
 import { createLogger } from '../../factories/logger-factory.ts'
@@ -12,7 +12,7 @@ const debug = createLogger('routes-callbacks')
 
 const router = new Router()
 router
-  .post('/zebedee', async (ctx: RouterContext<string>, next: NextFunction) => {
+  .post('/zebedee', async (ctx: RouterContext, next: NextFunction) => {
     const req : Request = ctx.request
     const res : Response = ctx.response
     
@@ -24,19 +24,17 @@ router
     if (ipWhitelist.length && !ipWhitelist.includes(remoteAddress)) {
       debug('unauthorized request from %s to /callbacks/zebedee', remoteAddress)
       ctx.throw(Status.Forbidden, 'Forbidden')
-      return
     }
 
     if (paymentProcessor !== 'zebedee') {
       debug('denied request from %s to /callbacks/zebedee which is not the current payment processor', remoteAddress)
       ctx.throw(Status.Forbidden, 'Forbidden')
-      return
     }
 
     await postZebedeeCallbackRequestHandler(req, res)
     await next();
   })
-  .post('/lnbits', async (ctx:  RouterContext<string>, next) => {
+  .post('/lnbits', async (ctx:  RouterContext, next) => {
     const req : Request = ctx.request
     const res : Response = ctx.response
     const settings = createSettings()
@@ -46,7 +44,6 @@ router
     if (paymentProcessor !== 'lnbits') {
       debug('denied request from %s to /callbacks/lnbits which is not the current payment processor', remoteAddress)
       ctx.throw(Status.Forbidden, 'Forbidden')
-      return
     }
 
     let validationPassed = false
@@ -63,9 +60,8 @@ router
     if (!validationPassed) {
       debug('unauthorized request from %s to /callbacks/lnbits', remoteAddress)
       ctx.throw(Status.Forbidden, 'Forbidden')
-      return
     }
-    await postLNbitsCallbackRequestHandler(req, res)
+    await postLNbitsCallbackRequestHandler(req, res, ctx)
     await next();
   })
 

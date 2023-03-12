@@ -8,10 +8,11 @@ import { FeeSchedule } from '../../@types/settings.ts'
 
 let pageCache: string
 
-export const getInvoiceRequestHandler = async (ctx: RouterContext<string>, next: NextFunction) => {
+export const getInvoiceRequestHandler = async (ctx: RouterContext, next: NextFunction) => {
+  console.info('阿萨斯大所多')
+
   const res: Response = ctx.response
   const settings = createSettings()
-
   if (pathEq(['payments', 'enabled'], true, settings)
    && pathEq(['payments', 'feeSchedules', 'admission', '0', 'enabled'], true, settings)) {
     if (!pageCache) {
@@ -28,7 +29,7 @@ export const getInvoiceRequestHandler = async (ctx: RouterContext<string>, next:
   } else {
     res.status = Status.NotFound
     res.headers.set('content-type', 'text/html; charset=utf8')
-    res.body = ''
+    res.body = 'not Found'
   }
 
   await next()
