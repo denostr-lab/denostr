@@ -1,4 +1,5 @@
-import { NextFunction, Request, Response } from 'express'
+import { NextFunction, Request, Response, Status, RouterContext } from '../../@types/controllers.ts'
+
 import { path, pathEq } from 'ramda'
 import { readFileSync } from 'node:fs'
 
@@ -7,7 +8,8 @@ import { FeeSchedule } from '../../@types/settings.ts'
 
 let pageCache: string
 
-export const getInvoiceRequestHandler = (_req: Request, res: Response, next: NextFunction) => {
+export const getInvoiceRequestHandler = async (ctx: RouterContext<string>, next: NextFunction) => {
+  const res: Response = ctx.response
   const settings = createSettings()
 
   if (pathEq(['payments', 'enabled'], true, settings)
@@ -19,11 +21,15 @@ export const getInvoiceRequestHandler = (_req: Request, res: Response, next: Nex
         .replaceAll('{{name}}', name)
         .replaceAll('{{amount}}', (BigInt(feeSchedule.amount) / 1000n).toString())
     }
-
-    res.status(200).setHeader('content-type', 'text/html; charset=utf8').send(pageCache)
+    res.status = Status.OK
+    res.headers.set('content-type', 'text/html; charset=utf8')
+    res.body = pageCache
+ 
   } else {
-    res.status(404).send()
+    res.status = Status.NotFound
+    res.headers.set('content-type', 'text/html; charset=utf8')
+    res.body = ''
   }
 
-  next()
+  await next()
 }

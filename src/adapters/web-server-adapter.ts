@@ -14,11 +14,11 @@ export class WebServerAdapter extends EventEmitter implements IWebServerAdapter 
   ) {
     debug('created')
     super()
-    this.webServer
-      .on('error', this.onError.bind(this))
-      .on('clientError', this.onClientError.bind(this))
-      .once('close', this.onClose.bind(this))
-      .once('listening', this.onListening.bind(this))
+    // this.webServer
+    //   .on('error', this.onError.bind(this))
+    //   .on('clientError', this.onClientError.bind(this))
+    //   .once('close', this.onClose.bind(this))
+    //   .once('listening', this.onListening.bind(this))
   }
 
   public listen(port: number): void {

@@ -1,17 +1,19 @@
-import { NextFunction, Request, Response } from 'express'
+import { Response, RouterContext, NextFunction, Status } from '../../@types/controllers.ts'
+
 import { readFileSync } from 'node:fs'
 
 import { createSettings as settings } from '../../factories/settings-factory.ts'
 
 let pageCache: string
 
-export const getTermsRequestHandler = (_req: Request, res: Response, next: NextFunction) => {
+export const getTermsRequestHandler = async (ctx: RouterContext<string>, next: NextFunction) => {
   const { info: { name } } = settings()
-
+  const res : Response = ctx.response
   if (!pageCache) {
     pageCache = readFileSync('./resources/terms.html', 'utf8').replaceAll('{{name}}', name)
   }
-
-  res.status(200).setHeader('content-type', 'text/html; charset=utf8').send(pageCache)
-  next()
+  res.status = Status.OK
+  res.headers.set('content-type', 'text/html; charset=utf8')
+  res.body = pageCache
+  await next()
 }

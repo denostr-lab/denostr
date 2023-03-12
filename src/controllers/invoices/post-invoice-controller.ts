@@ -1,11 +1,10 @@
 import { FeeSchedule, Settings } from '../../@types/settings.ts'
 import { fromBech32, toBech32 } from '../../utils/transform.ts'
 import { getPublicKey, getRelayPrivateKey } from '../../utils/event.ts'
-import { Request, Response } from 'express'
 
 import { createLogger } from '../../factories/logger-factory.ts'
 import { getRemoteAddress } from '../../utils/http.ts'
-import { IController } from '../../@types/controllers.ts'
+import { IController, Request, Response, RouterContext, helpers, Status } from '../../@types/controllers.ts'
 import { Invoice } from '../../@types/invoice.ts'
 import { IPaymentsService } from '../../@types/services.ts'
 import { IRateLimiter } from '../../@types/utils.ts'
@@ -25,12 +24,12 @@ export class PostInvoiceController implements IController {
     private readonly rateLimiter: () => Promise<IRateLimiter>,
   ){}
 
-  public async handleRequest(request: Request, response: Response): Promise<void> {
+  public async handleRequest(request: Request, response: Response, ctx: RouterContext<string>): Promise<void> {
     if (!pageCache) {
       pageCache = readFileSync('./resources/invoices.html', 'utf8')
     }
-
-    debug('params: %o', request.params)
+    const params = helpers.getQuery(ctx)
+    debug('params: %o', params)
     debug('body: %o', request.body)
 
     const currentSettings = this.settings()
@@ -41,40 +40,24 @@ export class PostInvoiceController implements IController {
 
     const limited = await this.isRateLimited(request, currentSettings)
     if (limited) {
-      response
-        .status(429)
-        .setHeader('content-type', 'text/plain; charset=utf8')
-        .send('Too many requests')
-      return
+      ctx.throw(Status.TooManyRequests, 'Too many requests')
     }
 
     if (!request.body || typeof request.body !== 'object') {
-      response
-        .status(400)
-        .setHeader('content-type', 'text/plain; charset=utf8')
-        .send('Invalid request')
-
+      ctx.throw(Status.BadRequest, 'Invalid request')
       return
     }
 
     const tosAccepted = request.body?.tosAccepted === 'yes'
 
     if (!tosAccepted) {
-      response
-        .status(400)
-        .setHeader('content-type', 'text/plain; charset=utf8')
-        .send('ToS agreement: not accepted')
-
+      ctx.throw(Status.BadRequest, 'ToS agreement: not accepted')
       return
     }
 
     const isAdmissionInvoice = request.body?.feeSchedule === 'admission'
     if (!isAdmissionInvoice) {
-      response
-        .status(400)
-        .setHeader('content-type', 'text/plain; charset=utf8')
-        .send('Invalid fee')
-
+      ctx.throw(Status.BadRequest, 'Invalid fee')
       return
     }
 
@@ -82,11 +65,7 @@ export class PostInvoiceController implements IController {
 
     let pubkey: string
     if (typeof pubkeyRaw !== 'string') {
-      response
-        .status(400)
-        .setHeader('content-type', 'text/plain; charset=utf8')
-        .send('Invalid pubkey: missing')
-
+      ctx.throw(Status.BadRequest, 'Invalid pubkey: missing')
       return
     } else if (/^[0-9a-f]{64}$/.test(pubkeyRaw)) {
       pubkey = pubkeyRaw
@@ -94,19 +73,11 @@ export class PostInvoiceController implements IController {
       try {
         pubkey = fromBech32(pubkeyRaw)
       } catch (error) {
-        response
-          .status(400)
-          .setHeader('content-type', 'text/plain; charset=utf8')
-          .send('Invalid pubkey: invalid npub')
-
+        ctx.throw(Status.BadRequest, 'Invalid pubkey: invalid npub')
         return
       }
     } else {
-      response
-        .status(400)
-        .setHeader('content-type', 'text/plain; charset=utf8')
-        .send('Invalid pubkey: unknown format')
-
+      ctx.throw(Status.BadRequest, 'Invalid pubkey: unknown format')
       return
     }
 
@@ -116,22 +87,14 @@ export class PostInvoiceController implements IController {
       .filter(isApplicableFee)
 
     if (!Array.isArray(admissionFee) || !admissionFee.length) {
-      response
-        .status(400)
-        .setHeader('content-type', 'text/plain; charset=utf8')
-        .send('No admission fee required')
-
+      ctx.throw(Status.BadRequest, 'No admission fee required')
       return
     }
 
     const minBalance = currentSettings.limits?.event?.pubkey?.minBalance
     const user = await this.userRepository.findByPubkey(pubkey)
     if (user && user.isAdmitted && (!minBalance || user.balance >= minBalance)) {
-      response
-        .status(400)
-        .setHeader('content-type', 'text/plain; charset=utf8')
-        .send('User is already admitted.')
-
+      ctx.throw(Status.BadRequest, 'User is already admitted.')
       return
     }
 
@@ -149,10 +112,7 @@ export class PostInvoiceController implements IController {
       await this.paymentsService.sendNewInvoiceNotification(invoice)
     } catch (error) {
       console.error('Unable to create invoice. Reason:', error)
-      response
-        .status(500)
-        .setHeader('content-type', 'text/plain')
-        .send('Unable to create invoice')
+      ctx.throw(Status.BadRequest, 'Unable to create invoice')
       return
     }
 
@@ -173,11 +133,9 @@ export class PostInvoiceController implements IController {
     const body = Object
       .entries(replacements)
       .reduce((body, [key, value]) => body.replaceAll(`{{${key}}}`, value.toString()), pageCache)
-
-    response
-      .status(200)
-      .setHeader('Content-Type', 'text/html; charset=utf8')
-      .send(body)
+    response.status = Status.OK
+    response.headers.set('Content-Type', 'text/html; charset=utf8')
+    response.body= body
 
     return
   }

@@ -1,6 +1,5 @@
-import { Request, Response } from 'express'
 import { createLogger } from '../../factories/logger-factory.ts'
-import { IController } from '../../@types/controllers.ts'
+import { IController, Request, Response, RouterContext, Status } from '../../@types/controllers.ts'
 import { IInvoiceRepository } from '../../@types/repositories.ts'
 
 const debug = createLogger('get-invoice-status-controller')
@@ -11,16 +10,17 @@ export class GetInvoiceStatusController implements IController {
   ) {}
 
   public async handleRequest(
-    request: Request,
+    _request: Request,
     response: Response,
+    ctx: RouterContext<string>
   ): Promise<void> {
-    const invoiceId = request.params.invoiceId
+    const params = ctx.params
+    const invoiceId = params.invoiceId
     if (typeof invoiceId !== 'string' || !invoiceId) {
       debug('invalid invoice id: %s', invoiceId)
-      response
-        .status(400)
-        .setHeader('content-type', 'text/plain; charset=utf8')
-          .send({ id: invoiceId, status: 'invalid invoice' })
+      response.headers.set('content-type', 'application/json')
+      response.status = Status.BadRequest
+      response.body = { id: invoiceId, status: 'invalid invoice' }
       return
     }
 
@@ -29,28 +29,22 @@ export class GetInvoiceStatusController implements IController {
       const invoice = await this.invoiceRepository.findById(invoiceId)
 
       if (!invoice) {
+        ctx.send
         debug('invoice not found: %s', invoiceId)
-        response
-          .status(404)
-          .setHeader('content-type', 'text/plain; charset=utf8')
-          .send({ id: invoiceId, status: 'not found' })
+        response.headers.set('content-type', 'application/json')
+        response.status = Status.NotFound
+        response.body = { id: invoiceId, status: 'not found' }
         return
       }
+      response.headers.set('content-type', 'application/json')
+      response.status = Status.OK
+      response.body = { id: invoiceId, status: invoice.status }
 
-      response
-        .status(200)
-        .setHeader('content-type', 'application/json; charset=utf8')
-        .send(JSON.stringify({
-          id: invoice.id,
-          status: invoice.status,
-        }))
     } catch (error) {
       console.error(`get-invoice-status-controller: unable to get invoice ${invoiceId}:`, error)
-
-      response
-        .status(500)
-        .setHeader('content-type', 'text/plain; charset=utf8')
-        .send({ id: invoiceId, status: 'error' })
+      response.headers.set('content-type', 'application/json')
+      response.status = Status.InternalServerError
+      response.body = { id: invoiceId, status: 'error' }
     }
   }
 }

@@ -1,4 +1,5 @@
-import { Request, Response } from 'express'
+import { Request, Response, Status } from '../../@types/controllers.ts'
+
 import { createZebedeeCallbackController } from '../../factories/zebedee-callback-controller-factory.ts'
 
 export const postZebedeeCallbackRequestHandler = async (
@@ -9,10 +10,9 @@ export const postZebedeeCallbackRequestHandler = async (
 
   try {
     await controller.handleRequest(req, res)
-  } catch (error) {
-    res
-      .status(500)
-      .setHeader('content-type', 'text-plain')
-      .send('Error handling request')
+  } catch (_) {
+    res.status = Status.InternalServerError
+    res.headers.set('content-type', 'text-plain')
+    res.body = 'Error handling request'
   }
 }

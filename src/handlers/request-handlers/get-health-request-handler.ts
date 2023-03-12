@@ -1,6 +1,9 @@
-import { NextFunction, Request, Response } from 'express'
+import { NextFunction, Response, RouterContext, Status } from '../../@types/controllers.ts'
 
-export const getHealthRequestHandler = (_req: Request, res: Response, next: NextFunction) => {
-  res.status(200).setHeader('content-type', 'text/plain; charset=utf8').send('OK')
-  next()
+export const getHealthRequestHandler = async(ctx: RouterContext<string>, next: NextFunction) => {
+  const res : Response = ctx.response
+  res.status = Status.OK
+  res.headers.set('content-type', 'text/plain; charset=utf8')
+  res.body = 'OK'
+  await next()
 }

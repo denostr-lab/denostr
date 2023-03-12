@@ -152,10 +152,7 @@ export class WebSocketAdapter extends EventEmitter implements IWebSocketAdapter 
         this.sendMessage(createNoticeMessage('rate limited'))
         return
       }
-      console.info(JSON.parse(raw.toString('utf8')), 'a阿萨斯')
-
       const message = attemptValidation(messageSchema)(JSON.parse(raw.toString('utf8')))
-      console.info(message, '消息')
       message[ContextMetadataKey] = {
         remoteAddress: this.clientAddress,
       } as ContextMetadata
@@ -176,7 +173,6 @@ export class WebSocketAdapter extends EventEmitter implements IWebSocketAdapter 
 
       await messageHandler.handleMessage(message)
     } catch (error) {
-      console.info('有错我妈', error)
       if (error instanceof Error) {
         if (error.name === 'AbortError') {
           console.error(`web-socket-adapter: abort from client ${this.clientId} (${this.getClientAddress()})`)

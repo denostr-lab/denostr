@@ -1,14 +1,16 @@
-import { NextFunction, Request, Response } from 'express'
+import { NextFunction, Request, Response, RouterContext } from '../../@types/controllers.ts'
+
 import { path } from 'ramda'
 
 import { createSettings } from '../../factories/settings-factory.ts'
 import { FeeSchedule } from '../../@types/settings.ts'
 import packageJson from '../../../package.json' assert { type: 'json' }
 
-export const rootRequestHandler = (request: Request, response: Response, next: NextFunction) => {
+export const rootRequestHandler = async(ctx: RouterContext<string>, next: NextFunction) => {
   const settings = createSettings()
-
-  if (request.header('accept') === 'application/nostr+json') {
+  const request: Request = ctx.request
+  const response: Response = ctx.response
+  if (request.headers.get('accept') === 'application/nostr+json') {
     const {
       info: { name, description, pubkey, contact, relay_url },
     } = settings

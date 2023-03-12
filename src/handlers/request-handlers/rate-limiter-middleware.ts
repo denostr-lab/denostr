@@ -1,4 +1,5 @@
-import { NextFunction, Request, Response } from 'express'
+import { NextFunction, Request, Response, Status } from '../../@types/controllers.ts'
+
 import { createLogger } from '../../factories/logger-factory.ts'
 import { createSettings } from '../../factories/settings-factory.ts'
 import { getRemoteAddress } from '../../utils/http.ts'
@@ -10,17 +11,16 @@ const debug = createLogger('rate-limiter-middleware')
 export const rateLimiterMiddleware = async (request: Request, response: Response, next: NextFunction) => {
   const currentSettings = createSettings()
 
-  const clientAddress = getRemoteAddress(request, currentSettings).split(',')[0]
+  const clientAddress = getRemoteAddress(request.originalRequest, currentSettings).split(',')[0]
 
   debug('request received from %s: %O', clientAddress, request.headers)
 
   if (await isRateLimited(clientAddress, currentSettings)) {
     response.destroy()
-
     return
   }
 
-  next()
+  await next()
 }
 
 export async function isRateLimited(remoteAddress: string, settings: Settings): Promise<boolean> {

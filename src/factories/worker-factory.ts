@@ -1,6 +1,5 @@
 import { is, path, pathSatisfies } from 'ramda'
 import http from 'node:http'
-import process from 'node:process'
 
 import { getMasterDbClient, getReadReplicaDbClient } from '../database/client.ts'
 import { AppWorker } from '../app/worker.ts'
@@ -22,9 +21,18 @@ export const workerFactory = (): AppWorker => {
   const settings = createSettings()
 
   const app = createWebApp()
-
+  console.log(`
+  ███▄    █  ▒█████    ██████ ▄▄▄█████▓ ██▀███  ▓█████ ▄▄▄       ███▄ ▄███▓
+  ██ ▀█   █ ▒██▒  ██▒▒██    ▒ ▓  ██▒ ▓▒▓██ ▒ ██▒▓█   ▀▒████▄    ▓██▒▀█▀ ██▒
+ ▓██  ▀█ ██▒▒██░  ██▒░ ▓██▄   ▒ ▓██░ ▒░▓██ ░▄█ ▒▒███  ▒██  ▀█▄  ▓██    ▓██░
+ ▓██▒  ▐▌██▒▒██   ██░  ▒   ██▒░ ▓██▓ ░ ▒██▀▀█▄  ▒▓█  ▄░██▄▄▄▄██ ▒██    ▒██
+ ▒██░   ▓██░░ ████▓▒░▒██████▒▒  ▒██▒ ░ ░██▓ ▒██▒░▒████▒▓█   ▓██▒▒██▒   ░██▒
+ ░ ▒░   ▒ ▒ ░ ▒░▒░▒░ ▒ ▒▓▒ ▒ ░  ▒ ░░   ░ ▒▓ ░▒▓░░░ ▒░ ░▒▒   ▓▒█░░ ▒░   ░  ░
+ ░ ░░   ░ ▒░  ░ ▒ ▒░ ░ ░▒  ░ ░    ░      ░▒ ░ ▒░ ░ ░  ░ ▒   ▒▒ ░░  ░      ░
+    ░   ░ ░ ░ ░ ░ ▒  ░  ░  ░    ░        ░░   ░    ░    ░   ▒   ░      ░
+          ░     ░ ░        ░              ░        ░  ░     ░  ░       ░`)
   // deepcode ignore HttpToHttps: we use proxies
-  const server = http.createServer(app)
+  // const server = http.createServer(app)
 
   // let maxPayloadSize: number | undefined
   // if (pathSatisfies(is(String), ['network', 'max_payload_size'], settings)) {
@@ -35,11 +43,12 @@ export const workerFactory = (): AppWorker => {
   //   maxPayloadSize = path(['network', 'maxPayloadSize'], settings)
   // }
   const webSocketServer = new WebSocketServer(8008)
+  const server = webSocketServer.server
   const adapter = new WebSocketServerAdapter(
     server,
     webSocketServer,
     webSocketAdapterFactory(eventRepository, userRepository),
     createSettings,
   )
-  return new AppWorker(process, adapter)
+  return new AppWorker(adapter)
 }

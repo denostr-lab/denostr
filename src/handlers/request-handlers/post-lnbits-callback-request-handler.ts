@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { Request, Response, Status } from '../../@types/controllers.ts'
 
 import { createLNbitsCallbackController } from '../../factories/lnbits-callback-controller-factory.ts'
 
@@ -12,9 +12,8 @@ export const postLNbitsCallbackRequestHandler = async (
     await controller.handleRequest(req, res)
   } catch (error) {
     console.error('error while handling LNbits request: %o', error)
-    res
-      .status(500)
-      .setHeader('content-type', 'text/plain')
-      .send('Error handling request')
+    res.status = Status.InternalServerError
+    res.headers.set('content-type', 'text/plain')
+    res.body = 'Error handling request'
   }
 }

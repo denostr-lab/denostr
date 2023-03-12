@@ -15,16 +15,10 @@ export class MaintenanceWorker implements IRunnable {
   private interval: NodeJS.Timer | undefined
 
   public constructor(
-    private readonly process: NodeJS.Process,
     private readonly paymentsService: IPaymentsService,
     private readonly settings: () => Settings,
   ) {
-    this.process
-      .on('SIGINT', this.onExit.bind(this))
-      .on('SIGHUP', this.onExit.bind(this))
-      .on('SIGTERM', this.onExit.bind(this))
-      .on('uncaughtException', this.onError.bind(this))
-      .on('unhandledRejection', this.onError.bind(this))
+ 
   }
 
   public run(): void {
@@ -73,18 +67,6 @@ export class MaintenanceWorker implements IRunnable {
 
       debug('updated %d of %d invoices successfully', successful, invoices.length)
     }
-  }
-
-  private onError(error: Error) {
-    debug('error: %o', error)
-    throw error
-  }
-
-  private onExit() {
-    debug('exiting')
-    this.close(() => {
-      this.process.exit(0)
-    })
   }
 
   public close(callback?: () => void) {

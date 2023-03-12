@@ -1,7 +1,6 @@
-import { Request, Response } from 'express'
 
 import { createLogger } from '../../factories/logger-factory.ts'
-import { IController } from '../../@types/controllers.ts'
+import { IController, Request, Response } from '../../@types/controllers.ts'
 import { IInvoiceRepository } from '../../@types/repositories.ts'
 import { InvoiceStatus } from '../../@types/invoice.ts'
 import { IPaymentsService } from '../../@types/services.ts'

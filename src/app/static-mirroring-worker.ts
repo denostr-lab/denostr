@@ -19,25 +19,15 @@ export class StaticMirroringWorker implements IRunnable {
   private config: Mirror
 
   public constructor(
-    private readonly process: NodeJS.Process,
     private readonly settings: () => Settings,
   ) {
-    this.process
-      .on('message', this.onMessage.bind(this))
-      .on('SIGINT', this.onExit.bind(this))
-      .on('SIGHUP', this.onExit.bind(this))
-      .on('SIGTERM', this.onExit.bind(this))
-      .on('uncaughtException', this.onError.bind(this))
-      .on('unhandledRejection', this.onError.bind(this))
+    const currentSettings = this.settings()
+    console.log('mirroring', currentSettings.mirroring)
+    this.config = path(['mirroring', 'static', process.env.MIRROR_INDEX], currentSettings) as Mirror
+
   }
 
   public run(): void {
-    const currentSettings = this.settings()
-
-    console.log('mirroring', currentSettings.mirroring)
-
-    this.config = path(['mirroring', 'static', process.env.MIRROR_INDEX], currentSettings) as Mirror
-
     let since = Math.floor(Date.now() / 1000) - 60*10
 
     const createMirror = (config: Mirror) => {
@@ -111,9 +101,12 @@ export class StaticMirroringWorker implements IRunnable {
   }
 
   private onMessage(message: { eventName: string, event: unknown, source: string }): void {
+    // 必须是广播时间,
+    // 消息的源头 不能是自己
+    // 如果客户端还没有创建,如果客户端还没有连接
     if (
       message.eventName !== WebSocketServerAdapterEvent.Broadcast
-      || message.source === this.config.address
+      || message.source === this.config?.address
       || !this.client
       || this.client.readyState !== WebSocket.OPEN
     ) {
@@ -122,22 +115,10 @@ export class StaticMirroringWorker implements IRunnable {
 
     const event = message.event as RelayedEvent
 
-    const eventToRelay = createRelayedEventMessage(event, this.config.secret)
+    const eventToRelay = createRelayedEventMessage(event, this.config?.secret)
     const outboundMessage = JSON.stringify(eventToRelay)
-    debug('%s >> %s: %s', message.source ?? 'local', this.config.address, outboundMessage)
+    debug('%s >> %s: %s', message.source ?? 'local', this.config?.address, outboundMessage)
     this.client.send(outboundMessage)
-  }
-
-  private onError(error: Error) {
-    debug('error: %o', error)
-    throw error
-  }
-
-  private onExit() {
-    debug('exiting')
-    this.close(() => {
-      this.process.exit(0)
-    })
   }
 
   public close(callback?: () => void) {

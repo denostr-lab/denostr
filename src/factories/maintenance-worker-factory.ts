@@ -3,5 +3,5 @@ import { createSettings } from './settings-factory.ts'
 import { MaintenanceWorker } from '../app/maintenance-worker.ts'
 
 export const maintenanceWorkerFactory = () => {
-  return new MaintenanceWorker(process, createPaymentsService(), createSettings)
+  return new MaintenanceWorker(createPaymentsService(), createSettings)
 }

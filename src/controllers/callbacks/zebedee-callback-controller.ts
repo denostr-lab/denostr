@@ -1,8 +1,7 @@
-import { Request, Response } from 'express'
 
 import { createLogger } from '../../factories/logger-factory.ts'
 import { fromZebedeeInvoice } from '../../utils/transform.ts'
-import { IController } from '../../@types/controllers.ts'
+import { IController, Request, Response } from '../../@types/controllers.ts'
 import { InvoiceStatus } from '../../@types/invoice.ts'
 import { IPaymentsService } from '../../@types/services.ts'
 
