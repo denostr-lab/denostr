@@ -1,3 +1,5 @@
+import { Buffer } from 'Buffer'
+
 import { Pubkey } from './base.ts'
 
 export enum InvoiceUnit {

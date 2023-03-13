@@ -1,5 +1,7 @@
 import { config } from 'dotenv'
-import { Buffer } from "https://deno.land/std@0.139.0/node/buffer.ts";
+
+import { Buffer } from 'Buffer'
+
 import { maintenanceWorkerFactory } from './factories/maintenance-worker-factory.ts'
 import { staticMirroringWorkerFactory } from './factories/static-mirroring.worker-factory.ts'
 import { workerFactory } from './factories/worker-factory.ts'
@@ -40,8 +42,8 @@ export const getRunner = () => {
     case 'static-mirroring':
       return staticMirroringWorkerFactory()
     default:
-      throw new Error(`Unknown worker: ${process.env.WORKER_TYPE}`)
+      return workerFactory()
   }
 }
-getRunner().run()
 
+getRunner().run()

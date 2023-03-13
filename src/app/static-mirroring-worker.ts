@@ -1,6 +1,5 @@
 import { anyPass, map, path } from 'ramda'
 import { RawData, WebSocket } from 'ws'
-import cluster from 'node:cluster'
 import { randomUUID } from 'node:crypto'
 
 import { createRelayedEventMessage, createSubscriptionMessage } from '../utils/messages.ts'
@@ -71,15 +70,15 @@ export class StaticMirroringWorker implements IRunnable {
             }
 
             since = Math.floor(Date.now() / 1000) - 30
-
-            if (cluster.isWorker && typeof process.send === 'function') {
-              debug('%s >> local: %s', config.address, event.id)
-              process.send({
-                eventName: WebSocketServerAdapterEvent.Broadcast,
-                event,
-                source: config.address,
-              })
-            }
+            // 应该在这里 createRelayedEventMessage(event) 然后其他的地方监听数据库变化自己
+            // if (cluster.isWorker && typeof process.send === 'function') {
+            //   debug('%s >> local: %s', config.address, event.id)
+            //   process.send({
+            //     eventName: WebSocketServerAdapterEvent.Broadcast,
+            //     event,
+            //     source: config.address,
+            //   })
+            // }
           } catch (error) {
             debug('unable to process message: %o', error)
           }

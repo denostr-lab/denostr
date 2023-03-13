@@ -1,3 +1,5 @@
+import { Buffer } from 'Buffer'
+
 import { createHmac } from 'node:crypto'
 
 export function deriveFromSecret(purpose: string | Buffer): Buffer {

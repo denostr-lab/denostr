@@ -1,4 +1,4 @@
-import { Router } from "oak";
+import { Router } from 'oak'
 
 import callbacksRouter from './callbacks/index.ts'
 import { getHealthRequestHandler } from '../handlers/request-handlers/get-health-request-handler.ts'
@@ -10,25 +10,22 @@ import { rootRequestHandler } from '../handlers/request-handlers/root-request-ha
 const router = new Router()
 
 router.get('/', rootRequestHandler)
-router.get('/favicon.ico', async (context, next) => {
+router.get('/:name', async (context, next) => {
     try {
         await context.send({
             root: `${Deno.cwd()}/resources/`,
-            index: "favicon.ico",
-        });
+        })
     } catch {
-
-        await next();
+        await next()
     }
 })
 router.get('/css/:name', async (context, next) => {
     try {
         await context.send({
             root: `${Deno.cwd()}/resources/`,
-        });
-    } catch (e){
-        console.info(e, 'asdasdasd')
-        await next();
+        })
+    } catch {
+        await next()
     }
 })
 router.get('/healthz', getHealthRequestHandler)

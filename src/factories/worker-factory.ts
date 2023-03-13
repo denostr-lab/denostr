@@ -20,7 +20,7 @@ export const workerFactory = (): AppWorker => {
 
   const settings = createSettings()
 
-  const app = createWebApp()
+  const server = createWebApp()
   console.log(`
   ███▄    █  ▒█████    ██████ ▄▄▄█████▓ ██▀███  ▓█████ ▄▄▄       ███▄ ▄███▓
   ██ ▀█   █ ▒██▒  ██▒▒██    ▒ ▓  ██▒ ▓▒▓██ ▒ ██▒▓█   ▀▒████▄    ▓██▒▀█▀ ██▒
@@ -42,9 +42,11 @@ export const workerFactory = (): AppWorker => {
   // } else {
   //   maxPayloadSize = path(['network', 'maxPayloadSize'], settings)
   // }
-  app.listen({port: 8085})
-  const webSocketServer = new WebSocketServer(8008)
-  const server = webSocketServer.server
+  
+  const webSocketServer = new WebSocketServer(server)
+  
+  // const server = webSocketServer.server
+
   const adapter = new WebSocketServerAdapter(
     server,
     webSocketServer,

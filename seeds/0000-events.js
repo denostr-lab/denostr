@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
+import { Buffer } from 'Buffer'
 
 const NAMESPACE = 'c646b451-db73-47fb-9a70-ea24ce8a225a'
 exports.seed = async function (knex) {

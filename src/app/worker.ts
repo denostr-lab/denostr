@@ -12,6 +12,13 @@ export class AppWorker implements IRunnable {
   public constructor(
     private readonly adapter: IWebSocketServerAdapter
   ) {
+    // this.process
+    // .on('message', this.onMessage.bind(this))
+    // .on('SIGINT', this.onExit.bind(this))
+    // .on('SIGHUP', this.onExit.bind(this))
+    // .on('SIGTERM', this.onExit.bind(this))
+    // .on('uncaughtException', this.onError.bind(this))
+    // .on('unhandledRejection', this.onError.bind(this))
   }
 
   public run(): void {

@@ -1,8 +1,8 @@
-import cluster from 'node:cluster'
-import { EventEmitter } from 'node:events'
-import { ServerRequest } from 'https://deno.land/std@0.92.0/http/server.ts'
+import { Buffer } from 'Buffer'
 
-import { WebSocketAcceptedClient as WebSocket, WebSocketState } from 'websocket'
+import { EventEmitter } from 'node:events'
+import { Request } from 'oak'
+import { WebSocketAcceptedClient } from 'websocket'
 
 import { ContextMetadata, Factory } from '../@types/base.ts'
 import { createNoticeMessage, createOutgoingEventMessage } from '../utils/messages.ts'
@@ -23,26 +23,23 @@ import { Settings } from '../@types/settings.ts'
 
 
 const debug = createLogger('web-socket-adapter')
-const debugHeartbeat = debug.extend('heartbeat')
 
-const abortableMessageHandlers: WeakMap<WebSocket, IAbortable[]> = new WeakMap()
+const abortableMessageHandlers: WeakMap<WebSocketAcceptedClient, IAbortable[]> = new WeakMap()
 
 export class WebSocketAdapter extends EventEmitter implements IWebSocketAdapter {
   public clientId: string
   private clientAddress: object
-  private alive: boolean
   private subscriptions: Map<SubscriptionId, SubscriptionFilter[]>
 
   public constructor(
-    private readonly client: WebSocket,
-    private readonly request: ServerRequest,
+    private readonly client: WebSocketAcceptedClient,
+    private readonly request: Request,
     private readonly webSocketServer: IWebSocketServerAdapter,
     private readonly createMessageHandler: Factory<IMessageHandler, [IncomingMessage, IWebSocketAdapter]>,
     private readonly slidingWindowRateLimiter: Factory<Promise<IRateLimiter>>,
     private readonly settings: Factory<Settings>,
   ) {
     super()
-    this.alive = true
     this.subscriptions = new Map()
 
     this.clientId = Buffer.from(this.request.headers.get('sec-websocket-key') as string, 'base64').toString('hex')
@@ -66,11 +63,11 @@ export class WebSocketAdapter extends EventEmitter implements IWebSocketAdapter 
       })
       .on('message', this.onClientMessage.bind(this))
       .on('close', this.onClientClose.bind(this))
-      .on('pong', this.onClientPong.bind(this))
-      .on('ping', this.onClientPing.bind(this))
+      // .on('pong', this.onClientPong.bind(this))
+      // .on('ping', this.onClientPing.bind(this))
 
     this
-      .on(WebSocketAdapterEvent.Heartbeat, this.onHeartbeat.bind(this))
+      // .on(WebSocketAdapterEvent.Heartbeat, this.onHeartbeat.bind(this))
       .on(WebSocketAdapterEvent.Subscribe, this.onSubscribed.bind(this))
       .on(WebSocketAdapterEvent.Unsubscribe, this.onUnsubscribed.bind(this))
       .on(WebSocketAdapterEvent.Event, this.onSendEvent.bind(this))
@@ -100,12 +97,6 @@ export class WebSocketAdapter extends EventEmitter implements IWebSocketAdapter 
 
   public onBroadcast(event: Event): void {
     this.webSocketServer.emit(WebSocketServerAdapterEvent.Broadcast, event)
-    if (cluster.isWorker && typeof process.send === 'function') {
-      process.send({
-        eventName: WebSocketServerAdapterEvent.Broadcast,
-        event,
-      })
-    }
   }
 
   public onSendEvent(event: Event): void {
@@ -120,22 +111,22 @@ export class WebSocketAdapter extends EventEmitter implements IWebSocketAdapter 
   }
 
   private sendMessage(message: OutgoingMessage): void {
-    if (this.client.state !== WebSocketState.OPEN) {
+    if (this.client.readyState !== WebSocket.OPEN) {
       return
     }
     this.client.send(JSON.stringify(message))
   }
 
   public onHeartbeat(): void {
-    if (!this.alive && !this.subscriptions.size) {
-      console.error(`web-socket-adapter: pong timeout for client ${this.clientId} (${this.getClientAddress()})`)
-      this.client.close()
-      return
-    }
+    // if (!this.alive && !this.subscriptions.size) {
+    //   console.error(`web-socket-adapter: pong timeout for client ${this.clientId} (${this.getClientAddress()})`)
+    //   this.client.close()
+    //   return
+    // }
 
-    this.alive = false
-    this.client.ping()
-    debugHeartbeat('client %s ping', this.clientId)
+    // this.alive = false
+    // this.client.ping()
+    // debugHeartbeat('client %s ping', this.clientId)
   }
 
   public getSubscriptions(): Map<string, SubscriptionFilter[]> {
@@ -143,7 +134,6 @@ export class WebSocketAdapter extends EventEmitter implements IWebSocketAdapter 
   }
 
   private async onClientMessage(raw: Buffer) {
-    this.alive = true
     let abortable = false
     let messageHandler: IMessageHandler & IAbortable | undefined = undefined
     try {
@@ -232,19 +222,7 @@ export class WebSocketAdapter extends EventEmitter implements IWebSocketAdapter 
     return limited
   }
 
-  private onClientPong() {
-    debugHeartbeat('client %s pong', this.clientId)
-    this.alive = true
-  }
-
-  private onClientPing(data: any) {
-    debugHeartbeat('client %s ping', this.clientId)
-    this.client.send(data)
-    this.alive = true
-  }
-
   private onClientClose() {
-    this.alive = false
     this.subscriptions.clear()
 
     const handlers = abortableMessageHandlers.get(this.client)

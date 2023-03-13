@@ -1,6 +1,6 @@
 import { Duplex } from 'node:stream'
 import { EventEmitter } from 'node:events'
-
+import { Application } from 'oak'
 import { Server } from 'node:http'
 
 import { createLogger } from '../factories/logger-factory.ts'
@@ -10,7 +10,7 @@ const debug = createLogger('web-server-adapter')
 
 export class WebServerAdapter extends EventEmitter implements IWebServerAdapter {
   public constructor(
-    protected readonly webServer: Server,
+    protected readonly webServer: Application,
   ) {
     debug('created')
     super()
@@ -24,7 +24,7 @@ export class WebServerAdapter extends EventEmitter implements IWebServerAdapter 
   public listen(port: number): void {
     console.info('开始监听', port)
     debug('attempt to listen on port %d', port)
-    // this.webServer.listen(port)
+    this.webServer.listen({ port })
   }
 
   private onListening() {

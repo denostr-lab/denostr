@@ -1,1 +1,4 @@
 
+export const Config = {
+    
+}

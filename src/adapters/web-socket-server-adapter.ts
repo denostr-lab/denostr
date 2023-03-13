@@ -1,9 +1,8 @@
-import {  Server } from 'node:http'
-
-import WebSocket, { WebSocketServer } from 'ws'
+// import {  Server } from 'node:http'
+import { Application, Request } from 'oak'
+import { WebSocketAcceptedClient as WebSocket, WebSocketServer, WebSocketState } from 'websocket'
 
 import { propEq } from 'ramda'
-import { ServerRequest } from 'https://deno.land/std@0.92.0/http/server.ts'
 
 import { IWebSocketAdapter, IWebSocketServerAdapter } from '../@types/adapters.ts'
 
@@ -22,15 +21,14 @@ const WSS_CLIENT_HEALTH_PROBE_INTERVAL = 120000
 
 export class WebSocketServerAdapter extends WebServerAdapter implements IWebSocketServerAdapter {
   private webSocketsAdapters: WeakMap<WebSocket, IWebSocketAdapter>
-
   private heartbeatInterval: NodeJS.Timer
 
   public constructor(
-    webServer: Server,
+    webServer: Application,
     private readonly webSocketServer: WebSocketServer,
     private readonly createWebSocketAdapter: Factory<
       IWebSocketAdapter,
-      [WebSocket, ServerRequest, IWebSocketServerAdapter]
+      [WebSocket, Request, IWebSocketServerAdapter]
     >,
     private readonly settings: () => Settings,
   ) {
@@ -61,7 +59,7 @@ export class WebSocketServerAdapter extends WebServerAdapter implements IWebSock
         if (webSocketAdapter) {
           debug('terminating client %s: %s', webSocketAdapter.getClientId(), webSocketAdapter.getClientAddress())
         }
-        webSocket.terminate()
+        webSocket.close()
       })
       debug('closing web socket server')
       this.webSocketServer.close(() => {
@@ -78,7 +76,7 @@ export class WebSocketServerAdapter extends WebServerAdapter implements IWebSock
   private onBroadcast(event: Event) {
     console.info(' 有广播吗')
     this.webSocketServer.clients.forEach((webSocket: WebSocket) => {
-      if (!propEq('readyState', WebSocket.OPEN)(webSocket)) {
+      if (!propEq('readyState', WebSocketState.OPEN)(webSocket)) {
         return
       }
       const webSocketAdapter = this.webSocketsAdapters.get(webSocket) as IWebSocketAdapter
@@ -90,10 +88,10 @@ export class WebSocketServerAdapter extends WebServerAdapter implements IWebSock
   }
 
   public getConnectedClients(): number {
-    return Array.from(this.webSocketServer.clients).filter(propEq('readyState', WebSocket.OPEN)).length
+    return Array.from(this.webSocketServer.clients).filter(propEq('readyState', WebSocketState.OPEN)).length
   }
 
-  private async onConnection(client: WebSocket, req: ServerRequest) {
+  private async onConnection(client: WebSocket, req: Request) {
     try {
       const currentSettings = this.settings()
       const remoteAddress = getRemoteAddress(req, currentSettings)
@@ -102,7 +100,7 @@ export class WebSocketServerAdapter extends WebServerAdapter implements IWebSock
   
       if (await isRateLimited(remoteAddress, currentSettings)) {
         debug('client %s terminated: rate-limited', remoteAddress)
-        client.terminate()
+        client.close()
         return
       }
   
