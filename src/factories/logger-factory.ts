@@ -1,10 +1,11 @@
 import debug from 'debug'
+import Config from '../config/index.ts'
 
 export const createLogger = (
   namespace: string,
   options: { enabled?: boolean; stdout?: boolean } = { enabled: false, stdout: false }
 ) => {
-  const prefix = (process.env.WORKER_TYPE || 'primary') as string
+  const prefix = (Config.WORKER_TYPE || 'primary') as string
   const instance = debug(prefix)
   if (options.enabled) {
     debug.enable(`${prefix}:${namespace}:*`)

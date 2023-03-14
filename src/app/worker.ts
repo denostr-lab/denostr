@@ -1,5 +1,6 @@
 import { IRunnable } from '../@types/base.ts'
 import { IWebSocketServerAdapter } from '../@types/adapters.ts'
+import Config from '../config/index.ts'
 
 import { createLogger } from '../factories/logger-factory.ts'
 import { FSWatcher } from 'node:fs'
@@ -24,7 +25,7 @@ export class AppWorker implements IRunnable {
   public run(): void {
     this.watchers = SettingsStatic.watchSettings()
 
-    const port = process.env.PORT || process.env.RELAY_PORT || 8008
+    const port = Config.PORT || Config.RELAY_PORT || 8008
     this.adapter.listen(typeof port === 'number' ? port : Number(port))
   }
 

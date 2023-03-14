@@ -2,12 +2,11 @@ import { Buffer } from 'Buffer'
 
 import { EventEmitter } from 'node:events'
 import { Request } from 'oak'
-import { WebSocketAcceptedClient } from 'websocket'
 
 import { ContextMetadata, Factory } from '../@types/base.ts'
 import { createNoticeMessage, createOutgoingEventMessage } from '../utils/messages.ts'
 import { IAbortable, IMessageHandler } from '../@types/message-handlers.ts'
-import { IncomingMessage, OutgoingMessage } from '../@types/messages.ts'
+import { EventMessage, IncomingMessage, OutgoingMessage } from '../@types/messages.ts'
 import { IWebSocketAdapter, IWebSocketServerAdapter } from '../@types/adapters.ts'
 import { SubscriptionFilter, SubscriptionId } from '../@types/subscription.ts'
 import { WebSocketAdapterEvent, WebSocketServerAdapterEvent } from '../constants/adapter.ts'
@@ -20,19 +19,20 @@ import { IRateLimiter } from '../@types/utils.ts'
 import { isEventMatchingFilter } from '../utils/event.ts'
 import { messageSchema } from '../schemas/message-schema.ts'
 import { Settings } from '../@types/settings.ts'
-
+import { NetAddress } from '../@types/http.ts'
 
 const debug = createLogger('web-socket-adapter')
 
-const abortableMessageHandlers: WeakMap<WebSocketAcceptedClient, IAbortable[]> = new WeakMap()
+const abortableMessageHandlers: WeakMap<WebSocket, IAbortable[]> = new WeakMap()
+
 
 export class WebSocketAdapter extends EventEmitter implements IWebSocketAdapter {
   public clientId: string
-  private clientAddress: object
+  private clientAddress: NetAddress
   private subscriptions: Map<SubscriptionId, SubscriptionFilter[]>
 
   public constructor(
-    private readonly client: WebSocketAcceptedClient,
+    private readonly client: WebSocket,
     private readonly request: Request,
     private readonly webSocketServer: IWebSocketServerAdapter,
     private readonly createMessageHandler: Factory<IMessageHandler, [IncomingMessage, IWebSocketAdapter]>,
@@ -50,7 +50,7 @@ export class WebSocketAdapter extends EventEmitter implements IWebSocketAdapter 
     }
 
     this.client
-      .on('error', (error) => {
+      .onerror = ((error) => {
         if (error.name === 'RangeError' && error.message === 'Max payload size exceeded') {
           console.error(`web-socket-adapter: client ${this.clientId} (${this.getClientAddress()}) sent payload too large`)
         } else if (error.name === 'RangeError' && error.message === 'Invalid WebSocket frame: RSV1 must be clear') {
@@ -58,13 +58,11 @@ export class WebSocketAdapter extends EventEmitter implements IWebSocketAdapter 
         } else {
           console.error(`web-socket-adapter: client error ${this.clientId} (${this.getClientAddress()}):`, error)
         }
-
         this.client.close()
       })
-      .on('message', this.onClientMessage.bind(this))
-      .on('close', this.onClientClose.bind(this))
-      // .on('pong', this.onClientPong.bind(this))
-      // .on('ping', this.onClientPing.bind(this))
+      this.client.onmessage = this.onClientMessage.bind(this)
+      this.client.onclose = this.onClientClose.bind(this)
+
 
     this
       // .on(WebSocketAdapterEvent.Heartbeat, this.onHeartbeat.bind(this))
@@ -97,6 +95,12 @@ export class WebSocketAdapter extends EventEmitter implements IWebSocketAdapter 
 
   public onBroadcast(event: Event): void {
     this.webSocketServer.emit(WebSocketServerAdapterEvent.Broadcast, event)
+    // if (cluster.isWorker && typeof process.send === 'function') {
+    //   process.send({
+    //     eventName: WebSocketServerAdapterEvent.Broadcast,
+    //     event,
+    //   })
+    // }
   }
 
   public onSendEvent(event: Event): void {
@@ -133,7 +137,7 @@ export class WebSocketAdapter extends EventEmitter implements IWebSocketAdapter 
     return new Map(this.subscriptions)
   }
 
-  private async onClientMessage(raw: Buffer) {
+  private async onClientMessage(raw: MessageEvent) {
     let abortable = false
     let messageHandler: IMessageHandler & IAbortable | undefined = undefined
     try {
@@ -141,7 +145,7 @@ export class WebSocketAdapter extends EventEmitter implements IWebSocketAdapter 
         this.sendMessage(createNoticeMessage('rate limited'))
         return
       }
-      const message = attemptValidation(messageSchema)(JSON.parse(raw.toString('utf8')))
+      const message = attemptValidation(messageSchema)(JSON.parse(raw.data.toString('utf8')))
       message[ContextMetadataKey] = {
         remoteAddress: this.clientAddress,
       } as ContextMetadata

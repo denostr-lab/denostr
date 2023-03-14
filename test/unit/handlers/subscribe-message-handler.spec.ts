@@ -3,6 +3,7 @@ import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import EventEmitter from 'node:events'
 import Sinon from 'sinon'
+import { Buffer } from 'Buffer'
 
 import { IAbortable, IMessageHandler } from '../../../src/@types/message-handlers.ts'
 import { MessageType, SubscribeMessage } from '../../../src/@types/messages.ts'

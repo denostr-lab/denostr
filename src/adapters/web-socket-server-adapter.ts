@@ -1,6 +1,5 @@
 // import {  Server } from 'node:http'
 import { Application, Request } from 'oak'
-import { WebSocketAcceptedClient as WebSocket, WebSocketServer, WebSocketState } from 'websocket'
 
 import { propEq } from 'ramda'
 
@@ -17,15 +16,11 @@ import { WebServerAdapter } from './web-server-adapter.ts'
 
 const debug = createLogger('web-socket-server-adapter')
 
-const WSS_CLIENT_HEALTH_PROBE_INTERVAL = 120000
 
 export class WebSocketServerAdapter extends WebServerAdapter implements IWebSocketServerAdapter {
-  private webSocketsAdapters: WeakMap<WebSocket, IWebSocketAdapter>
-  private heartbeatInterval: NodeJS.Timer
-
+  private webSocketsAdapters: Map<WebSocket, IWebSocketAdapter>
   public constructor(
     webServer: Application,
-    private readonly webSocketServer: WebSocketServer,
     private readonly createWebSocketAdapter: Factory<
       IWebSocketAdapter,
       [WebSocket, Request, IWebSocketServerAdapter]
@@ -35,51 +30,63 @@ export class WebSocketServerAdapter extends WebServerAdapter implements IWebSock
     debug('created')
     super(webServer)
 
-    this.webSocketsAdapters = new WeakMap()
+    this.webSocketsAdapters = new Map()
 
     this
       .on(WebSocketServerAdapterEvent.Broadcast, this.onBroadcast.bind(this))
-
-    this.webSocketServer
-      .on(WebSocketServerAdapterEvent.Connection, this.onConnection.bind(this))
-      .on('error', (error: any) => {
-        debug('error: %o', error)
-      })
-    this.heartbeatInterval = setInterval(this.onHeartbeat.bind(this), WSS_CLIENT_HEALTH_PROBE_INTERVAL)
+    this.initMiddleWare()
+    // this.webSocketServer
+    //   .on(WebSocketServerAdapterEvent.Connection, this.onConnection.bind(this))
+    //   .on('error', (error: any) => {
+    //     debug('error: %o', error)
+    //   })
+    // this.heartbeatInterval = setInterval(this.onHeartbeat.bind(this), WSS_CLIENT_HEALTH_PROBE_INTERVAL)
   }
 
+  public initMiddleWare () {
+    this.webServer.use(async(ctx, next) => {
+      if (ctx.isUpgradable) {
+        const webSocket = ctx.upgrade()
+        const req = ctx.request
+        webSocket.onopen = (e)=>{
+          console.info('阿达说的', e)
+          this.webSocketsAdapters.set(webSocket, this.createWebSocketAdapter([webSocket, req, this]))
+        }
+       
+      } else {
+        await next();
+      }
+    })
+  }
   public close(callback?: () => void): void {
     super.close(() => {
-      console.info('断开连接诶了')
-
       debug('closing')
-      clearInterval(this.heartbeatInterval)
-      this.webSocketServer.clients.forEach((webSocket: WebSocket) => {
-        const webSocketAdapter = this.webSocketsAdapters.get(webSocket)
+      // clearInterval(this.heartbeatInterval)
+      
+      this.webSocketsAdapters.forEach((webSocketAdapter: IWebSocketAdapter, webSocket: WebSocket) => {
         if (webSocketAdapter) {
           debug('terminating client %s: %s', webSocketAdapter.getClientId(), webSocketAdapter.getClientAddress())
         }
         webSocket.close()
       })
       debug('closing web socket server')
-      this.webSocketServer.close(() => {
-        this.webSocketServer.removeAllListeners()
-        if (typeof callback !== 'undefined') {
-          callback()
-        }
-        debug('closed')
-      })
+      // this.webSocketServer.close(() => {
+      //   this.webSocketServer.removeAllListeners()
+      //   if (typeof callback !== 'undefined') {
+      //     callback()
+      //   }
+      //   debug('closed')
+      // })
     })
     this.removeAllListeners()
   }
 
   private onBroadcast(event: Event) {
-    console.info(' 有广播吗')
-    this.webSocketServer.clients.forEach((webSocket: WebSocket) => {
-      if (!propEq('readyState', WebSocketState.OPEN)(webSocket)) {
+    
+    this.webSocketsAdapters.forEach((webSocketAdapter: IWebSocketAdapter, webSocket: WebSocket) => {
+      if (!propEq('readyState', WebSocket.OPEN)(webSocket)) {
         return
       }
-      const webSocketAdapter = this.webSocketsAdapters.get(webSocket) as IWebSocketAdapter
       if (!webSocketAdapter) {
         return
       }
@@ -88,35 +95,35 @@ export class WebSocketServerAdapter extends WebServerAdapter implements IWebSock
   }
 
   public getConnectedClients(): number {
-    return Array.from(this.webSocketServer.clients).filter(propEq('readyState', WebSocketState.OPEN)).length
+    return Array.from(this.webSocketsAdapters).filter(propEq('readyState', WebSocket.OPEN)).length
   }
 
-  private async onConnection(client: WebSocket, req: Request) {
-    try {
-      const currentSettings = this.settings()
-      const remoteAddress = getRemoteAddress(req, currentSettings)
-      // const remoteAddress = '192.168.0.126'
-      debug('client %s connected: %o', remoteAddress, req.headers)
+  // private async onConnection(client: WebSocket, req: Request) {
+  //   try {
+  //     const currentSettings = this.settings()
+  //     const remoteAddress = getRemoteAddress(req, currentSettings)
+  //     // const remoteAddress = '192.168.0.126'
+  //     debug('client %s connected: %o', remoteAddress, req.headers)
   
-      if (await isRateLimited(remoteAddress, currentSettings)) {
-        debug('client %s terminated: rate-limited', remoteAddress)
-        client.close()
-        return
-      }
+  //     if (await isRateLimited(remoteAddress, currentSettings)) {
+  //       debug('client %s terminated: rate-limited', remoteAddress)
+  //       client.close()
+  //       return
+  //     }
   
-      this.webSocketsAdapters.set(client, this.createWebSocketAdapter([client, req, this]))
-    } catch (e) {
-      console.info('链接错误的', e)
-    }
+  //     this.webSocketsAdapters.set(client, this.createWebSocketAdapter([client, req, this]))
+  //   } catch (e) {
+  //     console.info('链接错误的', e)
+  //   }
  
-  }
+  // }
 
-  private onHeartbeat() {
-    this.webSocketServer.clients.forEach((webSocket) => {
-      const webSocketAdapter = this.webSocketsAdapters.get(webSocket) as IWebSocketAdapter
-      if (webSocketAdapter) {
-        webSocketAdapter.emit(WebSocketAdapterEvent.Heartbeat)
-      }
-    })
-  }
+  // private onHeartbeat() {
+  //   this.webSocketsAdapters.forEach((webSocket) => {
+  //     const webSocketAdapter = this.webSocketsAdapters.get(webSocket) as IWebSocketAdapter
+  //     if (webSocketAdapter) {
+  //       webSocketAdapter.emit(WebSocketAdapterEvent.Heartbeat)
+  //     }
+  //   })
+  // }
 }

@@ -2,6 +2,7 @@ import { expect } from 'chai'
 import fs from 'node:fs'
 import { join } from 'node:path'
 import Sinon from 'sinon'
+import Config from '../../../src/config/index.ts'
 
 import { SettingsFileTypes, SettingsStatic } from '../../../src/utils/settings.ts'
 
@@ -23,11 +24,11 @@ describe('SettingsStatic', () => {
     })
 
     it('returns path begins with user\'s home dir by default', () => {
-      expect(SettingsStatic.getSettingsFileBasePath()).to.be.a('string').and.equal(`${join(process.cwd(), '.nostr')}`)
+      expect(SettingsStatic.getSettingsFileBasePath()).to.be.a('string').and.equal(`${join(Deno.cwd(), '.nostr')}`)
     })
 
     it('returns path with NOSTR_CONFIG_DIR if set', () => {
-      process.env.NOSTR_CONFIG_DIR = '/some/path/'
+      Config.NOSTR_CONFIG_DIR = '/some/path/'
 
       expect(SettingsStatic.getSettingsFileBasePath()).to.be.a('string').and.equal('/some/path/')
     })
@@ -50,7 +51,7 @@ describe('SettingsStatic', () => {
     })
 
     it('returns path begins with user\'s home dir by default', () => {
-      expect(SettingsStatic.getDefaultSettingsFilePath()).to.be.a('string').and.equal(`${join(process.cwd(), '/resources')}/default-settings.yaml`)
+      expect(SettingsStatic.getDefaultSettingsFilePath()).to.be.a('string').and.equal(`${join(Deno.cwd(), '/resources')}/default-settings.yaml`)
     })
   })
 

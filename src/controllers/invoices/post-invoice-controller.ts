@@ -4,7 +4,7 @@ import { getPublicKey, getRelayPrivateKey } from '../../utils/event.ts'
 
 import { createLogger } from '../../factories/logger-factory.ts'
 import { getRemoteAddress } from '../../utils/http.ts'
-import { IController, Request, Response, RouterContext, helpers, Status } from '../../@types/controllers.ts'
+import { helpers, IController, Request, Response, RouterContext, Status } from '../../@types/controllers.ts'
 import { Invoice } from '../../@types/invoice.ts'
 import { IPaymentsService } from '../../@types/services.ts'
 import { IRateLimiter } from '../../@types/utils.ts'
@@ -63,19 +63,16 @@ export class PostInvoiceController implements IController {
     let pubkey: string
     if (typeof pubkeyRaw !== 'string') {
       ctx.throw(Status.BadRequest, 'Invalid pubkey: missing')
-      return
     } else if (/^[0-9a-f]{64}$/.test(pubkeyRaw)) {
       pubkey = pubkeyRaw
     } else if (/^npub1/.test(pubkeyRaw)) {
       try {
         pubkey = fromBech32(pubkeyRaw)
-      } catch (error) {
+      } catch {
         ctx.throw(Status.BadRequest, 'Invalid pubkey: invalid npub')
-        return
       }
     } else {
       ctx.throw(Status.BadRequest, 'Invalid pubkey: unknown format')
-      return
     }
 
     const isApplicableFee = (feeSchedule: FeeSchedule) => feeSchedule.enabled

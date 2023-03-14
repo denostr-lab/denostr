@@ -1,4 +1,4 @@
-import { Request, Response, Status, RouterContext } from '../../@types/controllers.ts'
+import { Request, Response, RouterContext, Status } from '../../@types/controllers.ts'
 
 import { createLNbitsCallbackController } from '../../factories/lnbits-callback-controller-factory.ts'
 

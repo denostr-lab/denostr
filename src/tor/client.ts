@@ -5,22 +5,23 @@ import { Tor } from 'tor-control-ts'
 
 import { createLogger } from '../factories/logger-factory.ts'
 import { TorConfig } from '../@types/tor.ts'
+import Config from '../config/index.ts'
 
 
 const debug = createLogger('tor-client')
 
 const getPrivateKeyFile = () => {
   return join(
-    process.env.NOSTR_CONFIG_DIR ?? join(homedir(), '.nostr'),
+    Config.NOSTR_CONFIG_DIR ?? join(homedir(), '.nostr'),
     'v3_onion_private_key'
   )
 }
 
 export const createTorConfig = (): TorConfig => {
   return {
-    host: process.env.TOR_HOST,
-    port: process.env.TOR_CONTROL_PORT ? Number(process.env.TOR_CONTROL_PORT) : 9051,
-    password: process.env.TOR_PASSWORD,
+    host: Config.TOR_HOST,
+    port: Config.TOR_CONTROL_PORT ? Number(Config.TOR_CONTROL_PORT) : 9051,
+    password: Config.TOR_PASSWORD,
   }
 }
 

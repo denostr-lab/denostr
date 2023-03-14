@@ -1,5 +1,6 @@
 import { addOnion, closeTorClient, createTorConfig, getTorClient } from '../../../src/tor/client.ts'
 import { hiddenService, Tor } from 'tor-control-ts'
+import Config from '../../../src/config/index.ts'
 
 import { expect } from 'chai'
 import fs from 'node:fs/promises'
@@ -87,18 +88,18 @@ describe('onion',()=>{
         expect(config).to.include({ port: 9051 })
     })
     it('config set',()=>{
-        process.env.TOR_HOST = 'localhost'
-        process.env.TOR_CONTROL_PORT = '9051'
-        process.env.TOR_PASSWORD = 'test'
+        Config.TOR_HOST = 'localhost'
+        Config.TOR_CONTROL_PORT = '9051'
+        Config.TOR_PASSWORD = 'test'
         const config = createTorConfig()
         // deepcode ignore NoHardcodedPasswords/test: password is part of the test
         expect(config).to.include({host: 'localhost', port: 9051,password: 'test' })
     })
     it('tor connect fail',async ()=>{
         //mockTor(sandbox)
-        process.env.TOR_HOST = 'localhost'
-        process.env.TOR_CONTROL_PORT = '9051'
-        process.env.TOR_PASSWORD = 'nostr_ts_relay'
+        Config.TOR_HOST = 'localhost'
+        Config.TOR_CONTROL_PORT = '9051'
+        Config.TOR_PASSWORD = 'nostr_ts_relay'
 
         let client:Tor = undefined
         try{
@@ -111,9 +112,9 @@ describe('onion',()=>{
     })
     it('tor connect sucess',async ()=>{
         //mockTor(sandbox)
-        process.env.TOR_HOST = hostname()
-        process.env.TOR_CONTROL_PORT = '9051'
-        process.env.TOR_PASSWORD = 'nostr_ts_relay'
+        Config.TOR_HOST = hostname()
+        Config.TOR_CONTROL_PORT = '9051'
+        Config.TOR_PASSWORD = 'nostr_ts_relay'
         let client:Tor = undefined
         try{
             client = await getTorClient()
@@ -126,9 +127,9 @@ describe('onion',()=>{
     it('add onion connect fail',async ()=>{
         //mockTor(sandbox)
         mock(sandbox)
-        process.env.TOR_HOST = 'localhost'
-        process.env.TOR_CONTROL_PORT = '9051'
-        process.env.TOR_PASSWORD = 'nostr_ts_relay'
+        Config.TOR_HOST = 'localhost'
+        Config.TOR_CONTROL_PORT = '9051'
+        Config.TOR_PASSWORD = 'nostr_ts_relay'
 
         let domain = undefined
         try {
@@ -143,10 +144,10 @@ describe('onion',()=>{
     it('add onion fail',async ()=>{
         //mockTor(sandbox)
         mock(sandbox)
-        process.env.TOR_HOST = hostname()
-        process.env.TOR_CONTROL_PORT = '9051'
-        process.env.TOR_PASSWORD = 'nostr_ts_relay'
-        process.env.NOSTR_CONFIG_DIR = '/home/node'
+        Config.TOR_HOST = hostname()
+        Config.TOR_CONTROL_PORT = '9051'
+        Config.TOR_PASSWORD = 'nostr_ts_relay'
+        Config.NOSTR_CONFIG_DIR = '/home/node'
 
         let domain = undefined
         try {
@@ -160,9 +161,9 @@ describe('onion',()=>{
     it('add onion write fail',async ()=>{
         //mockTor(sandbox)
         mock(sandbox,false,true)
-        process.env.TOR_HOST = hostname()
-        process.env.TOR_CONTROL_PORT = '9051'
-        process.env.TOR_PASSWORD = 'nostr_ts_relay'
+        Config.TOR_HOST = hostname()
+        Config.TOR_CONTROL_PORT = '9051'
+        Config.TOR_PASSWORD = 'nostr_ts_relay'
 
         let domain = undefined
         try {
@@ -177,9 +178,9 @@ describe('onion',()=>{
     })
     it('add onion sucess read fail',async ()=>{
         mock(sandbox,true)
-        process.env.TOR_HOST = hostname()
-        process.env.TOR_CONTROL_PORT = '9051'
-        process.env.TOR_PASSWORD = 'nostr_ts_relay'
+        Config.TOR_HOST = hostname()
+        Config.TOR_CONTROL_PORT = '9051'
+        Config.TOR_PASSWORD = 'nostr_ts_relay'
 
         let domain = undefined
         try {
@@ -193,9 +194,9 @@ describe('onion',()=>{
     })
     it('add onion sucess',async ()=>{
         mock(sandbox)
-        process.env.TOR_HOST = hostname()
-        process.env.TOR_CONTROL_PORT = '9051'
-        process.env.TOR_PASSWORD = 'nostr_ts_relay'
+        Config.TOR_HOST = hostname()
+        Config.TOR_CONTROL_PORT = '9051'
+        Config.TOR_PASSWORD = 'nostr_ts_relay'
 
         let domain = undefined
         try {

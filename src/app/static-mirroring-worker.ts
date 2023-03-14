@@ -1,5 +1,6 @@
+import Config from '../config/index.ts'
+
 import { anyPass, map, path } from 'ramda'
-import { RawData, WebSocket } from 'ws'
 import { randomUUID } from 'node:crypto'
 
 import { createRelayedEventMessage, createSubscriptionMessage } from '../utils/messages.ts'
@@ -22,8 +23,14 @@ export class StaticMirroringWorker implements IRunnable {
   ) {
     const currentSettings = this.settings()
     console.log('mirroring', currentSettings.mirroring)
-    this.config = path(['mirroring', 'static', process.env.MIRROR_INDEX], currentSettings) as Mirror
-
+    this.config = path(['mirroring', 'static', Config.MIRROR_INDEX], currentSettings) as Mirror
+    // this.process
+    // .on('message', this.onMessage.bind(this))
+    // .on('SIGINT', this.onExit.bind(this))
+    // .on('SIGHUP', this.onExit.bind(this))
+    // .on('SIGTERM', this.onExit.bind(this))
+    // .on('uncaughtException', this.onError.bind(this))
+    // .on('unhandledRejection', this.onError.bind(this))
   }
 
   public run(): void {
@@ -33,67 +40,68 @@ export class StaticMirroringWorker implements IRunnable {
       const subscriptionId = `mirror-${randomUUID()}`
 
       debug('connecting to %s', config.address)
+      const websocket  = new WebSocket(config.address)
+       
+      websocket.onopen = function () {
+        debug('connected to %s', config.address)
 
-      return new WebSocket(config.address, { timeout: 5000 })
-        .on('open', function () {
-          debug('connected to %s', config.address)
+        if (Array.isArray(config.filters) && config.filters?.length) {
+          const filters = config.filters.map((filter) => ({ ...filter, since }))
 
-          if (Array.isArray(config.filters) && config.filters?.length) {
-            const filters = config.filters.map((filter) => ({ ...filter, since }))
+          debug('subscribing with %s: %o', subscriptionId, filters)
 
-            debug('subscribing with %s: %o', subscriptionId, filters)
+          this.send(JSON.stringify(createSubscriptionMessage(subscriptionId, filters)))
+        }
+      }
+      websocket.onmessage = async function (raw: MessageEvent) {
+        try {
+          const message = JSON.parse(raw.data.toString('utf8')) as OutgoingEventMessage
 
-            this.send(JSON.stringify(createSubscriptionMessage(subscriptionId, filters)))
+          if (!Array.isArray(message)) {
+            return
           }
-        })
-        .on('message', async function (raw: RawData) {
-          try {
-            const message = JSON.parse(raw.toString('utf8')) as OutgoingEventMessage
 
-            if (!Array.isArray(message)) {
-              return
-            }
-
-            if (message[0] !== 'EVENT' || message[1] !== subscriptionId) {
-              debug('%s >> local: %o', config.address, message)
-              return
-            }
-
-            const event = message[2]
-
-            if (!anyPass(map(isEventMatchingFilter, config.filters))(event)) {
-              return
-            }
-
-            if (!await isEventIdValid(event) || !await isEventSignatureValid(event)) {
-              return
-            }
-
-            since = Math.floor(Date.now() / 1000) - 30
-            // 应该在这里 createRelayedEventMessage(event) 然后其他的地方监听数据库变化自己
-            // if (cluster.isWorker && typeof process.send === 'function') {
-            //   debug('%s >> local: %s', config.address, event.id)
-            //   process.send({
-            //     eventName: WebSocketServerAdapterEvent.Broadcast,
-            //     event,
-            //     source: config.address,
-            //   })
-            // }
-          } catch (error) {
-            debug('unable to process message: %o', error)
+          if (message[0] !== 'EVENT' || message[1] !== subscriptionId) {
+            debug('%s >> local: %o', config.address, message)
+            return
           }
-        })
-        .on('close', (code, reason) => {
-          debug(`disconnected (${code}): ${reason.toString()}`)
 
-          setTimeout(() => {
-            this.client.removeAllListeners()
-            this.client = createMirror(config)
-          }, 5000)
-        })
-        .on('error', function (error) {
+          const event = message[2]
+
+          if (!anyPass(map(isEventMatchingFilter, config.filters))(event)) {
+            return
+          }
+
+          if (!await isEventIdValid(event) || !await isEventSignatureValid(event)) {
+            return
+          }
+
+          since = Math.floor(Date.now() / 1000) - 30
+          // 应该在这里 createRelayedEventMessage(event) 然后其他的地方监听数据库变化自己
+          // if (cluster.isWorker && typeof process.send === 'function') {
+          //   debug('%s >> local: %s', config.address, event.id)
+          //   process.send({
+          //     eventName: WebSocketServerAdapterEvent.Broadcast,
+          //     event,
+          //     source: config.address,
+          //   })
+          // }
+        } catch (error) {
+          debug('unable to process message: %o', error)
+        }
+      }
+      websocket.onclose = (ev: CloseEvent) => {
+        debug(`disconnected (${ev.code}): ${ev.reason.toString()}`)
+
+        setTimeout(() => {
+          this.client = createMirror(config)
+        }, 5000)
+      }
+      websocket.onerror = function (error) {
+          
           debug('connection error: %o', error)
-        })
+      }
+      return websocket
     }
 
     this.client = createMirror(this.config)
@@ -123,7 +131,7 @@ export class StaticMirroringWorker implements IRunnable {
   public close(callback?: () => void) {
     debug('closing')
     if (this.client) {
-      this.client.terminate()
+      this.client.close()
     }
     if (typeof callback === 'function') {
       callback()

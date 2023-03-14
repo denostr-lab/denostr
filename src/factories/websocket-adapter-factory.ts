@@ -1,5 +1,4 @@
 import { Request } from 'oak'
-import { WebSocketAcceptedClient as WebSocket } from 'websocket'
 
 import { IEventRepository, IUserRepository } from '../@types/repositories.ts'
 import { createSettings } from './settings-factory.ts'

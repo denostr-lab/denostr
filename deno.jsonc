@@ -12,7 +12,8 @@
     "oak": "https://deno.land/x/oak@v12.1.0/mod.ts",
     "Buffer": "https://deno.land/std@0.139.0/node/buffer.ts",
     "secp256k1": "https://deno.land/x/secp256k1@1.7.1/mod.ts",
-    "crypto": "https://deno.land/std@0.153.0/node/crypto.ts"
+    "crypto": "https://deno.land/std@0.153.0/node/crypto.ts",
+    "oak-csp": "https://deno.land/x/oak_csp@1.0.3/mod.ts",
   },
   "importMap": "./vendor/import_map.json"
 }

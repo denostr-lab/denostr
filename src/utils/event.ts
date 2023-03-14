@@ -1,4 +1,5 @@
 import * as secp256k1 from 'secp256k1'
+import Config from '../config/index.ts'
 
 import { applySpec, converge, curry, mergeLeft, nth, omit, pipe, prop, reduceBy } from 'ramda'
 import { Buffer } from 'Buffer'
@@ -184,8 +185,8 @@ export const identifyEvent = async (event: UnidentifiedEvent): Promise<UnsignedE
 }
 
 export function getRelayPrivateKey(relayUrl: string): string {
-  if (process.env.RELAY_PRIVATE_KEY) {
-    return process.env.RELAY_PRIVATE_KEY
+  if (Config.RELAY_PRIVATE_KEY) {
+    return Config.RELAY_PRIVATE_KEY
   }
 
   return deriveFromSecret(relayUrl).toString('hex')

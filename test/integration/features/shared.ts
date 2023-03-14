@@ -12,6 +12,8 @@ import { assocPath, pipe } from 'ramda'
 import { fromEvent, map, Observable, ReplaySubject, Subject, takeUntil } from 'rxjs'
 import WebSocket, { MessageEvent } from 'ws'
 import Sinon from 'sinon'
+import Config from '../../../src/config/index.ts'
+import { Buffer } from 'Buffer'
 
 import { connect, createIdentity, createSubscription, sendEvent } from './helpers.ts'
 import { getMasterDbClient, getReadReplicaDbClient } from '../../../src/database/client.ts'
@@ -34,7 +36,7 @@ let cacheClient: CacheClient
 export const streams = new WeakMap<WebSocket, Observable<unknown>>()
 
 BeforeAll({ timeout: 1000 }, async function () {
-  process.env.RELAY_PORT = '18808'
+  Config.RELAY_PORT = '18808'
   cacheClient = getCacheClient()
   dbClient = getMasterDbClient()
   rrDbClient = getReadReplicaDbClient()

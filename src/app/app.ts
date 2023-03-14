@@ -2,6 +2,7 @@
 // import { cpus, hostname } from 'os'
 // import { path, pathEq } from 'ramda'
 // import { FSWatcher } from 'fs'
+import Config from '../config/index.ts'
 
 // import { addOnion } from '../tor/client'
 // import { createLogger } from '../factories/logger-factory'
@@ -50,8 +51,8 @@
 //    ░   ░ ░ ░ ░ ░ ▒  ░  ░  ░    ░        ░░   ░    ░    ░   ▒   ░      ░
 //          ░     ░ ░        ░              ░        ░  ░     ░  ░       ░`)
 //     const width = 74
-//     const torHiddenServicePort = process.env.HIDDEN_SERVICE_PORT ? Number(process.env.HIDDEN_SERVICE_PORT) : 80
-//     const port = process.env.RELAY_PORT ? Number(process.env.RELAY_PORT) : 8008
+//     const torHiddenServicePort = Config.HIDDEN_SERVICE_PORT ? Number(Config.HIDDEN_SERVICE_PORT) : 80
+//     const port = Config.RELAY_PORT ? Number(Config.RELAY_PORT) : 8008
 
 //     const logCentered = (input: string, width: number) => {
 //       const start = (width - input.length) >> 1
@@ -65,13 +66,13 @@
 //       logCentered(`Payments provider: ${path(['payments', 'processor'], settings)}`, width)
 //     }
 
-//     if (paymentsEnabled && (typeof this.process.env.SECRET !== 'string' || this.process.env.SECRET === '' || this.process.env.SECRET === 'changeme')) {
+//     if (paymentsEnabled && (typeof this.Config.SECRET !== 'string' || this.Config.SECRET === '' || this.Config.SECRET === 'changeme')) {
 //       console.error('Please configure the secret using the SECRET environment variable.')
 //       this.process.exit(1)
 //     }
 
-//     const workerCount = process.env.WORKER_COUNT
-//       ? Number(process.env.WORKER_COUNT)
+//     const workerCount = Config.WORKER_COUNT
+//       ? Number(Config.WORKER_COUNT)
 //       : this.settings().workers?.count || cpus().length
 
 //     const createWorker = (env: Record<string, string>) => {

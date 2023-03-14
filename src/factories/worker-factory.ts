@@ -1,6 +1,3 @@
-import { is, path, pathSatisfies } from 'ramda'
-import http from 'node:http'
-
 import { getMasterDbClient, getReadReplicaDbClient } from '../database/client.ts'
 import { AppWorker } from '../app/worker.ts'
 import { createSettings } from '../factories/settings-factory.ts'
@@ -10,15 +7,13 @@ import { UserRepository } from '../repositories/user-repository.ts'
 import { webSocketAdapterFactory } from './websocket-adapter-factory.ts'
 import { WebSocketServerAdapter } from '../adapters/web-socket-server-adapter.ts'
 
-import { WebSocketServer } from 'websocket'
-
 export const workerFactory = (): AppWorker => {
   const dbClient = getMasterDbClient()
   const readReplicaDbClient = getReadReplicaDbClient()
   const eventRepository = new EventRepository(dbClient, readReplicaDbClient)
   const userRepository = new UserRepository(dbClient)
 
-  const settings = createSettings()
+  // const settings = createSettings()
 
   const server = createWebApp()
   console.log(`
@@ -43,13 +38,9 @@ export const workerFactory = (): AppWorker => {
   //   maxPayloadSize = path(['network', 'maxPayloadSize'], settings)
   // }
   
-  const webSocketServer = new WebSocketServer(server)
-  
-  // const server = webSocketServer.server
-
+  // const webSocketServer = new WebSocketServer(server)
   const adapter = new WebSocketServerAdapter(
     server,
-    webSocketServer,
     webSocketAdapterFactory(eventRepository, userRepository),
     createSettings,
   )

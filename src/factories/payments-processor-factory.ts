@@ -1,5 +1,6 @@
 import axios, { CreateAxiosDefaults } from 'axios'
 import { path } from 'ramda'
+import Config from '../config/index.ts'
 
 import { createLogger } from './logger-factory.ts'
 import { createSettings } from './settings-factory.ts'
@@ -13,7 +14,7 @@ import { ZebedeePaymentsProcesor } from '../payments-processors/zebedee-payments
 const debug = createLogger('create-payments-processor')
 
 const getZebedeeAxiosConfig = (settings: Settings): CreateAxiosDefaults<any> => {
-  if (!process.env.ZEBEDEE_API_KEY) {
+  if (!Config.ZEBEDEE_API_KEY) {
     const error = new Error('ZEBEDEE_API_KEY must be set.')
     console.error('Unable to get Zebedee config.', error)
     throw error
@@ -22,7 +23,7 @@ const getZebedeeAxiosConfig = (settings: Settings): CreateAxiosDefaults<any> => 
   return {
     headers: {
       'content-type': 'application/json',
-      'apikey': process.env.ZEBEDEE_API_KEY,
+      'apikey': Config.ZEBEDEE_API_KEY,
     },
     baseURL: path(['paymentsProcessors', 'zebedee', 'baseURL'], settings),
     maxRedirects: 1,
@@ -30,14 +31,14 @@ const getZebedeeAxiosConfig = (settings: Settings): CreateAxiosDefaults<any> => 
 }
 
 const getLNbitsAxiosConfig = (settings: Settings): CreateAxiosDefaults<any> => {
-  if (!process.env.LNBITS_API_KEY) {
+  if (!Config.LNBITS_API_KEY) {
     throw new Error('LNBITS_API_KEY must be set to an invoice or admin key.')
   }
 
   return {
     headers: {
       'content-type': 'application/json',
-      'x-api-key': process.env.LNBITS_API_KEY,
+      'x-api-key': Config.LNBITS_API_KEY,
     },
     baseURL: path(['paymentsProcessors', 'lnbits', 'baseURL'], settings),
     maxRedirects: 1,

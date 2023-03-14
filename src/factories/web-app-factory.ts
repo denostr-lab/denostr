@@ -1,6 +1,6 @@
 import { Application, etag } from 'oak'
 
-// import csp from 'npm:koa-csp@1.2.0'
+import csp from 'oak-csp'
 
 
 import { createLogger } from './logger-factory.ts'
@@ -28,6 +28,7 @@ const getDirectives = ()=> {
     'style-src': ["'self'", 'https://cdn.jsdelivr.net/npm/'],
     'font-src': ["'self'", 'https://cdn.jsdelivr.net/npm/'],
   }
+  return directives
   debug('CSP directives: %o', directives)
 }
 
@@ -37,7 +38,7 @@ export const createWebApp = () => {
   app.use(etag.factory())
     .use(router.routes())
     .use(router.allowedMethods())
-  // .use(csp.default({enableWarn: false, policy: getDirectives()}))
+    .use(csp({enableWarn: false, policy: getDirectives()}))
 
   return app
 }

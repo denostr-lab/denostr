@@ -1,4 +1,4 @@
-import { Response, RouterContext, NextFunction, Status } from '../../@types/controllers.ts'
+import { NextFunction, Response, RouterContext, Status } from '../../@types/controllers.ts'
 
 import { readFileSync } from 'node:fs'
 

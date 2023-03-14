@@ -1,7 +1,7 @@
+import { Application } from 'oak'
+
 import { Duplex } from 'node:stream'
 import { EventEmitter } from 'node:events'
-import { Application } from 'oak'
-import { Server } from 'node:http'
 
 import { createLogger } from '../factories/logger-factory.ts'
 import { IWebServerAdapter } from '../@types/adapters.ts'
