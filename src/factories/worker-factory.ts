@@ -12,9 +12,6 @@ export const workerFactory = (): AppWorker => {
   const readReplicaDbClient = getReadReplicaDbClient()
   const eventRepository = new EventRepository(dbClient, readReplicaDbClient)
   const userRepository = new UserRepository(dbClient)
-
-  // const settings = createSettings()
-
   const server = createWebApp()
   console.log(`
   ███▄    █  ▒█████    ██████ ▄▄▄█████▓ ██▀███  ▓█████ ▄▄▄       ███▄ ▄███▓
@@ -26,19 +23,6 @@ export const workerFactory = (): AppWorker => {
  ░ ░░   ░ ▒░  ░ ▒ ▒░ ░ ░▒  ░ ░    ░      ░▒ ░ ▒░ ░ ░  ░ ▒   ▒▒ ░░  ░      ░
     ░   ░ ░ ░ ░ ░ ▒  ░  ░  ░    ░        ░░   ░    ░    ░   ▒   ░      ░
           ░     ░ ░        ░              ░        ░  ░     ░  ░       ░`)
-  // deepcode ignore HttpToHttps: we use proxies
-  // const server = http.createServer(app)
-
-  // let maxPayloadSize: number | undefined
-  // if (pathSatisfies(is(String), ['network', 'max_payload_size'], settings)) {
-  //   console.warn(`WARNING: Setting network.max_payload_size is deprecated and will be removed in a future version.
-  //       Use network.maxPayloadSize instead.`)
-  //   maxPayloadSize = path(['network', 'max_payload_size'], settings)
-  // } else {
-  //   maxPayloadSize = path(['network', 'maxPayloadSize'], settings)
-  // }
-  
-  // const webSocketServer = new WebSocketServer(server)
   const adapter = new WebSocketServerAdapter(
     server,
     webSocketAdapterFactory(eventRepository, userRepository),

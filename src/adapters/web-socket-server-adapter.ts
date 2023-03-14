@@ -9,8 +9,8 @@ import { WebSocketAdapterEvent, WebSocketServerAdapterEvent } from '../constants
 import { createLogger } from '../factories/logger-factory.ts'
 import { Event } from '../@types/event.ts'
 import { Factory } from '../@types/base.ts'
-import { getRemoteAddress } from '../utils/http.ts'
-import { isRateLimited } from '../handlers/request-handlers/rate-limiter-middleware.ts'
+// import { getRemoteAddress } from '../utils/http.ts'
+// import { isRateLimited } from '../handlers/request-handlers/rate-limiter-middleware.ts'
 import { Settings } from '../@types/settings.ts'
 import { WebServerAdapter } from './web-server-adapter.ts'
 
@@ -32,8 +32,7 @@ export class WebSocketServerAdapter extends WebServerAdapter implements IWebSock
 
     this.webSocketsAdapters = new Map()
 
-    this
-      .on(WebSocketServerAdapterEvent.Broadcast, this.onBroadcast.bind(this))
+    this.on(WebSocketServerAdapterEvent.Broadcast, this.onBroadcast.bind(this))
     this.initMiddleWare()
     // this.webSocketServer
     //   .on(WebSocketServerAdapterEvent.Connection, this.onConnection.bind(this))
@@ -48,11 +47,9 @@ export class WebSocketServerAdapter extends WebServerAdapter implements IWebSock
       if (ctx.isUpgradable) {
         const webSocket = ctx.upgrade()
         const req = ctx.request
-        webSocket.onopen = (e)=>{
-          console.info('阿达说的', e)
+        webSocket.onopen = ()=>{
           this.webSocketsAdapters.set(webSocket, this.createWebSocketAdapter([webSocket, req, this]))
         }
-       
       } else {
         await next();
       }
@@ -93,7 +90,9 @@ export class WebSocketServerAdapter extends WebServerAdapter implements IWebSock
       webSocketAdapter.emit(WebSocketAdapterEvent.Event, event)
     })
   }
-
+  public removeClient = (client: WebSocket)=> {
+    this.webSocketsAdapters.delete(client)
+  }
   public getConnectedClients(): number {
     return Array.from(this.webSocketsAdapters).filter(propEq('readyState', WebSocket.OPEN)).length
   }

@@ -58,6 +58,7 @@ export class WebSocketAdapter extends EventEmitter implements IWebSocketAdapter 
         } else {
           console.error(`web-socket-adapter: client error ${this.clientId} (${this.getClientAddress()}):`, error)
         }
+        this.webSocketServer.removeClient(this.client)
         this.client.close()
       })
       this.client.onmessage = this.onClientMessage.bind(this)
@@ -228,7 +229,7 @@ export class WebSocketAdapter extends EventEmitter implements IWebSocketAdapter 
 
   private onClientClose() {
     this.subscriptions.clear()
-
+    this.webSocketServer.removeClient(this.client)
     const handlers = abortableMessageHandlers.get(this.client)
     if (Array.isArray(handlers) && handlers.length) {
       for (const handler of handlers) {
@@ -241,6 +242,6 @@ export class WebSocketAdapter extends EventEmitter implements IWebSocketAdapter 
     }
 
     this.removeAllListeners()
-    this.client.removeAllListeners()
+    // this.client.removeAllListeners()
   }
 }

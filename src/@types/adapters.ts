@@ -6,7 +6,8 @@ import { SubscriptionFilter } from './subscription.ts'
 
 export interface IWebSocketServerAdapter extends EventEmitter, IWebServerAdapter {
   getConnectedClients(): number
-  close(callback?: () => void): void
+  close(callback?: () => void): void,
+  removeClient(client: WebSocket): void
 }
 
 export interface IWebServerAdapter extends EventEmitter {
