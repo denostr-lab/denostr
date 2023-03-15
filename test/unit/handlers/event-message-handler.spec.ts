@@ -1,21 +1,22 @@
 import EventEmitter from 'node:events'
 
-import Sinon, { SinonFakeTimers, SinonStub } from 'sinon'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
+import { afterEach,beforeEach, describe, it } from 'jest'
+import Sinon, { SinonFakeTimers, SinonStub } from 'sinon'
 import sinonChai from 'sinon-chai'
 
 chai.use(sinonChai)
 chai.use(chaiAsPromised)
 
-import { EventLimits, Settings } from '../../../src/@types/settings.ts'
-import { IncomingEventMessage, MessageType } from '../../../src/@types/messages.ts'
+import { IWebSocketAdapter } from '../../../src/@types/adapters.ts'
 import { Event } from '../../../src/@types/event.ts'
+import { IncomingEventMessage, MessageType } from '../../../src/@types/messages.ts'
+import { IUserRepository } from '../../../src/@types/repositories.ts'
+import { EventLimits, Settings } from '../../../src/@types/settings.ts'
+import { WebSocketAdapterEvent } from '../../../src/constants/adapter.ts'
 import { EventKinds } from '../../../src/constants/base.ts'
 import { EventMessageHandler } from '../../../src/handlers/event-message-handler.ts'
-import { IUserRepository } from '../../../src/@types/repositories.ts'
-import { IWebSocketAdapter } from '../../../src/@types/adapters.ts'
-import { WebSocketAdapterEvent } from '../../../src/constants/adapter.ts'
 
 const { expect } = chai
 

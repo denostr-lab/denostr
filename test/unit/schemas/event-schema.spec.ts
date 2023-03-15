@@ -1,5 +1,6 @@
-import { assocPath, omit, range } from 'ramda'
 import { expect } from 'chai'
+import { beforeEach,describe, it } from 'jest'
+import { assocPath, omit, range } from 'ramda'
 
 import { Event } from '../../../src/@types/event.ts'
 import { eventSchema } from '../../../src/schemas/event-schema.ts'

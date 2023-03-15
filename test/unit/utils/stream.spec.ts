@@ -1,4 +1,5 @@
 import * as chai from 'chai'
+import { describe, it } from 'jest'
 import * as sinon from 'sinon'
 import sinonChai from 'sinon-chai'
 

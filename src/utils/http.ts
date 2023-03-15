@@ -1,7 +1,7 @@
 import { Request } from 'oak'
 import { Settings } from '../@types/settings.ts'
 
-export const getRemoteAddress = (request: Request, settings: Settings): string => {
+export const getRemoteAddress = (request: Request, settings: Pick<Settings, 'network'>): string => {
   let header: string | undefined
   // TODO: Remove deprecation warning
   if ('network' in settings && 'remote_ip_header' in settings.network) {

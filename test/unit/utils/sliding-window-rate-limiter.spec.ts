@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import { describe, it } from 'jest'
 import Sinon from 'sinon'
 
 import { ICacheAdapter } from '../../../src/@types/adapters.ts'

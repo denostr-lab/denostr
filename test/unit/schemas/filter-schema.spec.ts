@@ -1,8 +1,9 @@
-import { assocPath, range } from 'ramda'
 import { expect } from 'chai'
+import { beforeEach,describe, it } from 'jest'
+import { assocPath, range } from 'ramda'
 
-import { filterSchema } from '../../../src/schemas/filter-schema.ts'
 import { SubscriptionFilter } from '../../../src/@types/subscription.ts'
+import { filterSchema } from '../../../src/schemas/filter-schema.ts'
 import { validateSchema } from '../../../src/utils/validation.ts'
 
 describe('NIP-01', () => {
