@@ -55,7 +55,7 @@
 //     }
 
 //     if (paymentsEnabled && (typeof this.Config.SECRET !== 'string' ||
- //this.Config.SECRET === '' || this.Config.SECRET === 'changeme')) {
+//this.Config.SECRET === '' || this.Config.SECRET === 'changeme')) {
 //       console.error('Please configure the secret using the SECRET environment variable.')
 //       this.process.exit(1)
 //     }

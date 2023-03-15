@@ -1,5 +1,3 @@
-import { randomUUID } from 'node:crypto'
-
 import {
   always,
   applySpec,
@@ -11,18 +9,18 @@ import {
   prop,
   propSatisfies,
   toString,
-} from 'ramda'
+} from "ramda";
 
-import { DatabaseClient } from '../@types/base.ts'
-import { DBInvoice, Invoice, InvoiceStatus } from '../@types/invoice.ts'
-import { IInvoiceRepository } from '../@types/repositories.ts'
-import { createLogger } from '../factories/logger-factory.ts'
-import { fromDBInvoice, toBuffer } from '../utils/transform.ts'
+import { DatabaseClient } from "../@types/base.ts";
+import { DBInvoice, Invoice, InvoiceStatus } from "../@types/invoice.ts";
+import { IInvoiceRepository } from "../@types/repositories.ts";
+import { createLogger } from "../factories/logger-factory.ts";
+import { fromDBInvoice, toBuffer } from "../utils/transform.ts";
 
-const debug = createLogger('invoice-repository')
+const debug = createLogger("invoice-repository");
 
 export class InvoiceRepository implements IInvoiceRepository {
-  public constructor(private readonly dbClient: DatabaseClient) { }
+  public constructor(private readonly dbClient: DatabaseClient) {}
 
   public async confirmInvoice(
     invoiceId: string,
@@ -30,21 +28,26 @@ export class InvoiceRepository implements IInvoiceRepository {
     confirmedAt: Date,
     client: DatabaseClient = this.dbClient,
   ): Promise<void> {
-    debug('confirming invoice %s at %s: %s', invoiceId, confirmedAt, amountPaid)
+    debug(
+      "confirming invoice %s at %s: %s",
+      invoiceId,
+      confirmedAt,
+      amountPaid,
+    );
 
     try {
       await client.raw(
-        'select confirm_invoice(?, ?, ?)',
+        "select confirm_invoice(?, ?, ?)",
         [
           invoiceId,
           amountPaid.toString(),
           confirmedAt.toISOString(),
-        ]
-      )
+        ],
+      );
     } catch (error) {
-      console.error('Unable to confirm invoice. Reason:', error.message)
+      console.error("Unable to confirm invoice. Reason:", error.message);
 
-      throw error
+      throw error;
     }
   }
 
@@ -52,15 +55,15 @@ export class InvoiceRepository implements IInvoiceRepository {
     id: string,
     client: DatabaseClient = this.dbClient,
   ): Promise<Invoice | undefined> {
-    const [dbInvoice] = await client<DBInvoice>('invoices')
-      .where('id', id)
-      .select()
+    const [dbInvoice] = await client<DBInvoice>("invoices")
+      .where("id", id)
+      .select();
 
     if (!dbInvoice) {
-      return
+      return;
     }
 
-    return fromDBInvoice(dbInvoice)
+    return fromDBInvoice(dbInvoice);
   }
 
   public async findPendingInvoices(
@@ -68,66 +71,78 @@ export class InvoiceRepository implements IInvoiceRepository {
     limit = 10,
     client: DatabaseClient = this.dbClient,
   ): Promise<Invoice[]> {
-    const dbInvoices = await client<DBInvoice>('invoices')
-      .where('status', InvoiceStatus.PENDING)
+    const dbInvoices = await client<DBInvoice>("invoices")
+      .where("status", InvoiceStatus.PENDING)
       .offset(offset)
       .limit(limit)
-      .select()
+      .select();
 
-    return dbInvoices.map(fromDBInvoice)
+    return dbInvoices.map(fromDBInvoice);
   }
 
   public upsert(
     invoice: Invoice,
-    client: DatabaseClient = this.dbClient
+    client: DatabaseClient = this.dbClient,
   ): Promise<number> {
-    debug('upserting invoice: %o', invoice)
+    debug("upserting invoice: %o", invoice);
 
     const row = applySpec<DBInvoice>({
-      id: ifElse(propSatisfies(is(String), 'id'), prop('id'), always(randomUUID())),
-      pubkey: pipe(prop('pubkey'), toBuffer),
-      bolt11: prop('bolt11'),
-      amount_requested: pipe(prop('amountRequested'), toString),
+      id: ifElse(
+        propSatisfies(is(String), "id"),
+        prop("id"),
+        always(crypto.randomUUID()),
+      ),
+      pubkey: pipe(prop("pubkey"), toBuffer),
+      bolt11: prop("bolt11"),
+      amount_requested: pipe(prop("amountRequested"), toString),
       // amount_paid: ifElse(propSatisfies(is(BigInt), 'amountPaid'), pipe(prop('amountPaid'), toString), always(null)),
-      unit: prop('unit'),
-      status: prop('status'),
-      description: prop('description'),
+      unit: prop("unit"),
+      status: prop("status"),
+      description: prop("description"),
       // confirmed_at: prop('confirmedAt'),
       expires_at: ifElse(
-        propSatisfies(isNil, 'expiresAt'),
+        propSatisfies(isNil, "expiresAt"),
         always(undefined),
-        prop('expiresAt'),
+        prop("expiresAt"),
       ),
       updated_at: always(new Date()),
       created_at: ifElse(
-        propSatisfies(isNil, 'createdAt'),
+        propSatisfies(isNil, "createdAt"),
         always(undefined),
-        prop('createdAt'),
+        prop("createdAt"),
       ),
-    })(invoice)
+    })(invoice);
 
-    debug('row: %o', row)
+    debug("row: %o", row);
 
-    const query = client<DBInvoice>('invoices')
+    const query = client<DBInvoice>("invoices")
       .insert(row)
-      .onConflict('id')
+      .onConflict("id")
       .merge(
         omit([
-          'id',
-          'pubkey',
-          'bolt11',
-          'amount_requested',
-          'unit',
-          'description',
-          'expires_at',
-          'created_at',
-        ])(row)
-      )
+          "id",
+          "pubkey",
+          "bolt11",
+          "amount_requested",
+          "unit",
+          "description",
+          "expires_at",
+          "created_at",
+        ])(row),
+      );
 
     return {
-      then: <T1, T2>(onfulfilled: (value: number) => T1 | PromiseLike<T1>, onrejected: (reason: any) => T2 | PromiseLike<T2>) => query.then(prop('rowCount') as () => number).then(onfulfilled, onrejected),
-      catch: <T>(onrejected: (reason: any) => T | PromiseLike<T>) => query.catch(onrejected),
+      then: <T1, T2>(
+        onfulfilled: (value: number) => T1 | PromiseLike<T1>,
+        onrejected: (reason: any) => T2 | PromiseLike<T2>,
+      ) =>
+        query.then(prop("rowCount") as () => number).then(
+          onfulfilled,
+          onrejected,
+        ),
+      catch: <T>(onrejected: (reason: any) => T | PromiseLike<T>) =>
+        query.catch(onrejected),
       toString: (): string => query.toString(),
-    } as Promise<number>
+    } as Promise<number>;
   }
 }

@@ -31,20 +31,20 @@ export enum EventKinds {
 }
 
 export enum EventTags {
-  Event = 'e',
-  Pubkey = 'p',
+  Event = "e",
+  Pubkey = "p",
   //  Multicast = 'm',
-  Delegation = 'delegation',
-  Deduplication = 'd',
-  Expiration = 'expiration',
+  Delegation = "delegation",
+  Deduplication = "d",
+  Expiration = "expiration",
 }
 
 export enum PaymentsProcessors {
-  ZEBEDEE = 'zebedee',
-  LNBITS = 'lnbits',
+  ZEBEDEE = "zebedee",
+  LNBITS = "lnbits",
 }
 
-export const EventDelegatorMetadataKey = Symbol('Delegator')
-export const EventDeduplicationMetadataKey = Symbol('Deduplication')
-export const ContextMetadataKey = Symbol('Context')
-export const EventExpirationTimeMetadataKey = Symbol('Expiration')
+export const EventDelegatorMetadataKey = Symbol("Delegator");
+export const EventDeduplicationMetadataKey = Symbol("Deduplication");
+export const ContextMetadataKey = Symbol("Context");
+export const EventExpirationTimeMetadataKey = Symbol("Expiration");

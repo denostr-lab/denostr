@@ -1,14 +1,19 @@
-import { CreateInvoiceRequest, CreateInvoiceResponse, GetInvoiceResponse, IPaymentsProcessor } from '../@types/clients.ts'
-import { InvoiceStatus, InvoiceUnit } from '../@types/invoice.ts'
+import {
+  CreateInvoiceRequest,
+  CreateInvoiceResponse,
+  GetInvoiceResponse,
+  IPaymentsProcessor,
+} from "../@types/clients.ts";
+import { InvoiceStatus, InvoiceUnit } from "../@types/invoice.ts";
 
 export class NullPaymentsProcessor implements IPaymentsProcessor {
   public async getInvoice(invoiceId: string): Promise<GetInvoiceResponse> {
-    const date = new Date()
+    const date = new Date();
     return {
       id: invoiceId,
-      pubkey: '',
-      bolt11: '',
-      description: '',
+      pubkey: "",
+      bolt11: "",
+      description: "",
       status: InvoiceStatus.PENDING,
       unit: InvoiceUnit.MSATS,
       amountRequested: 0n,
@@ -16,22 +21,24 @@ export class NullPaymentsProcessor implements IPaymentsProcessor {
       confirmedAt: null,
       createdAt: date,
       updatedAt: date,
-    }
+    };
   }
 
-  public async createInvoice(_request: CreateInvoiceRequest): Promise<CreateInvoiceResponse> {
+  public async createInvoice(
+    _request: CreateInvoiceRequest,
+  ): Promise<CreateInvoiceResponse> {
     return {
-      description: '',
+      description: "",
       status: InvoiceStatus.PENDING,
       unit: InvoiceUnit.MSATS,
       amountRequested: 0n,
-      id: '',
+      id: "",
       expiresAt: new Date(),
-      bolt11: '',
-      pubkey: '',
-      rawResponse: '',
+      bolt11: "",
+      pubkey: "",
+      rawResponse: "",
       confirmedAt: null,
       createdAt: new Date(),
-    }
+    };
   }
 }

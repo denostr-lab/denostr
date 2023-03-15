@@ -1,6 +1,7 @@
 exports.up = function (knex) {
   return knex.schema
-    .raw(`CREATE OR REPLACE FUNCTION confirm_invoice(invoice_id TEXT, amount_received BIGINT, confirmation_date TIMESTAMP WITHOUT TIME ZONE)
+    .raw(
+      `CREATE OR REPLACE FUNCTION confirm_invoice(invoice_id TEXT, amount_received BIGINT, confirmation_date TIMESTAMP WITHOUT TIME ZONE)
 RETURNS INTEGER
 LANGUAGE plpgsql
 AS $$
@@ -29,12 +30,14 @@ BEGIN
   END IF;
   RETURN 0;
 END;
-$$;`)
-}
+$$;`,
+    );
+};
 
 exports.down = function (knex) {
   return knex.schema
-    .raw(`CREATE OR REPLACE FUNCTION confirm_invoice(invoice_id TEXT, amount_received BIGINT, confirmation_date TIMESTAMP WITHOUT TIME ZONE)
+    .raw(
+      `CREATE OR REPLACE FUNCTION confirm_invoice(invoice_id TEXT, amount_received BIGINT, confirmation_date TIMESTAMP WITHOUT TIME ZONE)
     RETURNS INTEGER
     LANGUAGE plpgsql
     AS $$
@@ -56,5 +59,6 @@ exports.down = function (knex) {
       END IF;
       RETURN 0;
     END;
-    $$;`)
-}
+    $$;`,
+    );
+};

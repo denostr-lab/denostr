@@ -1,7 +1,10 @@
 exports.up = function (knex) {
   return knex.schema
-    .raw('ALTER TABLE invoices ALTER COLUMN id TYPE text USING id::text; ALTER TABLE invoices ALTER COLUMN id DROP DEFAULT;')
-    .raw(`CREATE OR REPLACE FUNCTION confirm_invoice(invoice_id TEXT, amount_received BIGINT, confirmation_date TIMESTAMP WITHOUT TIME ZONE)
+    .raw(
+      "ALTER TABLE invoices ALTER COLUMN id TYPE text USING id::text; ALTER TABLE invoices ALTER COLUMN id DROP DEFAULT;",
+    )
+    .raw(
+      `CREATE OR REPLACE FUNCTION confirm_invoice(invoice_id TEXT, amount_received BIGINT, confirmation_date TIMESTAMP WITHOUT TIME ZONE)
 RETURNS INTEGER
 LANGUAGE plpgsql
 AS $$
@@ -23,13 +26,17 @@ BEGIN
   END IF;
   RETURN 0;
 END;
-$$;`)
-}
+$$;`,
+    );
+};
 
 exports.down = function (knex) {
   return knex.schema
-    .raw('ALTER TABLE invoices ALTER COLUMN id TYPE uuid USING id::uuid; ALTER TABLE invoices ALTER COLUMN id SET DEFAULT uuid_generate_v4();')
-    .raw(`CREATE OR REPLACE FUNCTION confirm_invoice(invoice_id UUID, amount_received BIGINT, confirmation_date TIMESTAMP WITHOUT TIME ZONE)
+    .raw(
+      "ALTER TABLE invoices ALTER COLUMN id TYPE uuid USING id::uuid; ALTER TABLE invoices ALTER COLUMN id SET DEFAULT uuid_generate_v4();",
+    )
+    .raw(
+      `CREATE OR REPLACE FUNCTION confirm_invoice(invoice_id UUID, amount_received BIGINT, confirmation_date TIMESTAMP WITHOUT TIME ZONE)
 RETURNS INTEGER
 LANGUAGE plpgsql
 AS $$
@@ -51,5 +58,6 @@ BEGIN
     END IF;
     RETURN 0;
 END;
-$$;`)
-}
+$$;`,
+    );
+};

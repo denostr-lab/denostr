@@ -4,5 +4,9 @@ export interface IRateLimiterOptions {
 }
 
 export interface IRateLimiter {
-  hit(key: string, step: number, options: IRateLimiterOptions): Promise<boolean>
+  hit(
+    key: string,
+    step: number,
+    options: IRateLimiterOptions,
+  ): Promise<boolean>;
 }
