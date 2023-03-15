@@ -1,33 +1,30 @@
-import * as secp256k1 from '@noble/secp256k1'
 import { Buffer } from 'Buffer'
-
-import { createHash, createHmac, Hash } from 'node:crypto'
+import { createHash, createHmac } from 'crypto'
 import { Observable } from 'rxjs'
-import WebSocket from 'ws'
-import Config from '../../../src/config/index.ts'
+import * as secp256k1 from 'secp256k1'
 
-import { CommandResult, MessageType, OutgoingMessage } from '../../../src/@types/messages.ts'
 import { Event } from '../../../src/@types/event.ts'
+import { CommandResult, MessageType, OutgoingMessage } from '../../../src/@types/messages.ts'
+import { SubscriptionFilter } from '../../../src/@types/subscription.ts'
+import Config from '../../../src/config/index.ts'
 import { serializeEvent } from '../../../src/utils/event.ts'
 import { streams } from './shared.ts'
-import { SubscriptionFilter } from '../../../src/@types/subscription.ts'
 
 
-secp256k1.utils.sha256Sync = (...messages: Uint8Array[]) =>
-  messages.reduce((hash: Hash, message: Uint8Array) => hash.update(message),  createHash('sha256')).digest()
+// secp256k1.utils.sha256Sync = (...messages: Uint8Array[]) =>
+//   messages.reduce((hash: Hash, message: Uint8Array) => hash.update(message),  createHash('sha256')).digest()
 
 export async function connect(_name: string): Promise<WebSocket> {
   const host = 'ws://localhost:18808'
   const ws = new WebSocket(host)
   return new Promise<WebSocket>((resolve, reject) => {
-    ws
-      .once('open', () => {
+    ws.onopen = (() => {
         resolve(ws)
       })
-      .once('error', reject)
-      .once('close', () => {
-        ws.removeAllListeners()
-      })
+    ws.onerror = reject
+    ws.onclose =() => {
+      // ws.removeAllListeners()
+    }
   })
 }
 
@@ -80,14 +77,9 @@ export async function createSubscription(
       subscriptionName,
       ...subscriptionFilters,
     ])
-
-    ws.send(data, (error?: Error) => {
-      if (error) {
-        reject(error)
-      } else {
-        resolve()
-      }
-    })
+    
+    ws.send(data)
+    resolve()
   })
 }
 
@@ -126,12 +118,7 @@ export async function sendEvent(ws: WebSocket, event: Event, successful = true) 
       }
     })
 
-    ws.send(JSON.stringify(['EVENT', event]), (err) => {
-      if (err) {
-        sub.unsubscribe()
-        reject(err)
-      }
-    })
+    ws.send(JSON.stringify(['EVENT', event]))
   })
 }
 

@@ -8,12 +8,18 @@
     "redis": "https://deno.land/x/redis@v0.29.2/mod.ts",
     "debug": "https://deno.land/x/debuglog@v1.0.0/debug.ts",
     "websocket": "./vendor/deno.land/x/websocket@v0.1.4/mod.ts",
-    "jest": "https://deno.land/x/stej@0.0.1/mod.ts",
+    "jest": "https://deno.land/std@0.179.0/testing/bdd.ts",
     "oak": "https://deno.land/x/oak@v12.1.0/mod.ts",
     "Buffer": "https://deno.land/std@0.139.0/node/buffer.ts",
     "secp256k1": "https://deno.land/x/secp256k1@1.7.1/mod.ts",
     "crypto": "https://deno.land/std@0.153.0/node/crypto.ts",
     "oak-csp": "https://deno.land/x/oak_csp@1.0.3/mod.ts",
+    "chai": "https://cdn.skypack.dev/chai@4.3.4?dts",
+    "sinon-chai": "https://cdn.skypack.dev/sinon-chai@3.7.0?dts",
+    "sinon": "https://cdn.skypack.dev/sinon@15.0.1?dts",
+    "@cucumber/cucumber": "https://cdn.skypack.dev/@cucumber/cucumber@9.0.0?dts",
+    "joi": "https://cdn.skypack.dev/joi@17.8.3?dts",
+    "rxjs": "https://cdn.skypack.dev/rxjs@7.8.0?dts"
   },
   "importMap": "./vendor/import_map.json"
 }

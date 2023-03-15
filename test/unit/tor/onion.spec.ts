@@ -1,11 +1,13 @@
-import { addOnion, closeTorClient, createTorConfig, getTorClient } from '../../../src/tor/client.ts'
-import { hiddenService, Tor } from 'tor-control-ts'
-import Config from '../../../src/config/index.ts'
-
-import { expect } from 'chai'
 import fs from 'node:fs/promises'
 import { hostname } from 'node:os'
+
+import { expect } from 'chai'
+import { afterEach,beforeEach, describe, it } from 'jest'
 import Sinon from 'sinon'
+import { hiddenService, Tor } from 'tor-control-ts'
+
+import Config from '../../../src/config/index.ts'
+import { addOnion, closeTorClient, createTorConfig, getTorClient } from '../../../src/tor/client.ts'
 
 export function mockModule<T extends { [K: string]: any }>
         (

@@ -3,7 +3,7 @@ module.exports = {
   parserOptions: {
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint/eslint-plugin'],
+  plugins: ['@typescript-eslint/eslint-plugin', 'simple-import-sort'],
   extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
   root: true,
   env: {
@@ -16,10 +16,8 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     semi: ['error', 'never'],
     quotes: ['error', 'single', { avoidEscape: true }],
-    'sort-imports': ['error', {
-      ignoreCase: true,
-      allowSeparatedGroups: true,
-    }],
+    'simple-import-sort/imports': 'error',
+    'simple-import-sort/exports': 'error',
     curly: [2, 'multi-line'],
     'max-len': [
       'error',

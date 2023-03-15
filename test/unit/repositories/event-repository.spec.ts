@@ -1,6 +1,7 @@
 import * as chai from 'chai'
-import * as sinon from 'sinon'
+import { afterEach,beforeEach, describe, it } from 'jest'
 import knex from 'knex'
+import * as sinon from 'sinon'
 import sinonChai from 'sinon-chai'
 
 import { Event, ParameterizedReplaceableEvent } from '../../../src/@types/event.ts'
@@ -11,8 +12,8 @@ chai.use(sinonChai)
 
 const { expect } = chai
 
-import { ContextMetadataKey, EventDeduplicationMetadataKey } from '../../../src/constants/base.ts'
 import { DatabaseClient } from '../../../src/@types/base.ts'
+import { ContextMetadataKey, EventDeduplicationMetadataKey } from '../../../src/constants/base.ts'
 import { EventRepository } from '../../../src/repositories/event-repository.ts'
 
 describe('EventRepository', () => {

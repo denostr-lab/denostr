@@ -2,11 +2,11 @@ import {
   Then,
   When,
   World,
-} from '@cucumber/cucumber.ts'
+} from '@cucumber/cucumber'
 import chai from 'chai'
 import sinonChai from 'sinon-chai'
-import { WebSocket } from 'ws'
 
+import { Event } from '../../../../src/@types/event.ts'
 import {
   createEvent,
   createSubscription,
@@ -17,7 +17,6 @@ import {
   waitForNextEvent,
   waitForNotice,
 } from '../helpers.ts'
-import { Event } from '../../../../src/@types/event.ts'
 import { isDraft } from '../shared.ts'
 
 chai.use(sinonChai)

@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import { describe, it } from 'jest'
 import sinon from 'sinon'
 
 import { Alternative } from '../../../src/utils/runes/alternative.ts'

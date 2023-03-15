@@ -1,9 +1,11 @@
-import { expect } from 'chai'
 import fs from 'node:fs'
 import { join } from 'node:path'
-import Sinon from 'sinon'
-import Config from '../../../src/config/index.ts'
 
+import { expect } from 'chai'
+import { afterEach,beforeEach, describe, it } from 'jest'
+import Sinon from 'sinon'
+
+import Config from '../../../src/config/index.ts'
 import { SettingsFileTypes, SettingsStatic } from '../../../src/utils/settings.ts'
 
 describe('SettingsStatic', () => {

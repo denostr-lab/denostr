@@ -1,11 +1,11 @@
 import { expect } from 'chai'
+import { afterEach,beforeEach, describe, it } from 'jest'
 import Sinon from 'sinon'
 
-import * as databaseClientModule from '../../../src/database/client.ts'
-
 import { AppWorker } from '../../../src/app/worker.ts'
-import { SettingsStatic } from '../../../src/utils/settings.ts'
+import * as databaseClientModule from '../../../src/database/client.ts'
 import { workerFactory } from '../../../src/factories/worker-factory.ts'
+import { SettingsStatic } from '../../../src/utils/settings.ts'
 
 
 describe('workerFactory', () => {

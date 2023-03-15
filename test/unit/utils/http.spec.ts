@@ -1,6 +1,8 @@
 import { expect } from 'chai'
-import { IncomingMessage } from 'node:http'
+import { beforeEach,describe, it } from 'jest'
+import { Request } from 'oak'
 
+import { Settings } from '../../../src/@types/settings.ts'
 import { getRemoteAddress } from '../../../src/utils/http.ts'
 
 describe('getRemoteAddress', () => {
@@ -8,7 +10,7 @@ describe('getRemoteAddress', () => {
   const socketAddress = 'socket-address'
   const address = 'address'
 
-  let request: IncomingMessage
+  let request: Request
 
   beforeEach(() => {
     request = {
@@ -18,14 +20,14 @@ describe('getRemoteAddress', () => {
       socket: {
         remoteAddress: socketAddress,
       },
-    } as any
+    } as unknown as Request
   })
 
   it('returns address using network.remote_ip_address when set', () => {
     expect(
       getRemoteAddress(
         request,
-        { network: { 'remote_ip_header': header } } as any,
+        { network: { 'remote_ip_header': header } } as Pick<Settings, 'network'>,
       )
     ).to.equal(address)
   })
@@ -34,7 +36,7 @@ describe('getRemoteAddress', () => {
     expect(
       getRemoteAddress(
         request,
-        { network: { remoteIpHeader: header } } as any,
+        { network: { remoteIpHeader: header } } as Pick<Settings, 'network'>,
       )
     ).to.equal(address)
   })
@@ -43,7 +45,7 @@ describe('getRemoteAddress', () => {
     expect(
       getRemoteAddress(
         request,
-        { network: { } } as any,
+        { network: { } } as Pick<Settings, 'network'>,
       )
     ).to.equal(socketAddress)
   })

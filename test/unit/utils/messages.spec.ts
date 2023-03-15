@@ -1,8 +1,9 @@
 import { expect } from 'chai'
+import { describe, it } from 'jest'
 
-import { createEndOfStoredEventsNoticeMessage, createNoticeMessage, createOutgoingEventMessage } from '../../../src/utils/messages.ts'
 import { Event } from '../../../src/@types/event.ts'
 import { MessageType } from '../../../src/@types/messages.ts'
+import { createEndOfStoredEventsNoticeMessage, createNoticeMessage, createOutgoingEventMessage } from '../../../src/utils/messages.ts'
 
 describe('createNotice', () => {
   it('returns a notice message', () => {

@@ -1,9 +1,8 @@
-import { Then, When } from '@cucumber/cucumber.ts'
+import { Then, When } from '@cucumber/cucumber'
 import { expect } from 'chai'
-import WebSocket from 'ws'
 
-import { createEvent, sendEvent, waitForEventCount, waitForNextEvent } from '../helpers.ts'
 import { Event } from '../../../../src/@types/event.ts'
+import { createEvent, sendEvent, waitForEventCount, waitForNextEvent } from '../helpers.ts'
 
 When(/^(\w+) sends a replaceable_event_0 event with content "([^"]+)"$/, async function(
   name: string,

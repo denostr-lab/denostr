@@ -1,12 +1,11 @@
-import { Given, Then, When } from '@cucumber/cucumber.ts'
+import { Given, Then, When } from '@cucumber/cucumber'
 import { expect } from 'chai'
-import WebSocket from 'ws'
 
-import { createEvent, sendEvent, waitForEventCount } from '../helpers.ts'
+import { Tag } from '../../../../src/@types/base.ts'
 import { Event } from '../../../../src/@types/event.ts'
 import { EventTags } from '../../../../src/constants/base.ts'
+import { createEvent, sendEvent, waitForEventCount } from '../helpers.ts'
 import { isDraft } from '../shared.ts'
-import { Tag } from '../../../../src/@types/base.ts'
 
 When(/^(\w+) sends a delete event for their last event$/, async function(
   name: string,

@@ -1,7 +1,8 @@
+import { Buffer } from 'Buffer'
 import { expect } from 'chai'
+import { describe, it } from 'jest'
 
 import { fromBuffer, toBuffer, toJSON } from '../../../src/utils/transform.ts'
-import { Buffer } from 'Buffer'
 
 
 describe('toJSON', () => {
