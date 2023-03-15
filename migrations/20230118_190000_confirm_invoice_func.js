@@ -24,11 +24,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 exports.up = async function (knex) {
-  return knex.schema
-    .raw(`create function now_utc() returns timestamp as $$
+    return knex.schema
+        .raw(`create function now_utc() returns timestamp as $$
   select now() at time zone 'utc';
 $$ language sql;`)
-    .raw(`create function ASSERT_SERIALIZED() returns void as $$
+        .raw(`create function ASSERT_SERIALIZED() returns void as $$
 BEGIN
     IF (select current_setting('transaction_isolation') <> 'serializable') THEN
         RAISE EXCEPTION 'SN_NOT_SERIALIZABLE';
@@ -36,8 +36,8 @@ BEGIN
 END;
 $$ language plpgsql;
     `)
-    .raw(
-      `CREATE OR REPLACE FUNCTION confirm_invoice(invoice_id UUID, amount_received BIGINT, confirmation_date TIMESTAMP WITHOUT TIME ZONE)
+        .raw(
+            `CREATE OR REPLACE FUNCTION confirm_invoice(invoice_id UUID, amount_received BIGINT, confirmation_date TIMESTAMP WITHOUT TIME ZONE)
 RETURNS INTEGER
 LANGUAGE plpgsql
 AS $$
@@ -60,12 +60,12 @@ BEGIN
     RETURN 0;
 END;
 $$;`,
-    );
-};
+        )
+}
 
 exports.down = function (knex) {
-  return knex.schema
-    .raw("DROP FUNCTION IF EXISTS confirm_invoice(UUID, BYTEA, TIMESTAMP);")
-    .raw("DROP FUNCTION IF EXISTS ASSERT_SERIALIZED();")
-    .raw("DROP FUNCTION IF EXISTS now_utc();");
-};
+    return knex.schema
+        .raw('DROP FUNCTION IF EXISTS confirm_invoice(UUID, BYTEA, TIMESTAMP);')
+        .raw('DROP FUNCTION IF EXISTS ASSERT_SERIALIZED();')
+        .raw('DROP FUNCTION IF EXISTS now_utc();')
+}

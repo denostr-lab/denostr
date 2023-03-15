@@ -1,255 +1,249 @@
-import EventEmitter from "node:events";
+import EventEmitter from 'node:events'
 
-import chai from "chai";
-import chaiAsPromised from "chai-as-promised";
-import { afterEach, beforeEach, describe, it } from "jest";
-import Sinon from "sinon";
-import sinonChai from "sinon-chai";
+import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
+import { afterEach, beforeEach, describe, it } from 'jest'
+import Sinon from 'sinon'
+import sinonChai from 'sinon-chai'
 
-chai.use(sinonChai);
-chai.use(chaiAsPromised);
+chai.use(sinonChai)
+chai.use(chaiAsPromised)
 
-import { Event } from "../../../src/@types/event.ts";
-import {
-  IncomingEventMessage,
-  MessageType,
-} from "../../../src/@types/messages.ts";
-import { IUserRepository } from "../../../src/@types/repositories.ts";
-import { WebSocketAdapterEvent } from "../../../src/constants/adapter.ts";
-import { DelegatedEventMessageHandler } from "../../../src/handlers/delegated-event-message-handler.ts";
-import { EventMessageHandler } from "../../../src/handlers/event-message-handler.ts";
+import { Event } from '../../../src/@types/event.ts'
+import { IncomingEventMessage, MessageType } from '../../../src/@types/messages.ts'
+import { IUserRepository } from '../../../src/@types/repositories.ts'
+import { WebSocketAdapterEvent } from '../../../src/constants/adapter.ts'
+import { DelegatedEventMessageHandler } from '../../../src/handlers/delegated-event-message-handler.ts'
+import { EventMessageHandler } from '../../../src/handlers/event-message-handler.ts'
 
-const { expect } = chai;
+const { expect } = chai
 
-describe("DelegatedEventMessageHandler", () => {
-  let webSocket: EventEmitter;
-  let handler: DelegatedEventMessageHandler;
-  let userRepository: IUserRepository;
-  let event: Event;
-  let message: IncomingEventMessage;
-  let sandbox: Sinon.SinonSandbox;
+describe('DelegatedEventMessageHandler', () => {
+    let webSocket: EventEmitter
+    let handler: DelegatedEventMessageHandler
+    let userRepository: IUserRepository
+    let event: Event
+    let message: IncomingEventMessage
+    let sandbox: Sinon.SinonSandbox
 
-  let originalConsoleWarn: any = undefined;
-
-  beforeEach(() => {
-    sandbox = Sinon.createSandbox();
-    originalConsoleWarn = console.warn;
-    console.warn = () => undefined;
-    event = {
-      content: "hello",
-      created_at: 1665546189,
-      id: "f".repeat(64),
-      kind: 1,
-      pubkey: "f".repeat(64),
-      sig: "f".repeat(128),
-      tags: [
-        ["delegation", "delegator", "rune", "signature"],
-      ],
-    };
-  });
-
-  afterEach(() => {
-    console.warn = originalConsoleWarn;
-    sandbox.restore();
-  });
-
-  describe("handleMessage", () => {
-    let canAcceptEventStub: Sinon.SinonStub;
-    let isEventValidStub: Sinon.SinonStub;
-    let strategyFactoryStub: Sinon.SinonStub;
-    let onMessageSpy: Sinon.SinonSpy;
-    let strategyExecuteStub: Sinon.SinonStub;
-    let isRateLimitedStub: Sinon.SinonStub;
-    let isUserAdmitted: Sinon.SinonStub;
+    let originalConsoleWarn: any = undefined
 
     beforeEach(() => {
-      canAcceptEventStub = sandbox.stub(
-        DelegatedEventMessageHandler.prototype,
-        "canAcceptEvent" as any,
-      );
-      isEventValidStub = sandbox.stub(
-        DelegatedEventMessageHandler.prototype,
-        "isEventValid" as any,
-      );
-      isUserAdmitted = sandbox.stub(
-        EventMessageHandler.prototype,
-        "isUserAdmitted" as any,
-      );
-      strategyExecuteStub = sandbox.stub();
-      strategyFactoryStub = sandbox.stub().returns({
-        execute: strategyExecuteStub,
-      });
-      onMessageSpy = sandbox.fake.returns(undefined);
-      webSocket = new EventEmitter();
-      webSocket.on(WebSocketAdapterEvent.Message, onMessageSpy);
-      message = [MessageType.EVENT, event];
-      isRateLimitedStub = sandbox.stub(
-        EventMessageHandler.prototype,
-        "isRateLimited" as any,
-      );
-      handler = new DelegatedEventMessageHandler(
-        webSocket as any,
-        strategyFactoryStub,
-        userRepository,
-        () => ({}) as any,
-        () => ({ hit: async () => false }),
-      );
-    });
+        sandbox = Sinon.createSandbox()
+        originalConsoleWarn = console.warn
+        console.warn = () => undefined
+        event = {
+            content: 'hello',
+            created_at: 1665546189,
+            id: 'f'.repeat(64),
+            kind: 1,
+            pubkey: 'f'.repeat(64),
+            sig: 'f'.repeat(128),
+            tags: [
+                ['delegation', 'delegator', 'rune', 'signature'],
+            ],
+        }
+    })
 
     afterEach(() => {
-      isEventValidStub.restore();
-      canAcceptEventStub.restore();
-      webSocket.removeAllListeners();
-    });
+        console.warn = originalConsoleWarn
+        sandbox.restore()
+    })
 
-    it("rejects event if it can't be accepted", async () => {
-      canAcceptEventStub.returns("reason");
+    describe('handleMessage', () => {
+        let canAcceptEventStub: Sinon.SinonStub
+        let isEventValidStub: Sinon.SinonStub
+        let strategyFactoryStub: Sinon.SinonStub
+        let onMessageSpy: Sinon.SinonSpy
+        let strategyExecuteStub: Sinon.SinonStub
+        let isRateLimitedStub: Sinon.SinonStub
+        let isUserAdmitted: Sinon.SinonStub
 
-      await handler.handleMessage(message);
+        beforeEach(() => {
+            canAcceptEventStub = sandbox.stub(
+                DelegatedEventMessageHandler.prototype,
+                'canAcceptEvent' as any,
+            )
+            isEventValidStub = sandbox.stub(
+                DelegatedEventMessageHandler.prototype,
+                'isEventValid' as any,
+            )
+            isUserAdmitted = sandbox.stub(
+                EventMessageHandler.prototype,
+                'isUserAdmitted' as any,
+            )
+            strategyExecuteStub = sandbox.stub()
+            strategyFactoryStub = sandbox.stub().returns({
+                execute: strategyExecuteStub,
+            })
+            onMessageSpy = sandbox.fake.returns(undefined)
+            webSocket = new EventEmitter()
+            webSocket.on(WebSocketAdapterEvent.Message, onMessageSpy)
+            message = [MessageType.EVENT, event]
+            isRateLimitedStub = sandbox.stub(
+                EventMessageHandler.prototype,
+                'isRateLimited' as any,
+            )
+            handler = new DelegatedEventMessageHandler(
+                webSocket as any,
+                strategyFactoryStub,
+                userRepository,
+                () => ({}) as any,
+                () => ({ hit: async () => false }),
+            )
+        })
 
-      expect(canAcceptEventStub).to.have.been.calledOnceWithExactly(event);
-      expect(onMessageSpy).to.have.been.calledOnceWithExactly(
-        [
-          MessageType.OK,
-          "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-          false,
-          "reason",
-        ],
-      );
-      expect(strategyFactoryStub).not.to.have.been.called;
-    });
+        afterEach(() => {
+            isEventValidStub.restore()
+            canAcceptEventStub.restore()
+            webSocket.removeAllListeners()
+        })
 
-    it("rejects event if invalid", async () => {
-      isEventValidStub.returns("reason");
+        it('rejects event if it can\'t be accepted', async () => {
+            canAcceptEventStub.returns('reason')
 
-      await handler.handleMessage(message);
+            await handler.handleMessage(message)
 
-      expect(isEventValidStub).to.have.been.calledOnceWithExactly(event);
-      expect(onMessageSpy).not.to.have.been.calledOnceWithExactly();
-      expect(strategyFactoryStub).not.to.have.been.called;
-    });
+            expect(canAcceptEventStub).to.have.been.calledOnceWithExactly(event)
+            expect(onMessageSpy).to.have.been.calledOnceWithExactly(
+                [
+                    MessageType.OK,
+                    'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+                    false,
+                    'reason',
+                ],
+            )
+            expect(strategyFactoryStub).not.to.have.been.called
+        })
 
-    it("rejects event if rate-limited", async () => {
-      isRateLimitedStub.resolves(true);
+        it('rejects event if invalid', async () => {
+            isEventValidStub.returns('reason')
 
-      await handler.handleMessage(message);
+            await handler.handleMessage(message)
 
-      expect(isRateLimitedStub).to.have.been.calledOnceWithExactly(event);
-      expect(onMessageSpy).to.have.been.calledOnceWithExactly(
-        [MessageType.OK, event.id, false, "rate-limited: slow down"],
-      );
-      expect(strategyFactoryStub).not.to.have.been.called;
-    });
+            expect(isEventValidStub).to.have.been.calledOnceWithExactly(event)
+            expect(onMessageSpy).not.to.have.been.calledOnceWithExactly()
+            expect(strategyFactoryStub).not.to.have.been.called
+        })
 
-    it("rejects event is user is not admitted", async () => {
-      isUserAdmitted.resolves("not admitted");
+        it('rejects event if rate-limited', async () => {
+            isRateLimitedStub.resolves(true)
 
-      await handler.handleMessage(message);
+            await handler.handleMessage(message)
 
-      expect(isRateLimitedStub).to.have.been.calledOnceWithExactly(event);
-      expect(isUserAdmitted).to.have.been.calledOnceWithExactly(event);
-      expect(onMessageSpy).to.have.been.calledOnceWithExactly([
-        MessageType.OK,
-        event.id,
-        false,
-        "not admitted",
-      ]);
-    });
+            expect(isRateLimitedStub).to.have.been.calledOnceWithExactly(event)
+            expect(onMessageSpy).to.have.been.calledOnceWithExactly(
+                [MessageType.OK, event.id, false, 'rate-limited: slow down'],
+            )
+            expect(strategyFactoryStub).not.to.have.been.called
+        })
 
-    it("does not call strategy if none given", async () => {
-      isEventValidStub.returns(undefined);
-      canAcceptEventStub.returns(undefined);
-      strategyFactoryStub.returns(undefined);
+        it('rejects event is user is not admitted', async () => {
+            isUserAdmitted.resolves('not admitted')
 
-      await handler.handleMessage(message);
+            await handler.handleMessage(message)
 
-      expect(isEventValidStub).to.have.been.calledOnceWithExactly(event);
-      expect(onMessageSpy).not.to.have.been.calledOnceWithExactly();
-      expect(strategyFactoryStub).to.have.been.calledOnceWithExactly([
-        event,
-        webSocket,
-      ]);
-      expect(strategyExecuteStub).not.to.have.been.called;
-    });
+            expect(isRateLimitedStub).to.have.been.calledOnceWithExactly(event)
+            expect(isUserAdmitted).to.have.been.calledOnceWithExactly(event)
+            expect(onMessageSpy).to.have.been.calledOnceWithExactly([
+                MessageType.OK,
+                event.id,
+                false,
+                'not admitted',
+            ])
+        })
 
-    it("calls strategy with event", async () => {
-      isEventValidStub.returns(undefined);
-      canAcceptEventStub.returns(undefined);
+        it('does not call strategy if none given', async () => {
+            isEventValidStub.returns(undefined)
+            canAcceptEventStub.returns(undefined)
+            strategyFactoryStub.returns(undefined)
 
-      await handler.handleMessage(message);
+            await handler.handleMessage(message)
 
-      expect(isEventValidStub).to.have.been.calledOnceWithExactly(event);
-      expect(onMessageSpy).not.to.have.been.calledOnceWithExactly();
-      expect(strategyFactoryStub).to.have.been.calledOnceWithExactly([
-        event,
-        webSocket,
-      ]);
-      expect(strategyExecuteStub).to.have.been.calledOnceWithExactly(event);
-    });
+            expect(isEventValidStub).to.have.been.calledOnceWithExactly(event)
+            expect(onMessageSpy).not.to.have.been.calledOnceWithExactly()
+            expect(strategyFactoryStub).to.have.been.calledOnceWithExactly([
+                event,
+                webSocket,
+            ])
+            expect(strategyExecuteStub).not.to.have.been.called
+        })
 
-    it("does not reject if strategy rejects", async () => {
-      const error = new Error("mistakes were made");
-      isEventValidStub.returns(undefined);
-      canAcceptEventStub.returns(undefined);
-      strategyExecuteStub.rejects(error);
+        it('calls strategy with event', async () => {
+            isEventValidStub.returns(undefined)
+            canAcceptEventStub.returns(undefined)
 
-      return expect(handler.handleMessage(message)).to.eventually.be.fulfilled;
-    });
-  });
+            await handler.handleMessage(message)
 
-  describe("isEventValid", () => {
-    let parentIsEventValidStub: Sinon.SinonStub;
+            expect(isEventValidStub).to.have.been.calledOnceWithExactly(event)
+            expect(onMessageSpy).not.to.have.been.calledOnceWithExactly()
+            expect(strategyFactoryStub).to.have.been.calledOnceWithExactly([
+                event,
+                webSocket,
+            ])
+            expect(strategyExecuteStub).to.have.been.calledOnceWithExactly(event)
+        })
 
-    beforeEach(() => {
-      parentIsEventValidStub = Sinon.stub(
-        EventMessageHandler.prototype,
-        "isEventValid" as any,
-      );
-      event = {
-        "id":
-          "a080fd288b60ac2225ff2e2d815291bd730911e583e177302cc949a15dc2b2dc",
-        "pubkey":
-          "62903b1ff41559daf9ee98ef1ae67cc52f301bb5ce26d14baba3052f649c3f49",
-        "created_at": 1660896109,
-        "kind": 1,
-        "tags": [
-          [
-            "delegation",
-            "86f0689bd48dcd19c67a19d994f938ee34f251d8c39976290955ff585f2db42e",
-            "kind=1&created_at>1640995200",
-            "c33c88ba78ec3c760e49db591ac5f7b129e3887c8af7729795e85a0588007e5ac89b46549232d8f918eefd73e726cb450135314bfda419c030d0b6affe401ec1",
-          ],
-        ],
-        "content": "Hello world",
-        "sig":
-          "cd4a3cd20dc61dcbc98324de561a07fd23b3d9702115920c0814b5fb822cc5b7c5bcdaf3fa326d24ed50c5b9c8214d66c75bae34e3a84c25e4d122afccb66eb6",
-      };
-    });
+        it('does not reject if strategy rejects', async () => {
+            const error = new Error('mistakes were made')
+            isEventValidStub.returns(undefined)
+            canAcceptEventStub.returns(undefined)
+            strategyExecuteStub.rejects(error)
 
-    afterEach(() => {
-      parentIsEventValidStub.restore();
-    });
+            return expect(handler.handleMessage(message)).to.eventually.be.fulfilled
+        })
+    })
 
-    it("returns undefined if event and delegate tag is valid", async () => {
-      parentIsEventValidStub.resolves(undefined);
+    describe('isEventValid', () => {
+        let parentIsEventValidStub: Sinon.SinonStub
 
-      expect(await (handler as any).isEventValid(event)).to.be.undefined;
-    });
+        beforeEach(() => {
+            parentIsEventValidStub = Sinon.stub(
+                EventMessageHandler.prototype,
+                'isEventValid' as any,
+            )
+            event = {
+                'id': 'a080fd288b60ac2225ff2e2d815291bd730911e583e177302cc949a15dc2b2dc',
+                'pubkey': '62903b1ff41559daf9ee98ef1ae67cc52f301bb5ce26d14baba3052f649c3f49',
+                'created_at': 1660896109,
+                'kind': 1,
+                'tags': [
+                    [
+                        'delegation',
+                        '86f0689bd48dcd19c67a19d994f938ee34f251d8c39976290955ff585f2db42e',
+                        'kind=1&created_at>1640995200',
+                        'c33c88ba78ec3c760e49db591ac5f7b129e3887c8af7729795e85a0588007e5ac89b46549232d8f918eefd73e726cb450135314bfda419c030d0b6affe401ec1',
+                    ],
+                ],
+                'content': 'Hello world',
+                'sig': 'cd4a3cd20dc61dcbc98324de561a07fd23b3d9702115920c0814b5fb822cc5b7c5bcdaf3fa326d24ed50c5b9c8214d66c75bae34e3a84c25e4d122afccb66eb6',
+            }
+        })
 
-    it("returns reason if event is not valid", () => {
-      parentIsEventValidStub.resolves("reason");
-      return expect((handler as any).isEventValid(event)).to.eventually.equal(
-        "reason",
-      );
-    });
+        afterEach(() => {
+            parentIsEventValidStub.restore()
+        })
 
-    it("returns reason if delegate signature is not valid", () => {
-      parentIsEventValidStub.resolves(undefined);
+        it('returns undefined if event and delegate tag is valid', async () => {
+            parentIsEventValidStub.resolves(undefined)
 
-      event.tags[0][3] = "wrong sig";
-      return expect((handler as any).isEventValid(event)).to.eventually.equal(
-        "invalid: delegation verification failed",
-      );
-    });
-  });
-});
+            expect(await (handler as any).isEventValid(event)).to.be.undefined
+        })
+
+        it('returns reason if event is not valid', () => {
+            parentIsEventValidStub.resolves('reason')
+            return expect((handler as any).isEventValid(event)).to.eventually.equal(
+                'reason',
+            )
+        })
+
+        it('returns reason if delegate signature is not valid', () => {
+            parentIsEventValidStub.resolves(undefined)
+
+            event.tags[0][3] = 'wrong sig'
+            return expect((handler as any).isEventValid(event)).to.eventually.equal(
+                'invalid: delegation verification failed',
+            )
+        })
+    })
+})

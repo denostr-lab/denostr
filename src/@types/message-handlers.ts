@@ -1,13 +1,13 @@
-import { IncomingMessage } from "./messages.ts";
+import { IncomingMessage } from './messages.ts'
 
 export interface IMessageHandler {
-  handleMessage(message: IncomingMessage): Promise<void>;
+    handleMessage(message: IncomingMessage): Promise<void>
 }
 
 export interface IAbortable {
-  abort(): void;
+    abort(): void
 }
 
 export interface IEventStrategy<TInput, TOutput> {
-  execute(args: TInput): TOutput;
+    execute(args: TInput): TOutput
 }

@@ -1,31 +1,31 @@
 {
-  "compilerOptions": {
-    "module": "CommonJS",
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "ESNext",
-    "outDir": "./dist",
-    "moduleResolution": "Node",
-    "types": ["node", "mocha"],
-    "typeRoots": ["./node_modules/@types"],
-    "declarationMap": true,
-    "inlineSourceMap": false,
-    "inlineSources": false,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "lib": ["ESNext"],
-    "incremental": true
-  },
-  "ts-node": {
-    "transpileOnly": true
-  },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+    "compilerOptions": {
+        "module": "CommonJS",
+        "declaration": true,
+        "removeComments": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "allowSyntheticDefaultImports": true,
+        "target": "ESNext",
+        "outDir": "./dist",
+        "moduleResolution": "Node",
+        "types": ["node", "mocha"],
+        "typeRoots": ["./node_modules/@types"],
+        "declarationMap": true,
+        "inlineSourceMap": false,
+        "inlineSources": false,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "lib": ["ESNext"],
+        "incremental": true
+    },
+    "ts-node": {
+        "transpileOnly": true
+    },
+    "include": [
+        "src/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
 }

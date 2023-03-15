@@ -1,7 +1,7 @@
 exports.up = async function (knex) {
-  return knex.schema
-    .raw(
-      `CREATE OR REPLACE FUNCTION charge_user(charged_user BYTEA, amount BIGINT)
+    return knex.schema
+        .raw(
+            `CREATE OR REPLACE FUNCTION charge_user(charged_user BYTEA, amount BIGINT)
 RETURNS INTEGER
 LANGUAGE plpgsql
 AS $$
@@ -19,10 +19,10 @@ BEGIN
     END IF;
 END;
 $$;`,
-    );
-};
+        )
+}
 
 exports.down = function (knex) {
-  return knex.schema
-    .raw("DROP FUNCTION IF EXISTS charge_user(BYTEA, BIGINT);");
-};
+    return knex.schema
+        .raw('DROP FUNCTION IF EXISTS charge_user(BYTEA, BIGINT);')
+}
