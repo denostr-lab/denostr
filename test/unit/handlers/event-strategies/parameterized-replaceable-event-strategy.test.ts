@@ -2,8 +2,10 @@ import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import { afterEach, beforeEach, describe, it } from 'jest'
 import Sinon from 'sinon'
+import SinonChi from 'sinon-chai'
 
 chai.use(chaiAsPromised)
+chai.use(SinonChi)
 
 import { IWebSocketAdapter } from '../../../../src/@types/adapters.ts'
 import { DatabaseClient } from '../../../../src/@types/base.ts'

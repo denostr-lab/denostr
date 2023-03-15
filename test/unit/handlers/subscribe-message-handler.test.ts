@@ -7,6 +7,7 @@ import chaiAsPromised from 'chai-as-promised'
 import { afterEach, beforeEach, describe, it } from 'jest'
 import { always } from 'ramda'
 import Sinon from 'sinon'
+import SinonChi from 'sinon-chai'
 
 import { IWebSocketAdapter } from '../../../src/@types/adapters.ts'
 import { Event } from '../../../src/@types/event.ts'
@@ -18,6 +19,8 @@ import { WebSocketAdapterEvent } from '../../../src/constants/adapter.ts'
 import { SubscribeMessageHandler } from '../../../src/handlers/subscribe-message-handler.ts'
 
 chai.use(chaiAsPromised)
+chai.use(SinonChi)
+
 const { expect } = chai
 
 const toDbEvent = (event: Event) => ({

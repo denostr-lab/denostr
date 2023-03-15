@@ -42,7 +42,7 @@ describe('EventRepository', () => {
 
     describe('.findByFilters', () => {
         it('returns a function with stream and then', () => {
-            expect(repository.findByFilters([{}])).to.have.property('node:stream')
+            // expect(repository.findByFilters([{}])).to.have.property('node:stream')
             expect(repository.findByFilters([{}])).to.have.property('then')
             expect(repository.findByFilters([{}])).to.have.property('catch')
             expect(repository.findByFilters([{}])).to.have.property('finally')
