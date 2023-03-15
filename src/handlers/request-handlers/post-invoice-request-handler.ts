@@ -1,4 +1,4 @@
-import { Request, Response, Status, RouterContext, NextFunction } from '../../@types/controllers.ts'
+import { NextFunction, Request, Response, RouterContext, Status } from '../../@types/controllers.ts'
 
 import { createPostInvoiceController } from '../../factories/post-invoice-controller-factory.ts'
 
@@ -12,7 +12,7 @@ export const postInvoiceRequestHandler = async (
 
   try {
     await controller.handleRequest(req, res, ctx)
-    await next();
+    await next()
   } catch (error) {
     
     console.error('Unable handle request.', error)

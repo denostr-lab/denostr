@@ -61,7 +61,7 @@ export const rootRequestHandler = async(ctx: RouterContext, next: NextFunction) 
     response.headers.set('content-type', 'application/nostr+json')
     response.headers.set('access-control-allow-origin', '*')
     response.body = relayInformationDocument
-    await next();
+    await next()
     return
   }
 
@@ -74,6 +74,6 @@ export const rootRequestHandler = async(ctx: RouterContext, next: NextFunction) 
     response.status = Status.OK
     response.headers.set('content-type', 'text/plain; charset=utf8')
     response.body = 'Please use a Nostr client to connect.'
-    await next();
+    await next()
   }
 }

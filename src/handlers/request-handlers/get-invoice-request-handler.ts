@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response, Status, RouterContext } from '../../@types/controllers.ts'
+import { NextFunction, Response, RouterContext, Status } from '../../@types/controllers.ts'
 
 import { path, pathEq } from 'ramda'
 import { readFileSync } from 'node:fs'
@@ -9,7 +9,6 @@ import { FeeSchedule } from '../../@types/settings.ts'
 let pageCache: string
 
 export const getInvoiceRequestHandler = async (ctx: RouterContext, next: NextFunction) => {
-  console.info('阿萨斯大所多')
 
   const res: Response = ctx.response
   const settings = createSettings()

@@ -1,9 +1,9 @@
 
 import { createLogger } from '../../factories/logger-factory.ts'
 import { fromZebedeeInvoice } from '../../utils/transform.ts'
-import { IController, Request, Response, Status } from '../../@types/controllers.ts'
 import { InvoiceStatus } from '../../@types/invoice.ts'
 import { IPaymentsService } from '../../@types/services.ts'
+import { IController, Request, Response, Status } from '../../@types/controllers.ts'
 
 const debug = createLogger('zebedee-callback-controller')
 

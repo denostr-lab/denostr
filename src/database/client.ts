@@ -2,6 +2,7 @@ import 'pg'
 import 'pg-query-stream'
 import knex, { Knex } from 'knex'
 import { createLogger } from '../factories/logger-factory.ts'
+import Config from '../config/index.ts'
 
 ((knex) => {
   const lastUpdate = {}
@@ -25,24 +26,24 @@ import { createLogger } from '../factories/logger-factory.ts'
 const getMasterConfig = (): Knex.Config => ({
   tag: 'master',
   client: 'pg',
-  connection: process.env.DB_URI ? process.env.DB_URI : {
-    host: process.env.DB_HOST,
-    port: Number(process.env.DB_PORT),
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
+  connection: Config.DB_URI ? Config.DB_URI : {
+    host: Config.DB_HOST,
+    port: Number(Config.DB_PORT),
+    user: Config.DB_USER,
+    password: Config.DB_PASSWORD,
+    database: Config.DB_NAME,
   },
   pool: {
-    min: process.env.DB_MIN_POOL_SIZE ? Number(process.env.DB_MIN_POOL_SIZE) : 0,
-    max: process.env.DB_MAX_POOL_SIZE ? Number(process.env.DB_MAX_POOL_SIZE) : 3,
+    min: Config.DB_MIN_POOL_SIZE ? Number(Config.DB_MIN_POOL_SIZE) : 0,
+    max: Config.DB_MAX_POOL_SIZE ? Number(Config.DB_MAX_POOL_SIZE) : 3,
     idleTimeoutMillis: 60000,
     propagateCreateError: false,
-    acquireTimeoutMillis: process.env.DB_ACQUIRE_CONNECTION_TIMEOUT
-    ? Number(process.env.DB_ACQUIRE_CONNECTION_TIMEOUT)
+    acquireTimeoutMillis: Config.DB_ACQUIRE_CONNECTION_TIMEOUT
+    ? Number(Config.DB_ACQUIRE_CONNECTION_TIMEOUT)
     : 60000,
   },
-  acquireConnectionTimeout: process.env.DB_ACQUIRE_CONNECTION_TIMEOUT
-    ? Number(process.env.DB_ACQUIRE_CONNECTION_TIMEOUT)
+  acquireConnectionTimeout: Config.DB_ACQUIRE_CONNECTION_TIMEOUT
+    ? Number(Config.DB_ACQUIRE_CONNECTION_TIMEOUT)
     : 60000,
 } as any)
 
@@ -50,19 +51,19 @@ const getReadReplicaConfig = (): Knex.Config => ({
   tag: 'read-replica',
   client: 'pg',
   connection: {
-    host: process.env.RR_DB_HOST,
-    port: Number(process.env.RR_DB_PORT),
-    user: process.env.RR_DB_USER,
-    password: process.env.RR_DB_PASSWORD,
-    database: process.env.RR_DB_NAME,
+    host: Config.RR_DB_HOST,
+    port: Number(Config.RR_DB_PORT),
+    user: Config.RR_DB_USER,
+    password: Config.RR_DB_PASSWORD,
+    database: Config.RR_DB_NAME,
   },
   pool: {
-    min: process.env.RR_DB_MIN_POOL_SIZE ? Number(process.env.RR_DB_MIN_POOL_SIZE) : 0,
-    max: process.env.RR_DB_MAX_POOL_SIZE ? Number(process.env.RR_DB_MAX_POOL_SIZE) : 3,
+    min: Config.RR_DB_MIN_POOL_SIZE ? Number(Config.RR_DB_MIN_POOL_SIZE) : 0,
+    max: Config.RR_DB_MAX_POOL_SIZE ? Number(Config.RR_DB_MAX_POOL_SIZE) : 3,
     idleTimeoutMillis: 60000,
     propagateCreateError: false,
-    acquireTimeoutMillis: process.env.RR_DB_ACQUIRE_CONNECTION_TIMEOUT
-    ? Number(process.env.RR_DB_ACQUIRE_CONNECTION_TIMEOUT)
+    acquireTimeoutMillis: Config.RR_DB_ACQUIRE_CONNECTION_TIMEOUT
+    ? Number(Config.RR_DB_ACQUIRE_CONNECTION_TIMEOUT)
     : 60000,
   },
 } as any)
@@ -83,7 +84,7 @@ export const getMasterDbClient = () => {
 let readClient: Knex
 
 export const getReadReplicaDbClient = () => {
-  if (process.env.READ_REPLICA_ENABLED !== 'true') {
+  if (Config.READ_REPLICA_ENABLED !== 'true') {
     return getMasterDbClient()
   }
 

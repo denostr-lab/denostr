@@ -1,5 +1,6 @@
 import fs from 'node:fs'
 import yaml from 'js-yaml'
+import Config from '../config/index.ts'
 
 import { extname, join } from 'node:path'
 import { mergeDeepRight } from 'ramda'
@@ -18,7 +19,7 @@ export class SettingsStatic {
   static _settings: Settings | undefined
 
   public static getSettingsFileBasePath(): string {
-    return process.env.NOSTR_CONFIG_DIR ?? join(process.cwd(), '.nostr')
+    return Config.NOSTR_CONFIG_DIR ?? join(Deno.cwd(), '.nostr')
   }
 
   public static getDefaultSettingsFilePath(): string {

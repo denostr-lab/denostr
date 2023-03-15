@@ -1,3 +1,5 @@
+import { Buffer } from 'Buffer'
+
 export function getLeadingZeroBits(hash: Buffer) {
   let total: number, i: number, bits: number
 

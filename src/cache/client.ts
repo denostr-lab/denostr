@@ -1,3 +1,4 @@
+import Config from '../config/index.ts'
 import { connect, RedisConnectOptions } from 'redis'
 import { CacheClient } from '../@types/cache.ts'
 import { createLogger } from '../factories/logger-factory.ts'
@@ -6,8 +7,8 @@ import { createLogger } from '../factories/logger-factory.ts'
 const debug = createLogger('cache-client')
 
 export const getCacheConfig = (): RedisConnectOptions => ({
-  hostname: process.env.REDIS_HOST as string,
-  port: process.env.REDIS_PORT as string,
+  hostname: Config.REDIS_HOST as string,
+  port: Config.REDIS_PORT as string,
   maxRetryCount: 100,
 })
 

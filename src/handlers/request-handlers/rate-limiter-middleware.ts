@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response, Status, RouterContext } from '../../@types/controllers.ts'
+import { NextFunction, Request, Response, RouterContext, Status } from '../../@types/controllers.ts'
 
 import { createLogger } from '../../factories/logger-factory.ts'
 import { createSettings } from '../../factories/settings-factory.ts'

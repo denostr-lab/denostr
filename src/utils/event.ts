@@ -1,12 +1,15 @@
-import * as secp256k1 from '@noble/secp256k1'
+import * as secp256k1 from 'secp256k1'
+import Config from '../config/index.ts'
 
 import { applySpec, converge, curry, mergeLeft, nth, omit, pipe, prop, reduceBy } from 'ramda'
+import { Buffer } from 'Buffer'
+
 import { CanonicalEvent, DBEvent, Event, UnidentifiedEvent, UnsignedEvent } from '../@types/event.ts'
 import { createCipheriv } from 'node:crypto'
+
 import { EventId, Pubkey, Tag } from '../@types/base.ts'
 import { EventKinds, EventTags } from '../constants/base.ts'
 
-import cluster from 'node:cluster'
 import { deriveFromSecret } from './secret.ts'
 import { EventKindsRange } from '../@types/settings.ts'
 import { fromBuffer } from './transform.ts'
@@ -182,8 +185,8 @@ export const identifyEvent = async (event: UnidentifiedEvent): Promise<UnsignedE
 }
 
 export function getRelayPrivateKey(relayUrl: string): string {
-  if (process.env.RELAY_PRIVATE_KEY) {
-    return process.env.RELAY_PRIVATE_KEY
+  if (Config.RELAY_PRIVATE_KEY) {
+    return Config.RELAY_PRIVATE_KEY
   }
 
   return deriveFromSecret(relayUrl).toString('hex')
@@ -225,24 +228,25 @@ export const encryptKind4Event = (
 
 export const broadcastEvent = async (event: Event): Promise<Event> => {
   return new Promise((resolve, reject) => {
-    if (!cluster.isWorker || typeof process.send === 'undefined') {
-      return resolve(event)
-    }
+    return resolve()
+    // if (!cluster.isWorker || typeof process.send === 'undefined') {
+    //   return resolve(event)
+    // }
 
-    process.send(
-      {
-        eventName: WebSocketServerAdapterEvent.Broadcast,
-        event,
-      },
-      undefined,
-      undefined,
-      (error: Error | null) => {
-        if (error) {
-          return reject(error)
-        }
-        resolve(event)
-      },
-    )
+    // process.send(
+    //   {
+    //     eventName: WebSocketServerAdapterEvent.Broadcast,
+    //     event,
+    //   },
+    //   undefined,
+    //   undefined,
+    //   (error: Error | null) => {
+    //     if (error) {
+    //       return reject(error)
+    //     }
+    //     resolve(event)
+    //   },
+    // )
   })
 }
 

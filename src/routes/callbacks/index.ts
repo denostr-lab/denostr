@@ -1,6 +1,6 @@
 import { deriveFromSecret, hmacSha256 } from '../../utils/secret.ts'
-import { Router , helpers} from 'oak'
-import { Request, Response, Status, NextFunction } from '../../@types/controllers.ts'
+import { helpers , Router} from 'oak'
+import { NextFunction, Request, Response, Status } from '../../@types/controllers.ts'
 import type { RouterContext } from '../../@types/controllers.ts'
 import { createLogger } from '../../factories/logger-factory.ts'
 import { createSettings } from '../../factories/settings-factory.ts'
@@ -32,7 +32,7 @@ router
     }
 
     await postZebedeeCallbackRequestHandler(req, res)
-    await next();
+    await next()
   })
   .post('/lnbits', async (ctx:  RouterContext, next) => {
     const req : Request = ctx.request
@@ -47,7 +47,7 @@ router
     }
 
     let validationPassed = false
-    const query = helpers.getQuery(ctx);
+    const query = helpers.getQuery(ctx)
     if (typeof query.hmac === 'string' && query.hmac.match(/^[0-9]{1,20}:[0-9a-f]{64}$/)) {
       const split = query.hmac.split(':')
       if (hmacSha256(deriveFromSecret('lnbits-callback-hmac-key'), split[0]).toString('hex') === split[1]) {
@@ -62,7 +62,7 @@ router
       ctx.throw(Status.Forbidden, 'Forbidden')
     }
     await postLNbitsCallbackRequestHandler(req, res, ctx)
-    await next();
+    await next()
   })
 
 export default router

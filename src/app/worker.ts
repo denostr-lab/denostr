@@ -1,5 +1,6 @@
 import { IRunnable } from '../@types/base.ts'
 import { IWebSocketServerAdapter } from '../@types/adapters.ts'
+import Config from '../config/index.ts'
 
 import { createLogger } from '../factories/logger-factory.ts'
 import { FSWatcher } from 'node:fs'
@@ -12,12 +13,19 @@ export class AppWorker implements IRunnable {
   public constructor(
     private readonly adapter: IWebSocketServerAdapter
   ) {
+    // this.process
+    // .on('message', this.onMessage.bind(this))
+    // .on('SIGINT', this.onExit.bind(this))
+    // .on('SIGHUP', this.onExit.bind(this))
+    // .on('SIGTERM', this.onExit.bind(this))
+    // .on('uncaughtException', this.onError.bind(this))
+    // .on('unhandledRejection', this.onError.bind(this))
   }
 
   public run(): void {
     this.watchers = SettingsStatic.watchSettings()
 
-    const port = process.env.PORT || process.env.RELAY_PORT || 8008
+    const port = Config.PORT || Config.RELAY_PORT || 8008
     this.adapter.listen(typeof port === 'number' ? port : Number(port))
   }
 
