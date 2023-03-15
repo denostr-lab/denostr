@@ -1,80 +1,80 @@
-import { expect } from "chai";
-import { describe, it } from "jest";
-import Sinon from "sinon";
+import { expect } from 'chai'
+import { describe, it } from 'jest'
+import Sinon from 'sinon'
 
-import { ICacheAdapter } from "../../../src/@types/adapters.ts";
-import { IRateLimiter } from "../../../src/@types/utils.ts";
-import { SlidingWindowRateLimiter } from "../../../src/utils/sliding-window-rate-limiter.ts";
+import { ICacheAdapter } from '../../../src/@types/adapters.ts'
+import { IRateLimiter } from '../../../src/@types/utils.ts'
+import { SlidingWindowRateLimiter } from '../../../src/utils/sliding-window-rate-limiter.ts'
 
-describe("SlidingWindowRateLimiter", () => {
-  let clock: Sinon.SinonFakeTimers;
-  let cache: ICacheAdapter;
-  let rateLimiter: IRateLimiter;
+describe('SlidingWindowRateLimiter', () => {
+    let clock: Sinon.SinonFakeTimers
+    let cache: ICacheAdapter
+    let rateLimiter: IRateLimiter
 
-  let removeRangeByScoreFromSortedSetStub: Sinon.SinonStub;
-  let addToSortedSetStub: Sinon.SinonStub;
-  let getRangeFromSortedSetStub: Sinon.SinonStub;
-  let setKeyExpiryStub: Sinon.SinonStub;
-  let getKeyStub: Sinon.SinonStub;
-  let hasKeyStub: Sinon.SinonStub;
-  let setKeyStub: Sinon.SinonStub;
+    let removeRangeByScoreFromSortedSetStub: Sinon.SinonStub
+    let addToSortedSetStub: Sinon.SinonStub
+    let getRangeFromSortedSetStub: Sinon.SinonStub
+    let setKeyExpiryStub: Sinon.SinonStub
+    let getKeyStub: Sinon.SinonStub
+    let hasKeyStub: Sinon.SinonStub
+    let setKeyStub: Sinon.SinonStub
 
-  let sandbox: Sinon.SinonSandbox;
+    let sandbox: Sinon.SinonSandbox
 
-  beforeEach(() => {
-    sandbox = Sinon.createSandbox();
-    clock = sandbox.useFakeTimers(1665546189000);
-    removeRangeByScoreFromSortedSetStub = sandbox.stub();
-    addToSortedSetStub = sandbox.stub();
-    getRangeFromSortedSetStub = sandbox.stub();
-    setKeyExpiryStub = sandbox.stub();
-    getKeyStub = sandbox.stub();
-    hasKeyStub = sandbox.stub();
-    setKeyStub = sandbox.stub();
-    cache = {
-      removeRangeByScoreFromSortedSet: removeRangeByScoreFromSortedSetStub,
-      addToSortedSet: addToSortedSetStub,
-      getRangeFromSortedSet: getRangeFromSortedSetStub,
-      setKeyExpiry: setKeyExpiryStub,
-      getKey: getKeyStub,
-      hasKey: hasKeyStub,
-      setKey: setKeyStub,
-    };
-    rateLimiter = new SlidingWindowRateLimiter(cache);
-  });
+    beforeEach(() => {
+        sandbox = Sinon.createSandbox()
+        clock = sandbox.useFakeTimers(1665546189000)
+        removeRangeByScoreFromSortedSetStub = sandbox.stub()
+        addToSortedSetStub = sandbox.stub()
+        getRangeFromSortedSetStub = sandbox.stub()
+        setKeyExpiryStub = sandbox.stub()
+        getKeyStub = sandbox.stub()
+        hasKeyStub = sandbox.stub()
+        setKeyStub = sandbox.stub()
+        cache = {
+            removeRangeByScoreFromSortedSet: removeRangeByScoreFromSortedSetStub,
+            addToSortedSet: addToSortedSetStub,
+            getRangeFromSortedSet: getRangeFromSortedSetStub,
+            setKeyExpiry: setKeyExpiryStub,
+            getKey: getKeyStub,
+            hasKey: hasKeyStub,
+            setKey: setKeyStub,
+        }
+        rateLimiter = new SlidingWindowRateLimiter(cache)
+    })
 
-  afterEach(() => {
-    clock.restore();
-    sandbox.restore();
-  });
+    afterEach(() => {
+        clock.restore()
+        sandbox.restore()
+    })
 
-  it("returns true if rate limited", async () => {
-    const now = Date.now();
-    getRangeFromSortedSetStub.resolves([
-      `${now}:6`,
-      `${now}:4`,
-      `${now}:1`,
-    ]);
+    it('returns true if rate limited', async () => {
+        const now = Date.now()
+        getRangeFromSortedSetStub.resolves([
+            `${now}:6`,
+            `${now}:4`,
+            `${now}:1`,
+        ])
 
-    const actualResult = await rateLimiter.hit("key", 1, {
-      period: 60000,
-      rate: 10,
-    });
+        const actualResult = await rateLimiter.hit('key', 1, {
+            period: 60000,
+            rate: 10,
+        })
 
-    expect(actualResult).to.be.true;
-  });
+        expect(actualResult).to.be.true
+    })
 
-  it("returns false if not rate limited", async () => {
-    const now = Date.now();
-    getRangeFromSortedSetStub.resolves([
-      `${now}:10`,
-    ]);
+    it('returns false if not rate limited', async () => {
+        const now = Date.now()
+        getRangeFromSortedSetStub.resolves([
+            `${now}:10`,
+        ])
 
-    const actualResult = await rateLimiter.hit("key", 1, {
-      period: 60000,
-      rate: 10,
-    });
+        const actualResult = await rateLimiter.hit('key', 1, {
+            period: 60000,
+            rate: 10,
+        })
 
-    expect(actualResult).to.be.false;
-  });
-});
+        expect(actualResult).to.be.false
+    })
+})

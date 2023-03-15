@@ -33,12 +33,7 @@ import { DatabaseClient, EventId } from '../@types/base.ts'
 import { DBEvent, Event } from '../@types/event.ts'
 import { IEventRepository, IQueryResult } from '../@types/repositories.ts'
 import { SubscriptionFilter } from '../@types/subscription.ts'
-import {
-    ContextMetadataKey,
-    EventDeduplicationMetadataKey,
-    EventDelegatorMetadataKey,
-    EventExpirationTimeMetadataKey,
-} from '../constants/base.ts'
+import { ContextMetadataKey, EventDeduplicationMetadataKey, EventDelegatorMetadataKey, EventExpirationTimeMetadataKey } from '../constants/base.ts'
 import { createLogger } from '../factories/logger-factory.ts'
 import { isGenericTagQuery } from '../utils/filter.ts'
 import { toBuffer, toJSON } from '../utils/transform.ts'
@@ -82,10 +77,7 @@ export class EventRepository implements IEventRepository {
                                 pipe(
                                     groupByLengthSpec,
                                     evolve({
-                                        exact: (pubkeys: string[]) =>
-                                            tableFields.forEach((tableField) =>
-                                                bd.orWhereIn(tableField, pubkeys.map(toBuffer))
-                                            ),
+                                        exact: (pubkeys: string[]) => tableFields.forEach((tableField) => bd.orWhereIn(tableField, pubkeys.map(toBuffer))),
                                         even: forEach((prefix: string) =>
                                             tableFields.forEach((tableField) =>
                                                 bd.orWhereRaw(

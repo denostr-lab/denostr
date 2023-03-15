@@ -10,14 +10,7 @@ import { FeeSchedule, Settings } from '../@types/settings.ts'
 import { EventKinds } from '../constants/base.ts'
 import { Transaction } from '../database/transaction.ts'
 import { createLogger } from '../factories/logger-factory.ts'
-import {
-    broadcastEvent,
-    encryptKind4Event,
-    getPublicKey,
-    getRelayPrivateKey,
-    identifyEvent,
-    signEvent,
-} from '../utils/event.ts'
+import { broadcastEvent, encryptKind4Event, getPublicKey, getRelayPrivateKey, identifyEvent, signEvent } from '../utils/event.ts'
 import { toBech32 } from '../utils/transform.ts'
 
 const debug = createLogger('payments-service')

@@ -29,7 +29,7 @@ export class RuneLike implements IRuneLike {
         let encStr = encodedStr.replace(/\s+/g, '')
 
         while (encStr.length) {
-            [restriction, encStr] = Restriction.decode(encStr)
+            ;[restriction, encStr] = Restriction.decode(encStr)
             restrictions.push(restriction)
         }
 

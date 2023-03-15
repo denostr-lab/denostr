@@ -13,11 +13,7 @@ import { SubscriptionFilter, SubscriptionId } from '../@types/subscription.ts'
 import { WebSocketAdapterEvent } from '../constants/adapter.ts'
 import { createLogger } from '../factories/logger-factory.ts'
 import { isEventMatchingFilter, toNostrEvent } from '../utils/event.ts'
-import {
-    createEndOfStoredEventsNoticeMessage,
-    createNoticeMessage,
-    createOutgoingEventMessage,
-} from '../utils/messages.ts'
+import { createEndOfStoredEventsNoticeMessage, createNoticeMessage, createOutgoingEventMessage } from '../utils/messages.ts'
 import { streamEach, streamEnd, streamFilter, streamMap } from '../utils/stream.ts'
 
 const debug = createLogger('subscribe-message-handler')

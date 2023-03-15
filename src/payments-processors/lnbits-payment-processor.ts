@@ -2,12 +2,7 @@ import { AxiosInstance } from 'axios'
 
 import { Factory } from '../@types/base.ts'
 import { Pubkey } from '../@types/base.ts'
-import {
-    CreateInvoiceRequest,
-    CreateInvoiceResponse,
-    GetInvoiceResponse,
-    IPaymentsProcessor,
-} from '../@types/clients.ts'
+import { CreateInvoiceRequest, CreateInvoiceResponse, GetInvoiceResponse, IPaymentsProcessor } from '../@types/clients.ts'
 import { Invoice, InvoiceStatus, InvoiceUnit } from '../@types/invoice.ts'
 import { Settings } from '../@types/settings.ts'
 import { createLogger } from '../factories/logger-factory.ts'

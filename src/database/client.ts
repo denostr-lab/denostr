@@ -41,13 +41,9 @@ const getMasterConfig = (): Knex.Config => ({
         max: Config.DB_MAX_POOL_SIZE ? Number(Config.DB_MAX_POOL_SIZE) : 3,
         idleTimeoutMillis: 60000,
         propagateCreateError: false,
-        acquireTimeoutMillis: Config.DB_ACQUIRE_CONNECTION_TIMEOUT
-            ? Number(Config.DB_ACQUIRE_CONNECTION_TIMEOUT)
-            : 60000,
+        acquireTimeoutMillis: Config.DB_ACQUIRE_CONNECTION_TIMEOUT ? Number(Config.DB_ACQUIRE_CONNECTION_TIMEOUT) : 60000,
     },
-    acquireConnectionTimeout: Config.DB_ACQUIRE_CONNECTION_TIMEOUT
-        ? Number(Config.DB_ACQUIRE_CONNECTION_TIMEOUT)
-        : 60000,
+    acquireConnectionTimeout: Config.DB_ACQUIRE_CONNECTION_TIMEOUT ? Number(Config.DB_ACQUIRE_CONNECTION_TIMEOUT) : 60000,
 } as any)
 
 const getReadReplicaConfig = (): Knex.Config => ({
@@ -65,9 +61,7 @@ const getReadReplicaConfig = (): Knex.Config => ({
         max: Config.RR_DB_MAX_POOL_SIZE ? Number(Config.RR_DB_MAX_POOL_SIZE) : 3,
         idleTimeoutMillis: 60000,
         propagateCreateError: false,
-        acquireTimeoutMillis: Config.RR_DB_ACQUIRE_CONNECTION_TIMEOUT
-            ? Number(Config.RR_DB_ACQUIRE_CONNECTION_TIMEOUT)
-            : 60000,
+        acquireTimeoutMillis: Config.RR_DB_ACQUIRE_CONNECTION_TIMEOUT ? Number(Config.RR_DB_ACQUIRE_CONNECTION_TIMEOUT) : 60000,
     },
 } as any)
 

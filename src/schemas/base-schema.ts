@@ -19,8 +19,7 @@ export const subscriptionSchema = Schema.string().min(1).max(255).label(
     'subscriptionId',
 )
 
-const seconds = (value: any, helpers: any) =>
-    (Number.isSafeInteger(value) && Math.log10(value) < 10) ? value : helpers.error('any.invalid')
+const seconds = (value: any, helpers: any) => (Number.isSafeInteger(value) && Math.log10(value) < 10) ? value : helpers.error('any.invalid')
 
 export const createdAtSchema = Schema.number().min(0).multiple(1).custom(
     seconds,

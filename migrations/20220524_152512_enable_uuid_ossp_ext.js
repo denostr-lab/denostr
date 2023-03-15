@@ -3,11 +3,11 @@
  */
 
 exports.up = function (knex) {
-  return knex.raw(
-    'CREATE EXTENSION IF NOT EXISTS "uuid-ossp" SCHEMA public version "1.1";',
-  );
-};
+    return knex.raw(
+        'CREATE EXTENSION IF NOT EXISTS "uuid-ossp" SCHEMA public version "1.1";',
+    )
+}
 
 exports.down = function (knex) {
-  return knex.raw('DROP EXTENSION IF EXISTS "uuid-ossp";');
-};
+    return knex.raw('DROP EXTENSION IF EXISTS "uuid-ossp";')
+}

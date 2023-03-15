@@ -9,6 +9,7 @@ import { createLogger } from '../factories/logger-factory.ts'
 const debug = createLogger('web-server-adapter')
 
 export class WebServerAdapter extends EventEmitter implements IWebServerAdapter {
+    private controller: AbortController | undefined
     public constructor(
         protected readonly webServer: Application,
     ) {
@@ -24,7 +25,9 @@ export class WebServerAdapter extends EventEmitter implements IWebServerAdapter 
     public listen(port: number): void {
         console.info('开始监听', port)
         debug('attempt to listen on port %d', port)
-        this.webServer.listen({ port })
+        this.controller = new AbortController();
+        const { signal } = this.controller;
+        this.webServer.listen({ port , signal})
     }
 
     private onListening() {
@@ -46,17 +49,16 @@ export class WebServerAdapter extends EventEmitter implements IWebServerAdapter 
         socket.end('HTTP/1.1 400 Bad Request\r\nContent-Type: text/html\r\n')
     }
 
-    public close(callback?: () => void): void {
+    public close(/* callback?: () => void */): void {
         debug('closing')
-        debug('主动关闭')
-
-        this.webServer.close(() => {
-            this.webServer.removeAllListeners()
-            this.removeAllListeners()
-            if (typeof callback !== 'undefined') {
-                callback()
-            }
-        })
+        this.controller?.abort?.();
+        // this.webServer.close(() => {
+        //     this.webServer.removeAllListeners()
+        //     this.removeAllListeners()
+        //     if (typeof callback !== 'undefined') {
+        //         callback()
+        //     }
+        // })
         debug('closed')
     }
 

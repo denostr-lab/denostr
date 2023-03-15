@@ -34,8 +34,7 @@ export const toNostrEvent: (event: DBEvent) => Event = applySpec({
     sig: pipe(prop('event_signature') as () => Buffer, fromBuffer),
 })
 
-export const isEventKindOrRangeMatch = ({ kind }: Event) => (item: EventKinds | EventKindsRange) =>
-    typeof item === 'number' ? item === kind : kind >= item[0] && kind <= item[1]
+export const isEventKindOrRangeMatch = ({ kind }: Event) => (item: EventKinds | EventKindsRange) => typeof item === 'number' ? item === kind : kind >= item[0] && kind <= item[1]
 
 export const isEventMatchingFilter = (filter: SubscriptionFilter) => (event: Event): boolean => {
     const startsWith = (input: string) => (prefix: string) => input.startsWith(prefix)
@@ -141,7 +140,7 @@ export const isDelegatedEventValid = async (event: Event): Promise<boolean> => {
 
     let result: boolean
     try {
-        [result] = RuneLike.from(delegation[2]).test(runifiedEvent)
+        ;[result] = RuneLike.from(delegation[2]).test(runifiedEvent)
     } catch {
         result = false
     }

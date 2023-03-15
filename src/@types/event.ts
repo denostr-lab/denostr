@@ -1,12 +1,6 @@
 import { Buffer } from 'Buffer'
 
-import {
-    ContextMetadataKey,
-    EventDeduplicationMetadataKey,
-    EventDelegatorMetadataKey,
-    EventExpirationTimeMetadataKey,
-    EventKinds,
-} from '../constants/base.ts'
+import { ContextMetadataKey, EventDeduplicationMetadataKey, EventDelegatorMetadataKey, EventExpirationTimeMetadataKey, EventKinds } from '../constants/base.ts'
 import { ContextMetadata, EventId, Pubkey, Tag } from './base.ts'
 
 export interface BaseEvent {

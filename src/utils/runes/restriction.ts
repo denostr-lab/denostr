@@ -39,7 +39,7 @@ export class Restriction implements IRestriction {
                 break
             }
 
-            [alternative, encStr] = Alternative.decode(encStr)
+            ;[alternative, encStr] = Alternative.decode(encStr)
 
             alternatives.push(alternative)
         }

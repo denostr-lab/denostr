@@ -10,15 +10,7 @@ import { WebSocketAdapterEvent } from '../constants/adapter.ts'
 import { ContextMetadataKey } from '../constants/base.ts'
 import { EventExpirationTimeMetadataKey } from '../constants/base.ts'
 import { createLogger } from '../factories/logger-factory.ts'
-import {
-    getEventExpiration,
-    getEventProofOfWork,
-    getPubkeyProofOfWork,
-    isEventIdValid,
-    isEventKindOrRangeMatch,
-    isEventSignatureValid,
-    isExpiredEvent,
-} from '../utils/event.ts'
+import { getEventExpiration, getEventProofOfWork, getPubkeyProofOfWork, isEventIdValid, isEventKindOrRangeMatch, isEventSignatureValid, isExpiredEvent } from '../utils/event.ts'
 import { createCommandResult } from '../utils/messages.ts'
 
 const debug = createLogger('event-message-handler')
@@ -249,9 +241,7 @@ export class EventMessageHandler implements IMessageHandler {
         }
 
         const hit = ({ period, rate, kinds = undefined }: EventRateLimit) => {
-            const key = Array.isArray(kinds)
-                ? `${event.pubkey}:events:${period}:${toString(kinds)}`
-                : `${event.pubkey}:events:${period}`
+            const key = Array.isArray(kinds) ? `${event.pubkey}:events:${period}:${toString(kinds)}` : `${event.pubkey}:events:${period}`
 
             return rateLimiter.hit(
                 key,
