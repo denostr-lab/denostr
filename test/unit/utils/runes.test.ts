@@ -1,7 +1,9 @@
-import { expect } from 'chai'
+import chai, { expect } from 'chai'
 import { describe, it } from 'jest'
 import sinon from 'sinon'
+import SinonChi from 'sinon-chai'
 
+chai.use(SinonChi)
 import { Alternative } from '../../../src/utils/runes/alternative.ts'
 import { Restriction } from '../../../src/utils/runes/restriction.ts'
 

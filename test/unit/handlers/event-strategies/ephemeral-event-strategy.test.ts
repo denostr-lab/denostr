@@ -2,7 +2,9 @@ import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import { afterEach, beforeEach, describe, it } from 'jest'
 import Sinon from 'sinon'
+import sinonChai from 'sinon-chai'
 
+chai.use(sinonChai)
 chai.use(chaiAsPromised)
 
 import { IWebSocketAdapter } from '../../../../src/@types/adapters.ts'

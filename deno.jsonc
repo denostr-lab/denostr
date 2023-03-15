@@ -1,7 +1,8 @@
 {
     "tasks": {
         "dev": "deno run --allow-all --watch src/index.ts",
-        "start": "deno run --allow-all src/index.ts"
+        "start": "deno run --allow-all src/index.ts",
+        "test": "deno test --no-check -A"
     },
     "imports": {
         "dotenv": "https://deno.land/x/dotenv@v3.2.0/mod.ts",

@@ -1,24 +1,22 @@
 import fs from 'node:fs'
 import { join } from 'node:path'
 
-import { expect } from 'chai'
+import chai, { expect } from 'chai'
 import { afterEach, beforeEach, describe, it } from 'jest'
 import Sinon from 'sinon'
+import SinonChi from 'sinon-chai'
 
 import Config from '../../../src/config/index.ts'
 import { SettingsFileTypes, SettingsStatic } from '../../../src/utils/settings.ts'
-
+chai.use(SinonChi)
 describe('SettingsStatic', () => {
     describe('.getSettingsFilePath', () => {
-        let originalEnv: NodeJS.ProcessEnv
 
         beforeEach(() => {
-            originalEnv = process.env
-            process.env = {}
+        
         })
 
         afterEach(() => {
-            process.env = originalEnv
         })
 
         it('returns string ending with .nostr/ by default', () => {
@@ -40,15 +38,11 @@ describe('SettingsStatic', () => {
     })
 
     describe('.getDefaultSettingsFilePath', () => {
-        let originalEnv: NodeJS.ProcessEnv
 
         beforeEach(() => {
-            originalEnv = process.env
-            process.env = {}
         })
 
         afterEach(() => {
-            process.env = originalEnv
         })
 
         it('returns string ending with settings.json by default', () => {

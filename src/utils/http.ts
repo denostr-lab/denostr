@@ -17,8 +17,10 @@ export const getRemoteAddress = (
     } else {
         header = settings.network.remoteIpHeader as string
     }
-
+    if (!header) {
+        header = settings.network.remoteIpHeader as string
+    }
     const result = request.headers.get(header) ?? request.ip as string
 
-    return result.split(',')[0]
+    return result?.split?.(',')?.[0] || ''
 }
