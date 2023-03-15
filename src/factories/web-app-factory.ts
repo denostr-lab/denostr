@@ -7,9 +7,7 @@ import { createSettings } from './settings-factory.ts'
 const getDirectives = () => {
     const debug = createLogger('web-app-factory')
     const settings = createSettings()
-    console.info(settings, '开始吗')
     const relayUrl = new URL(settings.info.relay_url)
-    console.info(relayUrl.toString(), 'relayUrl.toString()')
     const webRelayUrl = new URL(relayUrl.toString())
     webRelayUrl.protocol = (relayUrl.protocol === 'wss:') ? 'https:' : ':'
     const directives = {
