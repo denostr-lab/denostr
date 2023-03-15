@@ -1,15 +1,15 @@
 import axios, { CreateAxiosDefaults } from 'axios'
 import { path } from 'ramda'
-import Config from '../config/index.ts'
 
-import { createLogger } from './logger-factory.ts'
-import { createSettings } from './settings-factory.ts'
 import { IPaymentsProcessor } from '../@types/clients.ts'
+import { Settings } from '../@types/settings.ts'
+import Config from '../config/index.ts'
 import { LNbitsPaymentsProcesor } from '../payments-processors/lnbits-payment-processor.ts'
 import { NullPaymentsProcessor } from '../payments-processors/null-payments-processor.ts'
 import { PaymentsProcessor } from '../payments-processors/payments-procesor.ts'
-import { Settings } from '../@types/settings.ts'
 import { ZebedeePaymentsProcesor } from '../payments-processors/zebedee-payments-processor.ts'
+import { createLogger } from './logger-factory.ts'
+import { createSettings } from './settings-factory.ts'
 
 const debug = createLogger('create-payments-processor')
 

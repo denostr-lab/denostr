@@ -4,7 +4,6 @@ import { expect } from 'chai'
 import { afterEach,beforeEach, describe, it } from 'jest'
 import Sinon from 'sinon'
 
-
 import { IWebSocketServerAdapter } from '../../../src/@types/adapters.ts'
 import { IEventRepository, IUserRepository } from '../../../src/@types/repositories.ts'
 import { WebSocketAdapter } from '../../../src/adapters/web-socket-adapter.ts'

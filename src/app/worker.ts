@@ -1,9 +1,9 @@
-import { IRunnable } from '../@types/base.ts'
-import { IWebSocketServerAdapter } from '../@types/adapters.ts'
-import Config from '../config/index.ts'
-
-import { createLogger } from '../factories/logger-factory.ts'
 import { FSWatcher } from 'node:fs'
+
+import { IWebSocketServerAdapter } from '../@types/adapters.ts'
+import { IRunnable } from '../@types/base.ts'
+import Config from '../config/index.ts'
+import { createLogger } from '../factories/logger-factory.ts'
 import { SettingsStatic } from '../utils/settings.ts'
 
 const debug = createLogger('app-worker')

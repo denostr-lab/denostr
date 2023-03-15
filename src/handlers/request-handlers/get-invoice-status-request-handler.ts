@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response, RouterContext } from '../../@types/controllers.ts'
-
 import { createGetInvoiceStatusController } from '../../factories/get-invoice-status-controller-factory.ts'
 
 export const getInvoiceStatusRequestHandler = async (ctx: RouterContext, next: NextFunction) => {

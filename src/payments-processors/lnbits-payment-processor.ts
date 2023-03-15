@@ -1,12 +1,12 @@
-import { CreateInvoiceRequest, CreateInvoiceResponse, GetInvoiceResponse, IPaymentsProcessor } from '../@types/clients.ts'
-import { deriveFromSecret, hmacSha256 } from '../utils/secret.ts'
-import { Invoice, InvoiceStatus, InvoiceUnit } from '../@types/invoice.ts'
-
 import { AxiosInstance } from 'axios'
-import { createLogger } from '../factories/logger-factory.ts'
+
 import { Factory } from '../@types/base.ts'
 import { Pubkey } from '../@types/base.ts'
+import { CreateInvoiceRequest, CreateInvoiceResponse, GetInvoiceResponse, IPaymentsProcessor } from '../@types/clients.ts'
+import { Invoice, InvoiceStatus, InvoiceUnit } from '../@types/invoice.ts'
 import { Settings } from '../@types/settings.ts'
+import { createLogger } from '../factories/logger-factory.ts'
+import { deriveFromSecret, hmacSha256 } from '../utils/secret.ts'
 
 const debug = createLogger('lnbits-payments-processor')
 
@@ -23,9 +23,6 @@ export class LNbitsInvoice implements Invoice {
   expiresAt: Date | null
   updatedAt: Date
   createdAt: Date
-  constructor (){
-    
-  }
 }
 
 export class LNbitsCreateInvoiceResponse implements CreateInvoiceResponse {

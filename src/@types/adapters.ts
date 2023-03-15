@@ -1,5 +1,7 @@
-import { Bulk } from 'redis'
 import { EventEmitter } from 'node:events'
+
+import { Bulk } from 'redis'
+
 import { SubscriptionFilter } from './subscription.ts'
 
 

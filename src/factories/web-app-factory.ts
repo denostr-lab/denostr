@@ -1,11 +1,9 @@
 import { Application, etag } from 'oak'
-
 import csp from 'oak-csp'
 
-
+import router from '../routes/index.ts'
 import { createLogger } from './logger-factory.ts'
 import { createSettings } from './settings-factory.ts'
-import router from '../routes/index.ts'
 
 
 

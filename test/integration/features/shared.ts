@@ -12,7 +12,6 @@ import { Buffer } from 'Buffer'
 import { assocPath, pipe } from 'ramda'
 import { fromEvent, map, Observable, ReplaySubject, Subject, takeUntil } from 'rxjs'
 import Sinon from 'sinon'
-import WebSocket, { MessageEvent } from 'ws'
 
 import { DatabaseClient } from '../../../src/@types/base.ts'
 import { CacheClient } from '../../../src/@types/cache.ts'

@@ -1,4 +1,5 @@
 import debug from 'debug'
+
 import Config from '../config/index.ts'
 
 export const createLogger = (

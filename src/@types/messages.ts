@@ -1,7 +1,7 @@
+import { ContextMetadataKey } from '../constants/base.ts'
 import { ContextMetadata, EventId, Range, Secret } from './base.ts'
 import { Event, RelayedEvent } from './event.ts'
 import { SubscriptionFilter, SubscriptionId } from './subscription.ts'
-import { ContextMetadataKey } from '../constants/base.ts'
 
 export enum MessageType {
   REQ = 'REQ',

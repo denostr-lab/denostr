@@ -1,7 +1,8 @@
-import { Buffer } from 'Buffer'
-import Config from '../config/index.ts'
-
 import { createHmac } from 'node:crypto'
+
+import { Buffer } from 'Buffer'
+
+import Config from '../config/index.ts'
 
 export function deriveFromSecret(purpose: string | Buffer): Buffer {
     return hmacSha256(Config.SECRET as string, purpose)

@@ -1,11 +1,9 @@
 
-import { createLogger } from '../../factories/logger-factory.ts'
-
 import { IController, Request, Response, RouterContext, Status } from '../../@types/controllers.ts'
-
-import { IInvoiceRepository } from '../../@types/repositories.ts'
 import { InvoiceStatus } from '../../@types/invoice.ts'
+import { IInvoiceRepository } from '../../@types/repositories.ts'
 import { IPaymentsService } from '../../@types/services.ts'
+import { createLogger } from '../../factories/logger-factory.ts'
 
 const debug = createLogger('lnbits-callback-controller')
 

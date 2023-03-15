@@ -1,23 +1,20 @@
-import * as secp256k1 from 'secp256k1'
-import Config from '../config/index.ts'
-
-import { applySpec, converge, curry, mergeLeft, nth, omit, pipe, prop, reduceBy } from 'ramda'
 import { Buffer } from 'Buffer'
-
-import { CanonicalEvent, DBEvent, Event, UnidentifiedEvent, UnsignedEvent } from '../@types/event.ts'
-import { createCipheriv } from 'node:crypto'
+import { createCipheriv, getRandomValues } from 'crypto'
+import { applySpec, converge, curry, mergeLeft, nth, omit, pipe, prop, reduceBy } from 'ramda'
+import * as secp256k1 from 'secp256k1'
 
 import { EventId, Pubkey, Tag } from '../@types/base.ts'
-import { EventKinds, EventTags } from '../constants/base.ts'
-
-import { deriveFromSecret } from './secret.ts'
+import { CanonicalEvent, DBEvent, Event, UnidentifiedEvent, UnsignedEvent } from '../@types/event.ts'
 import { EventKindsRange } from '../@types/settings.ts'
-import { fromBuffer } from './transform.ts'
-import { getLeadingZeroBits } from './proof-of-work.ts'
-import { isGenericTagQuery } from './filter.ts'
-import { RuneLike } from './runes/rune-like.ts'
 import { SubscriptionFilter } from '../@types/subscription.ts'
-import { WebSocketServerAdapterEvent } from '../constants/adapter.ts'
+import Config from '../config/index.ts'
+// import { WebSocketServerAdapterEvent } from '../constants/adapter.ts'
+import { EventKinds, EventTags } from '../constants/base.ts'
+import { isGenericTagQuery } from './filter.ts'
+import { getLeadingZeroBits } from './proof-of-work.ts'
+import { RuneLike } from './runes/rune-like.ts'
+import { deriveFromSecret } from './secret.ts'
+import { fromBuffer } from './transform.ts'
 
 export const serializeEvent = (event: UnidentifiedEvent): CanonicalEvent => [
   0,
@@ -198,7 +195,6 @@ export const signEvent = (privkey: string | Buffer | undefined) => async (event:
   const sig = await secp256k1.schnorr.sign(event.id, privkey as any)
   return { ...event, sig: Buffer.from(sig).toString('hex') }
 }
-const getRandomValues = ()=>{}
 export const encryptKind4Event = (
   senderPrivkey: string | Buffer,
   receiverPubkey: Pubkey,
@@ -226,8 +222,8 @@ export const encryptKind4Event = (
   }
 }
 
-export const broadcastEvent = async (event: Event): Promise<Event> => {
-  return new Promise((resolve, reject) => {
+export const broadcastEvent = async (/*event: Event*/): Promise<Event> => {
+  return new Promise((resolve, /*reject*/) => {
     return resolve()
     // if (!cluster.isWorker || typeof process.send === 'undefined') {
     //   return resolve(event)

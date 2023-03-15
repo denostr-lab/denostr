@@ -71,7 +71,7 @@ export async function createSubscription(
   subscriptionName: string,
   subscriptionFilters: SubscriptionFilter[],
 ): Promise<void> {
-  return new Promise<void>((resolve, reject) => {
+  return new Promise<void>((resolve) => {
     const data = JSON.stringify([
       'REQ',
       subscriptionName,

@@ -1,6 +1,6 @@
-import { createLogger } from '../../factories/logger-factory.ts'
 import { IController, Request, Response, RouterContext, Status } from '../../@types/controllers.ts'
 import { IInvoiceRepository } from '../../@types/repositories.ts'
+import { createLogger } from '../../factories/logger-factory.ts'
 
 const debug = createLogger('get-invoice-status-controller')
 

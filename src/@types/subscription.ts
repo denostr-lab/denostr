@@ -1,5 +1,5 @@
-import { EventId, Pubkey } from './base.ts'
 import { EventKinds } from '../constants/base.ts'
+import { EventId, Pubkey } from './base.ts'
 
 export type SubscriptionId = string
 

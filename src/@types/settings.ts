@@ -1,5 +1,5 @@
-import { Pubkey, Secret } from './base.ts'
 import { EventKinds } from '../constants/base.ts'
+import { Pubkey, Secret } from './base.ts'
 import { MessageType } from './messages.ts'
 import { SubscriptionFilter } from './subscription.ts'
 

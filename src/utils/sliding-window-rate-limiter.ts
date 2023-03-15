@@ -1,6 +1,6 @@
+import { ICacheAdapter } from '../@types/adapters.ts'
 import { IRateLimiter, IRateLimiterOptions } from '../@types/utils.ts'
 import { createLogger } from '../factories/logger-factory.ts'
-import { ICacheAdapter } from '../@types/adapters.ts'
 
 const debug = createLogger('sliding-window-rate-limiter')
 

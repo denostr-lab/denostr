@@ -1,12 +1,12 @@
 import fs from 'node:fs'
-import yaml from 'js-yaml'
-import Config from '../config/index.ts'
-
 import { extname, join } from 'node:path'
+
+import yaml from 'js-yaml'
 import { mergeDeepRight } from 'ramda'
 
-import { createLogger } from '../factories/logger-factory.ts'
 import { Settings } from '../@types/settings.ts'
+import Config from '../config/index.ts'
+import { createLogger } from '../factories/logger-factory.ts'
 
 const debug = createLogger('settings')
 

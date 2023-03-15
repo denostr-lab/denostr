@@ -1,10 +1,10 @@
+import { EventEmitter } from 'node:events'
+import { Duplex } from 'node:stream'
+
 import { Application } from 'oak'
 
-import { Duplex } from 'node:stream'
-import { EventEmitter } from 'node:events'
-
-import { createLogger } from '../factories/logger-factory.ts'
 import { IWebServerAdapter } from '../@types/adapters.ts'
+import { createLogger } from '../factories/logger-factory.ts'
 
 const debug = createLogger('web-server-adapter')
 

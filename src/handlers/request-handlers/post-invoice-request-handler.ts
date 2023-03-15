@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response, RouterContext, Status } from '../../@types/controllers.ts'
-
 import { createPostInvoiceController } from '../../factories/post-invoice-controller-factory.ts'
 
 export const postInvoiceRequestHandler = async (

@@ -1,17 +1,15 @@
 // import {  Server } from 'node:http'
 import { Application, Request } from 'oak'
-
 import { propEq } from 'ramda'
 
 import { IWebSocketAdapter, IWebSocketServerAdapter } from '../@types/adapters.ts'
-
-import { WebSocketAdapterEvent, WebSocketServerAdapterEvent } from '../constants/adapter.ts'
-import { createLogger } from '../factories/logger-factory.ts'
-import { Event } from '../@types/event.ts'
 import { Factory } from '../@types/base.ts'
+import { Event } from '../@types/event.ts'
 // import { getRemoteAddress } from '../utils/http.ts'
 // import { isRateLimited } from '../handlers/request-handlers/rate-limiter-middleware.ts'
 import { Settings } from '../@types/settings.ts'
+import { WebSocketAdapterEvent, WebSocketServerAdapterEvent } from '../constants/adapter.ts'
+import { createLogger } from '../factories/logger-factory.ts'
 import { WebServerAdapter } from './web-server-adapter.ts'
 
 const debug = createLogger('web-socket-server-adapter')
@@ -51,11 +49,11 @@ export class WebSocketServerAdapter extends WebServerAdapter implements IWebSock
           this.webSocketsAdapters.set(webSocket, this.createWebSocketAdapter([webSocket, req, this]))
         }
       } else {
-        await next();
+        await next()
       }
     })
   }
-  public close(callback?: () => void): void {
+  public close(/*callback?: () => void*/): void {
     super.close(() => {
       debug('closing')
       // clearInterval(this.heartbeatInterval)

@@ -1,5 +1,4 @@
 import { Request, Response, Status } from '../../@types/controllers.ts'
-
 import { createZebedeeCallbackController } from '../../factories/zebedee-callback-controller-factory.ts'
 
 export const postZebedeeCallbackRequestHandler = async (

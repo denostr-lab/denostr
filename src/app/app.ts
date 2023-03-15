@@ -2,7 +2,7 @@
 // import { cpus, hostname } from 'os'
 // import { path, pathEq } from 'ramda'
 // import { FSWatcher } from 'fs'
-import Config from '../config/index.ts'
+// import Config from '../config/index.ts'
 
 // import { addOnion } from '../tor/client'
 // import { createLogger } from '../factories/logger-factory'
@@ -38,19 +38,7 @@ import Config from '../config/index.ts'
 //   }
 
 //   public run(): void {
-//     const settings = this.settings()
-//     this.watchers = SettingsStatic.watchSettings()
-//     console.log(`
-//  ███▄    █  ▒█████    ██████ ▄▄▄█████▓ ██▀███  ▓█████ ▄▄▄       ███▄ ▄███▓
-//  ██ ▀█   █ ▒██▒  ██▒▒██    ▒ ▓  ██▒ ▓▒▓██ ▒ ██▒▓█   ▀▒████▄    ▓██▒▀█▀ ██▒
-// ▓██  ▀█ ██▒▒██░  ██▒░ ▓██▄   ▒ ▓██░ ▒░▓██ ░▄█ ▒▒███  ▒██  ▀█▄  ▓██    ▓██░
-// ▓██▒  ▐▌██▒▒██   ██░  ▒   ██▒░ ▓██▓ ░ ▒██▀▀█▄  ▒▓█  ▄░██▄▄▄▄██ ▒██    ▒██
-// ▒██░   ▓██░░ ████▓▒░▒██████▒▒  ▒██▒ ░ ░██▓ ▒██▒░▒████▒▓█   ▓██▒▒██▒   ░██▒
-// ░ ▒░   ▒ ▒ ░ ▒░▒░▒░ ▒ ▒▓▒ ▒ ░  ▒ ░░   ░ ▒▓ ░▒▓░░░ ▒░ ░▒▒   ▓▒█░░ ▒░   ░  ░
-// ░ ░░   ░ ▒░  ░ ▒ ▒░ ░ ░▒  ░ ░    ░      ░▒ ░ ▒░ ░ ░  ░ ▒   ▒▒ ░░  ░      ░
-//    ░   ░ ░ ░ ░ ░ ▒  ░  ░  ░    ░        ░░   ░    ░    ░   ▒   ░      ░
-//          ░     ░ ░        ░              ░        ░  ░     ░  ░       ░`)
-//     const width = 74
+
 //     const torHiddenServicePort = Config.HIDDEN_SERVICE_PORT ? Number(Config.HIDDEN_SERVICE_PORT) : 80
 //     const port = Config.RELAY_PORT ? Number(Config.RELAY_PORT) : 8008
 
@@ -66,7 +54,8 @@ import Config from '../config/index.ts'
 //       logCentered(`Payments provider: ${path(['payments', 'processor'], settings)}`, width)
 //     }
 
-//     if (paymentsEnabled && (typeof this.Config.SECRET !== 'string' || this.Config.SECRET === '' || this.Config.SECRET === 'changeme')) {
+//     if (paymentsEnabled && (typeof this.Config.SECRET !== 'string' ||
+ //this.Config.SECRET === '' || this.Config.SECRET === 'changeme')) {
 //       console.error('Please configure the secret using the SECRET environment variable.')
 //       this.process.exit(1)
 //     }
@@ -127,41 +116,4 @@ import Config from '../config/index.ts'
 //     }
 //   }
 
-//   private onClusterExit(deadWorker: Worker, code: number, signal: string)  {
-//     debug('worker %s died', deadWorker.process.pid)
-
-//     if (code === 0 || signal === 'SIGINT') {
-//       return
-//     }
-//     setTimeout(() => {
-//       debug('starting worker')
-//       const workerEnv = this.workers.get(deadWorker)
-//       if (!workerEnv) {
-//         throw new Error('Mistakes were made')
-//       }
-//       const newWorker = this.cluster.fork(workerEnv)
-//       this.workers.set(newWorker, workerEnv)
-
-//       debug('started worker %s', newWorker.process.pid)
-//     }, 10000)
-//   }
-
-//   private onExit() {
-//     console.log('exiting')
-//     this.close(() => {
-//       this.process.exit(0)
-//     })
-//   }
-
-//   public close(callback?: (...args: any[]) => void): void {
-//     console.log('close')
-//     if (Array.isArray(this.watchers)) {
-//       for (const watcher of this.watchers) {
-//         watcher.close()
-//       }
-//     }
-//     if (typeof callback === 'function') {
-//       callback()
-//     }
-//   }
 // }

@@ -1,10 +1,9 @@
-import { NextFunction, Request, Response, RouterContext, Status } from '../../@types/controllers.ts'
-
 import { path } from 'ramda'
 
-import { createSettings } from '../../factories/settings-factory.ts'
-import { FeeSchedule } from '../../@types/settings.ts'
 import packageJson from '../../../package.json' assert { type: 'json' }
+import { NextFunction, Request, Response, RouterContext, Status } from '../../@types/controllers.ts'
+import { FeeSchedule } from '../../@types/settings.ts'
+import { createSettings } from '../../factories/settings-factory.ts'
 
 export const rootRequestHandler = async(ctx: RouterContext, next: NextFunction) => {
   const settings = createSettings()

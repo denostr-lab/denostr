@@ -1,5 +1,4 @@
 import { Request, Response, RouterContext, Status } from '../../@types/controllers.ts'
-
 import { createLNbitsCallbackController } from '../../factories/lnbits-callback-controller-factory.ts'
 
 export const postLNbitsCallbackRequestHandler = async (

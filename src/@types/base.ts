@@ -1,5 +1,6 @@
-import { Knex } from 'knex'
 import net from 'node:net'
+
+import { Knex } from 'knex'
 
 export type EventId = string
 export type Pubkey = string

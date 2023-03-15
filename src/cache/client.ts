@@ -1,6 +1,7 @@
-import Config from '../config/index.ts'
 import { connect, RedisConnectOptions } from 'redis'
+
 import { CacheClient } from '../@types/cache.ts'
+import Config from '../config/index.ts'
 import { createLogger } from '../factories/logger-factory.ts'
 
 

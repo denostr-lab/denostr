@@ -1,10 +1,9 @@
-import { NextFunction, Request, Response, RouterContext, Status } from '../../@types/controllers.ts'
-
+import { NextFunction, Request, Response, RouterContext } from '../../@types/controllers.ts'
+import { Settings } from '../../@types/settings.ts'
 import { createLogger } from '../../factories/logger-factory.ts'
+import { slidingWindowRateLimiterFactory } from '../../factories/rate-limiter-factory.ts'
 import { createSettings } from '../../factories/settings-factory.ts'
 import { getRemoteAddress } from '../../utils/http.ts'
-import { Settings } from '../../@types/settings.ts'
-import { slidingWindowRateLimiterFactory } from '../../factories/rate-limiter-factory.ts'
 
 const debug = createLogger('rate-limiter-middleware')
 

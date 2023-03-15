@@ -1,5 +1,5 @@
-import { Invoice } from './invoice.ts'
 import { Pubkey } from './base.ts'
+import { Invoice } from './invoice.ts'
 
 export interface IPaymentsService {
   getInvoiceFromPaymentsProcessor(invoiceId: string): Promise<Invoice>
