@@ -24,6 +24,20 @@
     "chai-as-promised": "https://cdn.skypack.dev/chai-as-promised@7.1.1?dts"
   },
   "importMap": "./vendor/import_map.json",
+  "fmt": {
+    "files": {
+      "include": ["src/"],
+      "exclude": ["src/testdata/"]
+    },
+    "options": {
+      "useTabs": false,
+      "lineWidth": 120,
+      "indentWidth": 4,
+      "semiColons": false,
+      "singleQuote": true,
+      "proseWrap": "preserve"
+    }
+  },
   "lint": {
     "files": {
       // "include": ["src/"],

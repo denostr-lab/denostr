@@ -1,4 +1,4 @@
-import { Settings } from "../@types/settings.ts";
-import { SettingsStatic } from "../utils/settings.ts";
+import { Settings } from '../@types/settings.ts'
+import { SettingsStatic } from '../utils/settings.ts'
 
-export const createSettings = (): Settings => SettingsStatic.createSettings();
+export const createSettings = (): Settings => SettingsStatic.createSettings()
