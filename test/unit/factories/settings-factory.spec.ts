@@ -1,25 +1,25 @@
-import { expect } from 'chai'
-import { afterEach,beforeEach, describe, it } from 'jest'
-import Sinon from 'sinon'
+import { expect } from "chai";
+import { afterEach, beforeEach, describe, it } from "jest";
+import Sinon from "sinon";
 
-import { createSettings } from '../../../src/factories/settings-factory.ts'
-import { SettingsStatic } from '../../../src/utils/settings.ts'
+import { createSettings } from "../../../src/factories/settings-factory.ts";
+import { SettingsStatic } from "../../../src/utils/settings.ts";
 
-describe('getSettings', () => {
- let createSettingsStub: Sinon.SinonStub
+describe("getSettings", () => {
+  let createSettingsStub: Sinon.SinonStub;
 
   beforeEach(() => {
-    createSettingsStub = Sinon.stub(SettingsStatic, 'createSettings')
-  })
+    createSettingsStub = Sinon.stub(SettingsStatic, "createSettings");
+  });
 
   afterEach(() => {
-    createSettingsStub.restore()
-  })
+    createSettingsStub.restore();
+  });
 
-  it('calls createSettings and returns', () => {
-    const settings = Symbol()
-    createSettingsStub.returns(settings)
+  it("calls createSettings and returns", () => {
+    const settings = Symbol();
+    createSettingsStub.returns(settings);
 
-    expect(createSettings()).to.equal(settings)
-  })
-})
+    expect(createSettings()).to.equal(settings);
+  });
+});

@@ -1,187 +1,187 @@
-import { Pubkey, Secret } from './base.ts'
-import { EventKinds } from '../constants/base.ts'
-import { MessageType } from './messages.ts'
-import { SubscriptionFilter } from './subscription.ts'
+import { EventKinds } from "../constants/base.ts";
+import { Pubkey, Secret } from "./base.ts";
+import { MessageType } from "./messages.ts";
+import { SubscriptionFilter } from "./subscription.ts";
 
 export interface Info {
-  relay_url: string
-  name: string
-  description: string
-  pubkey: string
-  contact: string
+  relay_url: string;
+  name: string;
+  description: string;
+  pubkey: string;
+  contact: string;
 }
 
 export interface Network {
-  maxPayloadSize?: number
-  remoteIpHeader?: string
+  maxPayloadSize?: number;
+  remoteIpHeader?: string;
 }
 
 export interface RateLimit {
-  description?: string
-  period: number
-  rate: number
+  description?: string;
+  period: number;
+  rate: number;
 }
 
 export interface EventIdLimits {
-  minLeadingZeroBits?: number
+  minLeadingZeroBits?: number;
 }
 
 export interface PubkeyLimits {
-  minBalance: bigint
-  minLeadingZeroBits: number
-  whitelist?: Pubkey[]
-  blacklist?: Pubkey[]
+  minBalance: bigint;
+  minLeadingZeroBits: number;
+  whitelist?: Pubkey[];
+  blacklist?: Pubkey[];
 }
 
-export type EventKindsRange = [EventKinds, EventKinds]
+export type EventKindsRange = [EventKinds, EventKinds];
 
 export interface EventRateLimit extends RateLimit {
-  kinds?: (EventKinds | [EventKinds, EventKinds])[]
+  kinds?: (EventKinds | [EventKinds, EventKinds])[];
 }
 
 export interface KindLimits {
-  whitelist?: (EventKinds | EventKindsRange)[]
-  blacklist?: (EventKinds | EventKindsRange)[]
+  whitelist?: (EventKinds | EventKindsRange)[];
+  blacklist?: (EventKinds | EventKindsRange)[];
 }
 
 export interface CreatedAtLimits {
   /**
    * Maximum number of seconds allowed before the current unix timestamp
    */
-  maxNegativeDelta?: number
+  maxNegativeDelta?: number;
   /**
    * Maximum number of seconds allowed after the current unix timestamp
    */
-  maxPositiveDelta?: number
+  maxPositiveDelta?: number;
 }
 
 export interface ContentLimits {
-  description?: string
-  kinds?: (EventKinds | EventKindsRange)[]
+  description?: string;
+  kinds?: (EventKinds | EventKindsRange)[];
   /**
    * Maximum number of characters allowed on events
    */
-  maxLength?: number
+  maxLength?: number;
 }
 
 export interface EventWhitelists {
-  pubkeys?: Pubkey[]
-  ipAddresses?: string[]
+  pubkeys?: Pubkey[];
+  ipAddresses?: string[];
 }
 
 export interface EventLimits {
-  eventId?: EventIdLimits
-  pubkey?: PubkeyLimits
-  kind?: KindLimits
-  createdAt?: CreatedAtLimits
-  content?: ContentLimits | ContentLimits[]
-  rateLimits?: EventRateLimit[]
-  whitelists?: EventWhitelists
+  eventId?: EventIdLimits;
+  pubkey?: PubkeyLimits;
+  kind?: KindLimits;
+  createdAt?: CreatedAtLimits;
+  content?: ContentLimits | ContentLimits[];
+  rateLimits?: EventRateLimit[];
+  whitelists?: EventWhitelists;
 }
 
 export interface ClientSubscriptionLimits {
-  maxSubscriptions?: number
-  maxFilters?: number
+  maxSubscriptions?: number;
+  maxFilters?: number;
 }
 
 export interface ClientLimits {
-  subscription?: ClientSubscriptionLimits
+  subscription?: ClientSubscriptionLimits;
 }
 
 export interface MessageRateLimit extends RateLimit {
-  type?: MessageType
+  type?: MessageType;
 }
 
 export interface MessageLimits {
-  rateLimits?: MessageRateLimit[]
-  ipWhitelist?: string[]
+  rateLimits?: MessageRateLimit[];
+  ipWhitelist?: string[];
 }
 
 export interface ConnectionLimits {
-  rateLimits: RateLimit[]
-  ipWhitelist?: string[]
-  ipBlacklist?: string[]
+  rateLimits: RateLimit[];
+  ipWhitelist?: string[];
+  ipBlacklist?: string[];
 }
 
 export interface InvoiceLimits {
-  rateLimits: RateLimit[]
-  ipWhitelist?: string[]
+  rateLimits: RateLimit[];
+  ipWhitelist?: string[];
 }
 
 export interface Limits {
-  invoice?: InvoiceLimits
-  connection?: ConnectionLimits
-  client?: ClientLimits
-  event?: EventLimits
-  message?: MessageLimits
+  invoice?: InvoiceLimits;
+  connection?: ConnectionLimits;
+  client?: ClientLimits;
+  event?: EventLimits;
+  message?: MessageLimits;
 }
 
 export interface Worker {
-  count: number
+  count: number;
 }
 
 export interface FeeScheduleWhitelists {
-  pubkeys?: Pubkey[]
+  pubkeys?: Pubkey[];
 }
 
 export interface FeeSchedule {
-  enabled: boolean
-  description?: string
-  amount: bigint
-  whitelists?: FeeScheduleWhitelists
+  enabled: boolean;
+  description?: string;
+  amount: bigint;
+  whitelists?: FeeScheduleWhitelists;
 }
 
 export interface FeeSchedules {
-  admission: FeeSchedule[]
-  publication: FeeSchedule[]
+  admission: FeeSchedule[];
+  publication: FeeSchedule[];
 }
 
 export interface Payments {
-  enabled: boolean
-  processor: keyof PaymentsProcessors
-  feeSchedules: FeeSchedules
+  enabled: boolean;
+  processor: keyof PaymentsProcessors;
+  feeSchedules: FeeSchedules;
 }
 
 export interface ZebedeePaymentsProcessor {
-  baseURL: string
-  callbackBaseURL: string
-  ipWhitelist: string[]
+  baseURL: string;
+  callbackBaseURL: string;
+  ipWhitelist: string[];
 }
 
 export interface LNbitsPaymentProcessor {
-  baseURL: string
-  callbackBaseURL: string
+  baseURL: string;
+  callbackBaseURL: string;
 }
 
 export interface PaymentsProcessors {
-  zebedee?: ZebedeePaymentsProcessor
-  lnbits?: LNbitsPaymentProcessor
+  zebedee?: ZebedeePaymentsProcessor;
+  lnbits?: LNbitsPaymentProcessor;
 }
 
 export interface Local {
-  secret: Secret
+  secret: Secret;
 }
 
 export interface Remote {
-  secret: Secret
+  secret: Secret;
 }
 
 export interface Mirror {
-  address: string
-  filters?: SubscriptionFilter[]
-  secret?: Secret
+  address: string;
+  filters?: SubscriptionFilter[];
+  secret?: Secret;
 }
 
 export interface Mirroring {
-  static?: Mirror[]
+  static?: Mirror[];
 }
 
 export interface Settings {
-  info: Info
-  payments?: Payments
-  paymentsProcessors?: PaymentsProcessors
-  network: Network
-  workers?: Worker
-  limits?: Limits
-  mirroring?: Mirroring
+  info: Info;
+  payments?: Payments;
+  paymentsProcessors?: PaymentsProcessors;
+  network: Network;
+  workers?: Worker;
+  limits?: Limits;
+  mirroring?: Mirroring;
 }

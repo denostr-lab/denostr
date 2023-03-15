@@ -15,9 +15,9 @@
     }],
     ["semantic-release-telegram", {
       "name": "nostream",
-      "chats": [ -1001670974037 ],
+      "chats": [-1001670974037],
       "templates": {
-        "success" : "A {release_type} version of <a href='{repository_url}'>{name}</a> has been released. Current version is <b>{version}</b>\n{release_notes}"
+        "success": "A {release_type} version of <a href='{repository_url}'>{name}</a> has been released. Current version is <b>{version}</b>\n{release_notes}"
       }
     }]
   ]

@@ -1,4 +1,4 @@
 export interface NetAddress {
-    address: string,
-    family?: string 
-  }
+  address: string;
+  family?: string;
+}

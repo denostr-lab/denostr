@@ -1,4 +1,4 @@
-import Schema from 'joi'
+import Schema from "joi";
 
 import {
   createdAtSchema,
@@ -7,8 +7,7 @@ import {
   pubkeySchema,
   signatureSchema,
   tagSchema,
-} from './base-schema.ts'
-
+} from "./base-schema.ts";
 
 /**
  * {
@@ -33,8 +32,8 @@ export const eventSchema = Schema.object({
   kind: kindSchema.required(),
   tags: Schema.array().items(tagSchema).max(2500).required(),
   content: Schema.string()
-    .allow('')
+    .allow("")
     .max(100 * 1024) // 100 kB
     .required(),
   sig: signatureSchema.required(),
-}).unknown(false)
+}).unknown(false);

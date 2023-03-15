@@ -1,6 +1,6 @@
 exports.up = async function (knex) {
   return knex.schema
-    .raw('DROP INDEX IF EXISTS replaceable_events_idx')
+    .raw("DROP INDEX IF EXISTS replaceable_events_idx")
     .raw(`DELETE FROM events a
       WHERE a.event_kind = 41
       AND a.event_created_at < (
@@ -31,12 +31,12 @@ exports.up = async function (knex) {
           OR (event_kind >= 10000 AND event_kind < 20000)
         )
         OR (event_kind >= 30000 AND event_kind < 40000);`,
-    )
-}
+    );
+};
 
 exports.down = function (knex) {
   return knex.schema
-    .raw('DROP INDEX IF EXISTS replaceable_events_idx')
+    .raw("DROP INDEX IF EXISTS replaceable_events_idx")
     .raw(
       `CREATE UNIQUE INDEX replaceable_events_idx
       ON events ( event_pubkey, event_kind, event_deduplication )
@@ -47,5 +47,5 @@ exports.down = function (knex) {
           OR (event_kind >= 10000 AND event_kind < 20000)
         )
         OR (event_kind >= 30000 AND event_kind < 40000);`,
-    )
-}
+    );
+};

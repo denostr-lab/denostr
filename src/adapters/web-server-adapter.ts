@@ -1,19 +1,20 @@
-import { Application } from 'oak'
+import { EventEmitter } from "node:events";
+import { Duplex } from "node:stream";
 
-import { Duplex } from 'node:stream'
-import { EventEmitter } from 'node:events'
+import { Application } from "oak";
 
-import { createLogger } from '../factories/logger-factory.ts'
-import { IWebServerAdapter } from '../@types/adapters.ts'
+import { IWebServerAdapter } from "../@types/adapters.ts";
+import { createLogger } from "../factories/logger-factory.ts";
 
-const debug = createLogger('web-server-adapter')
+const debug = createLogger("web-server-adapter");
 
-export class WebServerAdapter extends EventEmitter implements IWebServerAdapter {
+export class WebServerAdapter extends EventEmitter
+  implements IWebServerAdapter {
   public constructor(
     protected readonly webServer: Application,
   ) {
-    debug('created')
-    super()
+    debug("created");
+    super();
     // this.webServer
     //   .on('error', this.onError.bind(this))
     //   .on('clientError', this.onClientError.bind(this))
@@ -22,47 +23,47 @@ export class WebServerAdapter extends EventEmitter implements IWebServerAdapter 
   }
 
   public listen(port: number): void {
-    console.info('开始监听', port)
-    debug('attempt to listen on port %d', port)
-    this.webServer.listen({ port })
+    console.info("开始监听", port);
+    debug("attempt to listen on port %d", port);
+    this.webServer.listen({ port });
   }
 
   private onListening() {
-    debug('olistening for incoming connections')
-    debug('listening for incoming connections')
+    debug("olistening for incoming connections");
+    debug("listening for incoming connections");
   }
 
   private onError(error: Error) {
-    console.error('web-server-adapter: error:', error)
+    console.error("web-server-adapter: error:", error);
   }
 
   private onClientError(error: Error, socket: Duplex) {
-    debug('onClientError',error, socket)
+    debug("onClientError", error, socket);
 
-    console.error('web-server-adapter: client socket error:', error)
-    if (error['code'] === 'ECONNRESET' || !socket.writable) {
-      return
+    console.error("web-server-adapter: client socket error:", error);
+    if (error["code"] === "ECONNRESET" || !socket.writable) {
+      return;
     }
-    socket.end('HTTP/1.1 400 Bad Request\r\nContent-Type: text/html\r\n')
+    socket.end("HTTP/1.1 400 Bad Request\r\nContent-Type: text/html\r\n");
   }
 
   public close(callback?: () => void): void {
-    debug('closing')
-    debug('主动关闭')
+    debug("closing");
+    debug("主动关闭");
 
     this.webServer.close(() => {
-      this.webServer.removeAllListeners()
-      this.removeAllListeners()
-      if (typeof callback !== 'undefined') {
-        callback()
+      this.webServer.removeAllListeners();
+      this.removeAllListeners();
+      if (typeof callback !== "undefined") {
+        callback();
       }
-    })
-    debug('closed')
+    });
+    debug("closed");
   }
 
   protected onClose(e) {
-    debug('stopped listening to incoming connections', e)
+    debug("stopped listening to incoming connections", e);
 
-    debug('stopped listening to incoming connections')
+    debug("stopped listening to incoming connections");
   }
 }
