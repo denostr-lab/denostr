@@ -18,10 +18,11 @@ BEGIN
       RETURN 0;
     END IF;
 END;
-$$;`)
-}
+$$;`,
+    );
+};
 
 exports.down = function (knex) {
   return knex.schema
-    .raw('DROP FUNCTION IF EXISTS charge_user(BYTEA, BIGINT);')
-}
+    .raw("DROP FUNCTION IF EXISTS charge_user(BYTEA, BIGINT);");
+};

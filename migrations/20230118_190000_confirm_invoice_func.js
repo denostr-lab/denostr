@@ -59,12 +59,13 @@ BEGIN
     END IF;
     RETURN 0;
 END;
-$$;`)
-}
+$$;`,
+    );
+};
 
 exports.down = function (knex) {
   return knex.schema
-    .raw('DROP FUNCTION IF EXISTS confirm_invoice(UUID, BYTEA, TIMESTAMP);')
-    .raw('DROP FUNCTION IF EXISTS ASSERT_SERIALIZED();')
-    .raw('DROP FUNCTION IF EXISTS now_utc();')
-}
+    .raw("DROP FUNCTION IF EXISTS confirm_invoice(UUID, BYTEA, TIMESTAMP);")
+    .raw("DROP FUNCTION IF EXISTS ASSERT_SERIALIZED();")
+    .raw("DROP FUNCTION IF EXISTS now_utc();");
+};

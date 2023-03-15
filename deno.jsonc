@@ -1,6 +1,7 @@
 {
   "tasks": {
-    "dev": "deno run --watch main.ts"
+    "dev": "deno run --allow-all --watch src/index.ts",
+    "start": "deno run --allow-all src/index.ts"
   },
   "imports": {
     "dotenv": "https://deno.land/x/dotenv@v3.2.0/mod.ts",
@@ -12,14 +13,40 @@
     "oak": "https://deno.land/x/oak@v12.1.0/mod.ts",
     "Buffer": "https://deno.land/std@0.139.0/node/buffer.ts",
     "secp256k1": "https://deno.land/x/secp256k1@1.7.1/mod.ts",
-    "crypto": "https://deno.land/std@0.153.0/node/crypto.ts",
+    "crypto": "https://deno.land/std@0.177.0/node/crypto.ts",
     "oak-csp": "https://deno.land/x/oak_csp@1.0.3/mod.ts",
     "chai": "https://cdn.skypack.dev/chai@4.3.4?dts",
     "sinon-chai": "https://cdn.skypack.dev/sinon-chai@3.7.0?dts",
     "sinon": "https://cdn.skypack.dev/sinon@15.0.1?dts",
     "@cucumber/cucumber": "https://cdn.skypack.dev/@cucumber/cucumber@9.0.0?dts",
-    "joi": "https://cdn.skypack.dev/joi@17.8.3?dts",
-    "rxjs": "https://cdn.skypack.dev/rxjs@7.8.0?dts"
+    "joi": "https://cdn.skypack.dev/joi@17.7.0?dts",
+    "rxjs": "https://cdn.skypack.dev/rxjs@7.8.0?dts",
+    "chai-as-promised": "https://cdn.skypack.dev/chai-as-promised@7.1.1?dts"
   },
-  "importMap": "./vendor/import_map.json"
+  "importMap": "./vendor/import_map.json",
+  "fmt": {
+    "files": {
+      "include": ["src/"],
+      "exclude": ["src/testdata/"]
+    },
+    "options": {
+      "useTabs": false,
+      "lineWidth": 120,
+      "indentWidth": 4,
+      "semiColons": false,
+      "singleQuote": true,
+      "proseWrap": "preserve"
+    }
+  },
+  "lint": {
+    "files": {
+      // "include": ["src/"],
+      // "exclude": ["src/testdata/"]
+    },
+    "rules": {
+      "tags": ["recommended"],
+      "include": [],
+      "exclude": ["no-explicit-any", "require-await"]
+    }
+  }
 }

@@ -2,15 +2,17 @@ import { CreateInvoiceRequest, CreateInvoiceResponse, IPaymentsProcessor } from 
 import { Invoice } from '../@types/invoice.ts'
 
 export class PaymentsProcessor implements IPaymentsProcessor {
-  public constructor(
-    private readonly processor: IPaymentsProcessor
-  ) {}
+    public constructor(
+        private readonly processor: IPaymentsProcessor,
+    ) {}
 
-  public async getInvoice(invoiceId: string): Promise<Invoice> {
-    return this.processor.getInvoice(invoiceId)
-  }
+    public async getInvoice(invoiceId: string): Promise<Invoice> {
+        return this.processor.getInvoice(invoiceId)
+    }
 
-  public async createInvoice(request: CreateInvoiceRequest): Promise<CreateInvoiceResponse> {
-    return this.processor.createInvoice(request)
-  }
+    public async createInvoice(
+        request: CreateInvoiceRequest,
+    ): Promise<CreateInvoiceResponse> {
+        return this.processor.createInvoice(request)
+    }
 }

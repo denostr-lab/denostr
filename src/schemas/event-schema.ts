@@ -1,14 +1,6 @@
 import Schema from 'joi'
 
-import {
-  createdAtSchema,
-  idSchema,
-  kindSchema,
-  pubkeySchema,
-  signatureSchema,
-  tagSchema,
-} from './base-schema.ts'
-
+import { createdAtSchema, idSchema, kindSchema, pubkeySchema, signatureSchema, tagSchema } from './base-schema.ts'
 
 /**
  * {
@@ -26,15 +18,15 @@ import {
  * }
  */
 export const eventSchema = Schema.object({
-  // NIP-01
-  id: idSchema.required(),
-  pubkey: pubkeySchema.required(),
-  created_at: createdAtSchema.required(),
-  kind: kindSchema.required(),
-  tags: Schema.array().items(tagSchema).max(2500).required(),
-  content: Schema.string()
-    .allow('')
-    .max(100 * 1024) // 100 kB
-    .required(),
-  sig: signatureSchema.required(),
+    // NIP-01
+    id: idSchema.required(),
+    pubkey: pubkeySchema.required(),
+    created_at: createdAtSchema.required(),
+    kind: kindSchema.required(),
+    tags: Schema.array().items(tagSchema).max(2500).required(),
+    content: Schema.string()
+        .allow('')
+        .max(100 * 1024) // 100 kB
+        .required(),
+    sig: signatureSchema.required(),
 }).unknown(false)

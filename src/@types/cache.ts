@@ -1,5 +1,3 @@
-import {
-  Redis,
-} from 'redis'
+import { Redis } from 'redis'
 
 export type CacheClient = Redis

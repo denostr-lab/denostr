@@ -1,6 +1,6 @@
 import { config } from 'dotenv'
 
-config({ export: true})
+config({ export: true })
 
 const Config = {
     HIDDEN_SERVICE_PORT: Deno.env.get('HIDDEN_SERVICE_PORT'),
@@ -23,7 +23,9 @@ const Config = {
     RR_DB_NAME: Deno.env.get('RR_DB_NAME'),
     RR_DB_MIN_POOL_SIZE: Deno.env.get('RR_DB_MIN_POOL_SIZE'),
     RR_DB_MAX_POOL_SIZE: Deno.env.get('RR_DB_MAX_POOL_SIZE'),
-    RR_DB_ACQUIRE_CONNECTION_TIMEOUT: Deno.env.get('RR_DB_ACQUIRE_CONNECTION_TIMEOUT'),
+    RR_DB_ACQUIRE_CONNECTION_TIMEOUT: Deno.env.get(
+        'RR_DB_ACQUIRE_CONNECTION_TIMEOUT',
+    ),
     READ_REPLICA_ENABLED: Deno.env.get('READ_REPLICA_ENABLED'),
     ZEBEDEE_API_KEY: Deno.env.get('ZEBEDEE_API_KEY'),
     LNBITS_API_KEY: Deno.env.get('LNBITS_API_KEY'),
