@@ -27,7 +27,7 @@ export const streams = new WeakMap<WebSocket, Observable<unknown>>()
 
 BeforeAll({ timeout: 1000 }, async function () {
     Config.RELAY_PORT = '18808'
-    cacheClient = getCacheClient()
+    cacheClient = await getCacheClient()
     dbClient = getMasterDbClient()
     rrDbClient = getReadReplicaDbClient()
     await dbClient.raw('SELECT 1=1')
@@ -49,7 +49,7 @@ BeforeAll({ timeout: 1000 }, async function () {
 AfterAll(async function () {
     worker.close(async () => {
         await Promise.all([
-            cacheClient.disconnect(),
+            cacheClient.close(),
             dbClient.destroy(),
             rrDbClient.destroy(),
         ])
@@ -98,7 +98,7 @@ Given(/someone called (\w+)/, async function (name: string) {
     this.parameters.subscriptions[name] = []
     this.parameters.events[name] = []
     const subject = new Subject()
-    connection.once('close', subject.next.bind(subject))
+    connection.onclose = subject.next.bind(subject)
 
     const project = (raw: MessageEvent) => JSON.parse(raw.data.toString('utf8'))
 

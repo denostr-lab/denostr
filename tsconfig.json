@@ -9,7 +9,7 @@
         "target": "ESNext",
         "outDir": "./dist",
         "moduleResolution": "Node",
-        "types": ["node", "mocha", "@cucumber/cucumber"],
+        "types": ["node"],
         "typeRoots": ["./node_modules/@types"],
         "incremental": true,
         "declarationMap": true,
