@@ -23,7 +23,6 @@ export class WebServerAdapter extends EventEmitter implements IWebServerAdapter 
     }
 
     public listen(port: number): void {
-        console.info('开始监听', port)
         debug('attempt to listen on port %d', port)
         this.controller = new AbortController();
         const { signal } = this.controller;

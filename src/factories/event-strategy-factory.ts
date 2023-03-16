@@ -13,7 +13,7 @@ import { isDeleteEvent, isEphemeralEvent, isParameterizedReplaceableEvent, isRep
 export const eventStrategyFactory = (
     eventRepository: IEventRepository,
 ): Factory<IEventStrategy<Event, Promise<void>>, [Event, IWebSocketAdapter]> =>
-([event, adapter]: [Event, IWebSocketAdapter]) => {
+ ([event, adapter]: [Event, IWebSocketAdapter]) => {
     if (isReplaceableEvent(event)) {
         return new ReplaceableEventStrategy(adapter, eventRepository)
     } else if (isEphemeralEvent(event)) {
