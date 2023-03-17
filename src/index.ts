@@ -1,9 +1,12 @@
 import Config from './config/index.ts'
+import { coreServicesFactory } from './factories/core-services-factory.ts'
 import { maintenanceWorkerFactory } from './factories/maintenance-worker-factory.ts'
 import { staticMirroringWorkerFactory } from './factories/static-mirroring.worker-factory.ts'
 import { workerFactory } from './factories/worker-factory.ts'
 
-export const getRunner = () => {
+export const getRunner = async () => {
+    await coreServicesFactory()
+
     switch (Config.WORKER_TYPE) {
         case 'worker':
             return workerFactory()
@@ -16,5 +19,5 @@ export const getRunner = () => {
     }
 }
 if (import.meta.main) {
-    getRunner().run()
+    (await getRunner()).run()
 }

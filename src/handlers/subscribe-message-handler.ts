@@ -83,7 +83,7 @@ export class SubscribeMessageHandler implements IMessageHandler, IAbortable {
         const isSubscribedToEvent = SubscribeMessageHandler
             .isClientSubscribedToEvent(filters)
 
-        const findEvents = this.eventRepository.findByFilters(filters).stream()
+        const findEvents = this.eventRepository.findByFilters(filters).cursor()
 
         // const abortableFindEvents = addAbortSignal(this.abortController.signal, findEvents)
 

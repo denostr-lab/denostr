@@ -26,7 +26,7 @@ const Config = {
     RR_DB_ACQUIRE_CONNECTION_TIMEOUT: Deno.env.get(
         'RR_DB_ACQUIRE_CONNECTION_TIMEOUT',
     ),
-    READ_REPLICA_ENABLED: Deno.env.get('READ_REPLICA_ENABLED'),
+    READ_REPLICA_ENABLED: Boolean(Deno.env.get('READ_REPLICA_ENABLED')),
     ZEBEDEE_API_KEY: Deno.env.get('ZEBEDEE_API_KEY'),
     LNBITS_API_KEY: Deno.env.get('LNBITS_API_KEY'),
     NOSTR_CONFIG_DIR: Deno.env.get('NOSTR_CONFIG_DIR'),

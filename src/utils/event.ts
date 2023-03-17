@@ -43,7 +43,7 @@ export const isEventMatchingFilter = (filter: SubscriptionFilter) => (event: Eve
 
     if (
         Array.isArray(filter.ids) && (
-            !filter.ids.some(startsWith(event.id))
+            event.id && !filter.ids.some(startsWith(event.id))
         )
     ) {
         return false
@@ -63,9 +63,9 @@ export const isEventMatchingFilter = (filter: SubscriptionFilter) => (event: Eve
 
     if (Array.isArray(filter.authors)) {
         if (
-            !filter.authors.some(startsWith(event.pubkey))
+            event.pubkey && !filter.authors.some(startsWith(event.pubkey))
         ) {
-            if (isDelegatedEvent(event)) {
+            if (Array.isArray(event.tags) && isDelegatedEvent(event)) {
                 const delegation = event.tags.find((tag) => tag[0] === EventTags.Delegation)
                 if (typeof delegation === 'undefined') {
                     return false

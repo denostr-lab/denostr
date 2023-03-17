@@ -36,3 +36,5 @@ dist
 
 # Nostr data folder
 .nostr
+
+deno.lock

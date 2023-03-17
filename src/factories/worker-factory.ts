@@ -1,5 +1,6 @@
 import { WebSocketServerAdapter } from '../adapters/web-socket-server-adapter.ts'
 import { AppWorker } from '../app/worker.ts'
+import { api, LocalBroker, WebSocketServerService } from '../core-services/index.ts'
 import { getMasterDbClient, getReadReplicaDbClient } from '../database/client.ts'
 import { createSettings } from '../factories/settings-factory.ts'
 import { EventRepository } from '../repositories/event-repository.ts'
@@ -28,5 +29,15 @@ export const workerFactory = (): AppWorker => {
         webSocketAdapterFactory(eventRepository, userRepository),
         createSettings,
     )
+
+    api.registerService(new WebSocketServerService(adapter))
+    const broker = new LocalBroker()
+    broker.onBroadcast((eventName, ...args) => {
+        // TODO
+        console.log('broadcast', [{ eventName, args }])
+    })
+    api.setBroker(broker)
+    api.start()
+
     return new AppWorker(adapter)
 }
