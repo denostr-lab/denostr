@@ -1,7 +1,10 @@
 import { PassThrough } from 'node:stream'
 
+import mongoose from 'npm:mongoose'
+
+import { IEvent } from '../database/types/IEvent.ts'
 import { DatabaseClient, EventId, Pubkey } from './base.ts'
-import { DBEvent, Event } from './event.ts'
+import { Event } from './event.ts'
 import { Invoice } from './invoice.ts'
 import { SubscriptionFilter } from './subscription.ts'
 import { User } from './user.ts'
@@ -15,7 +18,7 @@ export interface IQueryResult<T> extends Pick<Promise<T>, keyof Promise<T> & Exp
 export interface IEventRepository {
     create(event: Event): Promise<number>
     upsert(event: Event): Promise<number>
-    findByFilters(filters: SubscriptionFilter[]): IQueryResult<DBEvent[]>
+    findByFilters(filters: SubscriptionFilter[]): mongoose.Aggregate<IEvent[]>
     insertStubs(pubkey: string, eventIdsToDelete: EventId[]): Promise<number>
     deleteByPubkeyAndIds(pubkey: Pubkey, ids: EventId[]): Promise<number>
 }

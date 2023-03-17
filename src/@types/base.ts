@@ -1,6 +1,7 @@
 import net from 'node:net'
 
 import { Knex } from 'knex'
+import mongoose from 'npm:mongoose'
 
 export type EventId = string
 export type Pubkey = string
@@ -35,6 +36,8 @@ export type DatabaseTransaction<T extends Record<string, unknown> = any> = Knex.
 export interface ContextMetadata {
     remoteAddress: net.SocketAddress
 }
+
+export type DatabaseClient1 = mongoose.Connection
 
 export interface IRunnable {
     run(): void

@@ -2,7 +2,9 @@
     "tasks": {
         "dev": "deno run --allow-all --watch src/index.ts",
         "start": "deno run --allow-all src/index.ts",
-        "test": "deno test --no-check -A"
+        "test": "deno test --no-check -A",
+        "example:db:createInstance": "deno run --allow-all src/database/example/createInstance.ts",
+        "example:db:node": "deno run --allow-all src/database/example/node.ts"
     },
     "imports": {
         "dotenv": "https://deno.land/x/dotenv@v3.2.0/mod.ts",
@@ -22,7 +24,9 @@
         "@cucumber/cucumber": "https://cdn.skypack.dev/@cucumber/cucumber@9.0.0?dts",
         "joi": "https://cdn.skypack.dev/joi@17.7.0?dts",
         "rxjs": "https://cdn.skypack.dev/rxjs@7.8.0?dts",
-        "chai-as-promised": "https://cdn.skypack.dev/chai-as-promised@7.1.1?dts"
+        "chai-as-promised": "https://cdn.skypack.dev/chai-as-promised@7.1.1?dts",
+        "events": "https://deno.land/std@0.177.0/node/events.ts"
+
     },
     "importMap": "./vendor/import_map.json",
     "fmt": {
