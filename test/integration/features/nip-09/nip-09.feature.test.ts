@@ -1,16 +1,16 @@
-import { Given, Then, When } from '@cucumber/cucumber'
 import { expect } from 'chai'
 
 import { Tag } from '../../../../src/@types/base.ts'
 import { Event } from '../../../../src/@types/event.ts'
 import { EventTags } from '../../../../src/constants/base.ts'
-import { createEvent, sendEvent, waitForEventCount } from '../helpers.ts'
-import { isDraft } from '../shared.ts'
+import { createEvent, sendEvent, waitForEventCount, WebSocketWrapper } from '../helpers.ts'
+import { isDraft, Given, Then, When, World, startTest } from '../shared.ts'
 
 When(/^(\w+) sends a delete event for their last event$/, async function (
+    this: typeof World,
     name: string,
 ) {
-    const ws = this.parameters.clients[name] as WebSocket
+    const ws = this.parameters.clients[name] as WebSocketWrapper
     const { pubkey, privkey } = this.parameters.identities[name]
 
     const tags: Tag[] = [
@@ -32,8 +32,8 @@ When(/^(\w+) sends a delete event for their last event$/, async function (
 
 Then(
     /(\w+) receives (\d+) delete events? from (\w+) and EOSE$/,
-    async function (name: string, count: string, author: string) {
-        const ws = this.parameters.clients[name] as WebSocket
+    async function (this: typeof World, name: string, count: string, author: string) {
+        const ws = this.parameters.clients[name] as WebSocketWrapper
         const subscription = this.parameters
             .subscriptions[name][this.parameters.subscriptions[name].length - 1]
         const [event] = await waitForEventCount(
@@ -50,8 +50,8 @@ Then(
 
 Then(
     /(\w+) receives (\d+) delete events? from (\w+)$/,
-    async function (name: string, count: string, author: string) {
-        const ws = this.parameters.clients[name] as WebSocket
+    async function (this: typeof World, name: string, count: string, author: string) {
+        const ws = this.parameters.clients[name] as WebSocketWrapper
         const subscription = this.parameters
             .subscriptions[name][this.parameters.subscriptions[name].length - 1]
         const [event] = await waitForEventCount(
@@ -68,7 +68,7 @@ Then(
 
 When(
     /^(\w+) drafts a text_note event with content "([^"]+)"$/,
-    async function (name: string, content: string) {
+    async function (this: typeof World, name: string, content: string) {
         const { pubkey, privkey } = this.parameters.identities[name]
 
         const event: Event = await createEvent(
@@ -82,7 +82,7 @@ When(
     },
 )
 
-Given(/^(\w+) drafts a set_metadata event$/, async function (name: string) {
+Given(/^(\w+) drafts a set_metadata event$/, async function (this: typeof World, name: string) {
     const { pubkey, privkey } = this.parameters.identities[name]
 
     const content = JSON.stringify({ name })
@@ -92,3 +92,5 @@ Given(/^(\w+) drafts a set_metadata event$/, async function (name: string) {
 
     this.parameters.events[name].push(event)
 })
+
+startTest(import.meta.url)
