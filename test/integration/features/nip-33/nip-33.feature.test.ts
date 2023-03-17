@@ -1,14 +1,15 @@
-import { Then, When, World, startTest } from '../shared.ts'
+import { Then, When, startTest } from '../shared.ts'
 
 import { expect } from 'chai'
 
 import { Event } from '../../../../src/@types/event.ts'
 import { createEvent, sendEvent, waitForEventCount, waitForNextEvent, WebSocketWrapper } from '../helpers.ts'
+import type { IWorld } from '../types.ts'
 
 When(
     /^(\w+) sends a parameterized_replaceable_event_0 event with content "([^"]+)" and tag (\w) containing "([^"]+)"$/,
     async function (
-        this: typeof World,
+        this: IWorld,
         name: string,
         content: string,
         tag: string,
@@ -32,7 +33,7 @@ When(
 Then(
     /(\w+) receives a parameterized_replaceable_event_0 event from (\w+) with content "([^"]+?)" and tag (\w+) containing "([^"]+?)"/,
     async function (
-        this: typeof World,
+        this: IWorld,
         name: string,
         author: string,
         content: string,
@@ -56,7 +57,7 @@ Then(
 Then(
     /(\w+) receives (\d+) parameterized_replaceable_event_0 events? from (\w+) with content "([^"]+?)" and EOSE/,
     async function (
-        this: typeof World,
+        this: IWorld,
         name: string,
         count: string,
         author: string,

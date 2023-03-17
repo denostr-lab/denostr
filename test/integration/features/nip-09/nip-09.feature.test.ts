@@ -4,10 +4,10 @@ import { Tag } from '../../../../src/@types/base.ts'
 import { Event } from '../../../../src/@types/event.ts'
 import { EventTags } from '../../../../src/constants/base.ts'
 import { createEvent, sendEvent, waitForEventCount, WebSocketWrapper } from '../helpers.ts'
-import { isDraft, Given, Then, When, World, startTest } from '../shared.ts'
-
+import { isDraft, Given, Then, When, startTest } from '../shared.ts'
+import type { IWorld } from '../types.ts'
 When(/^(\w+) sends a delete event for their last event$/, async function (
-    this: typeof World,
+    this: IWorld,
     name: string,
 ) {
     const ws = this.parameters.clients[name] as WebSocketWrapper
@@ -32,7 +32,7 @@ When(/^(\w+) sends a delete event for their last event$/, async function (
 
 Then(
     /(\w+) receives (\d+) delete events? from (\w+) and EOSE$/,
-    async function (this: typeof World, name: string, count: string, author: string) {
+    async function (this: IWorld, name: string, count: string, author: string) {
         const ws = this.parameters.clients[name] as WebSocketWrapper
         const subscription = this.parameters
             .subscriptions[name][this.parameters.subscriptions[name].length - 1]
@@ -50,7 +50,7 @@ Then(
 
 Then(
     /(\w+) receives (\d+) delete events? from (\w+)$/,
-    async function (this: typeof World, name: string, count: string, author: string) {
+    async function (this: IWorld, name: string, count: string, author: string) {
         const ws = this.parameters.clients[name] as WebSocketWrapper
         const subscription = this.parameters
             .subscriptions[name][this.parameters.subscriptions[name].length - 1]
@@ -68,7 +68,7 @@ Then(
 
 When(
     /^(\w+) drafts a text_note event with content "([^"]+)"$/,
-    async function (this: typeof World, name: string, content: string) {
+    async function (this: IWorld, name: string, content: string) {
         const { pubkey, privkey } = this.parameters.identities[name]
 
         const event: Event = await createEvent(
@@ -82,7 +82,7 @@ When(
     },
 )
 
-Given(/^(\w+) drafts a set_metadata event$/, async function (this: typeof World, name: string) {
+Given(/^(\w+) drafts a set_metadata event$/, async function (this: IWorld, name: string) {
     const { pubkey, privkey } = this.parameters.identities[name]
 
     const content = JSON.stringify({ name })

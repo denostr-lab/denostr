@@ -1,12 +1,13 @@
 import { expect } from 'chai'
-import { Then, When, World, startTest } from '../shared.ts'
+import { Then, When, startTest } from '../shared.ts'
 
 import { Event } from '../../../../src/@types/event.ts'
 import { createEvent, createSubscription, sendEvent, waitForNextEvent, WebSocketWrapper } from '../helpers.ts'
+import type { IWorld } from '../types.ts'
 
 When(
     /^(\w+) sends a channel_creation event with content '([^']+)'$/,
-    async function (this: typeof World, name: string, content: string) {
+    async function (this: IWorld, name: string, content: string) {
         const ws = this.parameters.clients[name] as WebSocketWrapper
         const { pubkey, privkey } = this.parameters.identities[name]
 
@@ -22,7 +23,7 @@ When(
 
 When(
     /^(\w+) sends a channel_metadata event with content '([^']+)'$/,
-    async function (this: typeof World, name: string, content: string) {
+    async function (this: IWorld, name: string, content: string) {
         const ws = this.parameters.clients[name] as WebSocketWrapper
         const { pubkey, privkey } = this.parameters.identities[name]
 
@@ -41,7 +42,7 @@ When(
 
 Then(
     /(\w+) receives a channel_creation event from (\w+) with content '([^']+?)'/,
-    async function (this: typeof World, name: string, author: string, content: string) {
+    async function (this: IWorld, name: string, author: string, content: string) {
         const ws = this.parameters.clients[name] as WebSocketWrapper
         const subscription = this.parameters
             .subscriptions[name][this.parameters.subscriptions[name].length - 1]
@@ -61,7 +62,7 @@ Then(
 
 Then(
     /(\w+) receives a channel_metadata event from (\w+) with content '([^']+?)'/,
-    async function (this: typeof World, name: string, author: string, content: string) {
+    async function (this: IWorld, name: string, author: string, content: string) {
         const ws = this.parameters.clients[name] as WebSocketWrapper
         const subscription = this.parameters
             .subscriptions[name][this.parameters.subscriptions[name].length - 1]
@@ -84,7 +85,7 @@ Then(
 
 When(
     /^(\w+) subscribes to channel_creation events$/,
-    async function (this: typeof World, name: string) {
+    async function (this: IWorld, name: string) {
         const ws = this.parameters.clients[name] as WebSocketWrapper
         const subscription = {
             name: `test-${Math.random()}`,
@@ -98,7 +99,7 @@ When(
 
 When(
     /^(\w+) subscribes to channel_metadata events$/,
-    async function (this: typeof World, name: string) {
+    async function (this: IWorld, name: string) {
         const ws = this.parameters.clients[name] as WebSocketWrapper
         const subscription = {
             name: `test-${Math.random()}`,

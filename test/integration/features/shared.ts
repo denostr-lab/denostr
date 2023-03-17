@@ -14,13 +14,13 @@ import Config from '../../../src/config/index.ts'
 import { getMasterDbClient, getReadReplicaDbClient } from '../../../src/database/client.ts'
 import { workerFactory } from '../../../src/factories/worker-factory.ts'
 import { SettingsStatic } from '../../../src/utils/settings.ts'
-import type { WorldType } from './types.ts'
+import type { IWorld } from './types.ts'
 import { connect, createIdentity, createSubscription, sendEvent, WebSocketWrapper } from './helpers.ts'
 
 export const isDraft = Symbol('draft')
 
 
-export const World: WorldType = {
+const World: IWorld = {
     parameters: {
         identities: {},
     },
@@ -30,14 +30,14 @@ export const World: WorldType = {
         Then: [],
     },
 }
-export const Given = (reg: RegExp, func: Function) => {
+export const Given = (reg: RegExp, func: ()=>void) => {
     World.functions.Given.push({ reg, func })
 }
-export const When = (reg: RegExp, func: Function) => {
+export const When = (reg: RegExp, func: ()=>void) => {
     World.functions.When.push({ reg, func })
 }
 
-export const Then = (reg: RegExp, func: Function) => {
+export const Then = (reg: RegExp, func: ()=>void) => {
     World.functions.Then.push({ reg, func })
 }
 
@@ -53,7 +53,7 @@ export const startTest = (pathUrl: string) => {
     pathUrl = new URL(pathUrl).pathname
     const testDesc = pathUrl.replace(Deno.cwd(), '')
     const featPath: string = pathUrl.replace('.ts', '')
-    Given(/someone called (\w+)/, async function (this: typeof World, name: string) {
+    Given(/someone called (\w+)/, async function (this: IWorld, name: string) {
         const connection = await connect(name)
         World.parameters.identities[name] = World.parameters.identities[name] ??
             createIdentity(name)
@@ -74,7 +74,7 @@ export const startTest = (pathUrl: string) => {
 
     When(
         /(\w+) subscribes to author (\w+)$/,
-        async function (this: typeof World, from: string, to: string) {
+        async function (this: IWorld, from: string, to: string) {
             const ws = World.parameters.clients[from] as WebSocketWrapper
             const pubkey = World.parameters.identities[to].pubkey
             const subscription = {
@@ -87,7 +87,7 @@ export const startTest = (pathUrl: string) => {
         },
     )
 
-    Then(/(\w+) unsubscribes from author \w+/, async function (this: typeof World, from: string) {
+    Then(/(\w+) unsubscribes from author \w+/, async function (this: IWorld, from: string) {
         const ws = World.parameters.clients[from] as WebSocketWrapper
         const subscription = World.parameters.subscriptions[from].pop()
         return new Promise<void>((resolve, reject) => {
@@ -101,7 +101,7 @@ export const startTest = (pathUrl: string) => {
     Then(
         /^(\w+) sends their last draft event (successfully|unsuccessfully)$/,
         async function (
-            this: typeof World,
+            this: IWorld,
             name: string,
             successfullyOrNot: string,
         ) {
@@ -215,23 +215,23 @@ export const startTest = (pathUrl: string) => {
                         }
                     }
                 }
-                // it(`start task, ${desc}`, async() => {
-                //     let hitGroup = false
-                //     for (let line of scenario.list) {
-                //         hitGroup = false
-                //         for (let key in World.functions) {
-                //             if (line.startsWith(key)) {
-                //                 hitGroup = true
-                //                 prevKey = key
-                //                 await statuFunction(line, key)
-                //                 break
-                //             }
-                //         }
-                //         if (!hitGroup && prevKey && line.startsWith('And')) {
-                //             await statuFunction(line, prevKey)
-                //         }
-                //     }
-                // })
+                it(`start task, ${desc}`, async() => {
+                    let hitGroup = false
+                    for (let line of scenario.list) {
+                        hitGroup = false
+                        for (let key in World.functions) {
+                            if (line.startsWith(key)) {
+                                hitGroup = true
+                                prevKey = key
+                                await statuFunction(line, key)
+                                break
+                            }
+                        }
+                        if (!hitGroup && prevKey && line.startsWith('And')) {
+                            await statuFunction(line, prevKey)
+                        }
+                    }
+                })
             })
         }
     })

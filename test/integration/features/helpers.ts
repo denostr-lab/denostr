@@ -11,11 +11,11 @@ import { SubscriptionFilter } from '../../../src/@types/subscription.ts'
 import Config from '../../../src/config/index.ts'
 import { serializeEvent } from '../../../src/utils/event.ts'
 import { streams } from './shared.ts'
-
+import type { IWebSocketWrapper } from './types.ts'
 // secp256k1.utils.sha256Sync = (...messages: Uint8Array[]) =>
 //   messages.reduce((hash: Hash, message: Uint8Array) => hash.update(message),  createHash('sha256')).digest()
 
-export class WebSocketWrapper extends EventEmitter {
+export class WebSocketWrapper extends EventEmitter implements IWebSocketWrapper{
     private host: string
     public readyState: number
     private ws: WebSocket | undefined
