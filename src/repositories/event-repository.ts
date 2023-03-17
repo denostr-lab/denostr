@@ -126,9 +126,7 @@ export class EventRepository implements IEventRepository {
             }
         })
 
-        const cursor = EventsModel.aggregate([...pipelines])
-
-        return cursor
+        return EventsModel.aggregate([...pipelines])
 
         // debug('querying for %o', filters)
         // if (!Array.isArray(filters) || !filters.length) {
@@ -268,7 +266,9 @@ export class EventRepository implements IEventRepository {
             const result = await EventsModel.collection.insertOne(row)
             return { rowCount: result.insertedId ? 1 : 0 }
         } catch (err) {
-            console.error(err)
+            if (!String(err).indexOf('E11000 duplicate key error collection')) {
+                console.error(String(err))
+            }
             return { rowCount: 0 }
         }
 
@@ -383,7 +383,9 @@ export class EventRepository implements IEventRepository {
             const result = await EventsModel.insertMany(stubs, { ordered: false })
             return result.length
         } catch (err) {
-            console.error(err)
+            if (!String(err).indexOf('E11000 duplicate key error collection')) {
+                console.error(String(err))
+            }
             return 0
         }
     }
@@ -419,7 +421,9 @@ async function tryCatchUpdate(query: any) {
 
         return result.modifiedCount
     } catch (err) {
-        console.error(err)
+        if (!String(err).indexOf('E11000 duplicate key error collection')) {
+            console.error(String(err))
+        }
         return 0
     }
 }
