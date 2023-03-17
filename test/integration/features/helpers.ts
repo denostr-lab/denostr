@@ -69,7 +69,7 @@ export async function connect(_name: string): Promise<WebSocketWrapper> {
         })
        
     } catch (e) {
-        console.info(e, '初始化socker 错误')
+        console.info(e, 'inie socket error')
     }
     })
 }

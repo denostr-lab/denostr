@@ -129,7 +129,6 @@ When(/(\w+) sends a set_metadata event/, async function (this: typeof World, nam
     const content = JSON.stringify({ name })
     const event: Event = await createEvent({ pubkey, kind: 0, content }, privkey)
     await sendEvent(ws, event)
-    console.info(this.parameters.events, name, event, '输入数据')
     this.parameters.events[name].push(event)
 })
 
@@ -303,8 +302,6 @@ Then(/(\w+) receives (\d+) text_note events from (\w+)/, async function (
     count: string,
     author: string,
 ) {
-    console.info('由于那是123123123艾司洛尔')
-
     const ws = this.parameters.clients[name] as WebSocketWrapper
     const subscription = this.parameters
         .subscriptions[name][this.parameters.subscriptions[name].length - 1]
@@ -320,7 +317,6 @@ Then(/(\w+) receives (\d+) text_note events from (\w+)/, async function (
     expect(events[1].kind).to.equal(1)
     expect(events[0].pubkey).to.equal(this.parameters.identities[author].pubkey)
     expect(events[1].pubkey).to.equal(this.parameters.identities[author].pubkey)
-    console.info('由于那是艾司洛尔')
 })
 
 Then(/(\w+) receives (\d+) events from (\w+) and (\w+)/, async function (

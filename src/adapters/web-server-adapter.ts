@@ -48,16 +48,11 @@ export class WebServerAdapter extends EventEmitter implements IWebServerAdapter 
         socket.end('HTTP/1.1 400 Bad Request\r\nContent-Type: text/html\r\n')
     }
 
-    public close(/* callback?: () => void */): void {
+    public close( callback?: () => void): void {
         debug('closing')
         this.controller?.abort?.();
-        // this.webServer.close(() => {
-        //     this.webServer.removeAllListeners()
-        //     this.removeAllListeners()
-        //     if (typeof callback !== 'undefined') {
-        //         callback()
-        //     }
-        // })
+        callback?.()
+        this.removeAllListeners()
         debug('closed')
     }
 

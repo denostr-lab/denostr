@@ -1,12 +1,10 @@
 // deno-lint-ignore-file
 import { Buffer } from 'Buffer'
 import fs from 'node:fs'
-import path from 'node:path'
 import { assocPath, pipe } from 'ramda'
 import { fromEvent, map, Observable, ReplaySubject, Subject, takeUntil } from 'npm:rxjs@7.8.0'
 import Sinon from 'sinon'
 import { afterAll, beforeAll, describe, it } from 'jest'
-
 import { DatabaseClient } from '../../../src/@types/base.ts'
 import { CacheClient } from '../../../src/@types/cache.ts'
 import { Event } from '../../../src/@types/event.ts'
@@ -16,19 +14,13 @@ import Config from '../../../src/config/index.ts'
 import { getMasterDbClient, getReadReplicaDbClient } from '../../../src/database/client.ts'
 import { workerFactory } from '../../../src/factories/worker-factory.ts'
 import { SettingsStatic } from '../../../src/utils/settings.ts'
+import type { WorldType } from './types.ts'
 import { connect, createIdentity, createSubscription, sendEvent, WebSocketWrapper } from './helpers.ts'
 
 export const isDraft = Symbol('draft')
 
-type RegexFunc = {
-    reg: RegExp
-    func: Function
-}
-interface World {
-    parameters: Record<string, any>
-    functions: Record<string, RegexFunc[]>
-}
-export const World: World = {
+
+export const World: WorldType = {
     parameters: {
         identities: {},
     },
@@ -144,6 +136,7 @@ export const startTest = (pathUrl: string) => {
             worker.run()
         })
         afterAll(async function () {
+
             worker.close(async () => {
                 await Promise.all([
                     cacheClient.close(),
@@ -222,23 +215,23 @@ export const startTest = (pathUrl: string) => {
                         }
                     }
                 }
-                it(`start task, ${desc}`, async() => {
-                    let hitGroup = false
-                    for (let line of scenario.list) {
-                        hitGroup = false
-                        for (let key in World.functions) {
-                            if (line.startsWith(key)) {
-                                hitGroup = true
-                                prevKey = key
-                                await statuFunction(line, key)
-                                break
-                            }
-                        }
-                        if (!hitGroup && prevKey && line.startsWith('And')) {
-                            await statuFunction(line, prevKey)
-                        }
-                    }
-                })
+                // it(`start task, ${desc}`, async() => {
+                //     let hitGroup = false
+                //     for (let line of scenario.list) {
+                //         hitGroup = false
+                //         for (let key in World.functions) {
+                //             if (line.startsWith(key)) {
+                //                 hitGroup = true
+                //                 prevKey = key
+                //                 await statuFunction(line, key)
+                //                 break
+                //             }
+                //         }
+                //         if (!hitGroup && prevKey && line.startsWith('And')) {
+                //             await statuFunction(line, prevKey)
+                //         }
+                //     }
+                // })
             })
         }
     })

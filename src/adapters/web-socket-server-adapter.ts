@@ -54,7 +54,7 @@ export class WebSocketServerAdapter extends WebServerAdapter implements IWebSock
             }
         })
     }
-    public close(/*callback?: () => void*/): void {
+    public close(callback?: () => void): void {
         super.close(() => {
             debug('closing')
             // clearInterval(this.heartbeatInterval)
@@ -71,6 +71,7 @@ export class WebSocketServerAdapter extends WebServerAdapter implements IWebSock
                     webSocket.close()
                 },
             )
+            callback?.()
             debug('closing web socket server')
             // this.webSocketServer.close(() => {
             //   this.webSocketServer.removeAllListeners()
