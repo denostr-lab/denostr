@@ -14,8 +14,7 @@ import { createSettings } from './settings-factory.ts'
 export const messageHandlerFactory = (
     eventRepository: IEventRepository,
     userRepository: IUserRepository,
-) =>
-([message, adapter]: [IncomingMessage, IWebSocketAdapter]) => {
+) => ([message, adapter]: [IncomingMessage, IWebSocketAdapter]) => {
     switch (message[0]) {
         case MessageType.EVENT: {
             if (isDelegatedEvent(message[1])) {
