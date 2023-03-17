@@ -1,18 +1,17 @@
-import { Then, When, World } from '@cucumber/cucumber'
 import chai from 'chai'
 import sinonChai from 'sinon-chai'
 
 import { Event } from '../../../../src/@types/event.ts'
-import { createEvent, createSubscription, sendEvent, waitForCommand, waitForEOSE, waitForEventCount, waitForNextEvent, waitForNotice } from '../helpers.ts'
-import { isDraft } from '../shared.ts'
-
+import { createEvent, createSubscription, sendEvent, waitForCommand, waitForEOSE, waitForEventCount, waitForNextEvent, waitForNotice, WebSocketWrapper } from '../helpers.ts'
+import { isDraft, Then, When, World, startTest } from '../shared.ts'
+import type { WorldType } from '../types.ts'
 chai.use(sinonChai)
 const { expect } = chai
 
 When(
     /(\w+) subscribes to last event from (\w+)$/,
-    async function (this: World<Record<string, any>>, from: string, to: string) {
-        const ws = this.parameters.clients[from] as WebSocket
+    async function (this: WorldType, from: string, to: string) {
+        const ws = this.parameters.clients[from] as WebSocketWrapper
         const event = this.parameters.events[to].pop()
         const subscription = {
             name: `test-${Math.random()}`,
@@ -21,18 +20,19 @@ When(
         this.parameters.subscriptions[from].push(subscription)
 
         await createSubscription(ws, subscription.name, subscription.filters)
+
     },
 )
 
 When(
     /(\w+) subscribes to author (\w+) with a limit of (\d+)/,
     async function (
-        this: World<Record<string, any>>,
+        this: IWorld,
         from: string,
         to: string,
         limit: string,
     ) {
-        const ws = this.parameters.clients[from] as WebSocket
+        const ws = this.parameters.clients[from] as WebSocketWrapper
         const pubkey = this.parameters.identities[to].pubkey
         const subscription = {
             name: `test-${Math.random()}`,
@@ -46,8 +46,8 @@ When(
 
 When(
     /^(\w+) subscribes to text_note events$/,
-    async function (this: World<Record<string, any>>, name: string) {
-        const ws = this.parameters.clients[name] as WebSocket
+    async function (this: IWorld, name: string) {
+        const ws = this.parameters.clients[name] as WebSocketWrapper
         const subscription = {
             name: `test-${Math.random()}`,
             filters: [{ kinds: [1] }],
@@ -61,12 +61,12 @@ When(
 When(
     /^(\w+) subscribes to text_note events from (\w+) and set_metadata events from (\w+)$/,
     async function (
-        this: World<Record<string, any>>,
+        this: IWorld,
         name: string,
         author1: string,
         author2: string,
     ) {
-        const ws = this.parameters.clients[name] as WebSocket
+        const ws = this.parameters.clients[name] as WebSocketWrapper
         const firstAuthor = this.parameters.identities[author1].pubkey
         const secondAuthor = this.parameters.identities[author2].pubkey
         const subscription = {
@@ -85,12 +85,12 @@ When(
 When(
     /(\w+) subscribes to any event since (\d+) until (\d+)/,
     async function (
-        this: World<Record<string, any>>,
+        this: IWorld,
         name: string,
         since: string,
         until: string,
     ) {
-        const ws = this.parameters.clients[name] as WebSocket
+        const ws = this.parameters.clients[name] as WebSocketWrapper
         const subscription = {
             name: `test-${Math.random()}`,
             filters: [{ since: Number(since), until: Number(until) }],
@@ -104,12 +104,12 @@ When(
 When(
     /(\w+) subscribes to tag (\w) with "(.*?)"$/,
     async function (
-        this: World<Record<string, any>>,
+        this: IWorld,
         name: string,
         tag: string,
         value: string,
     ) {
-        const ws = this.parameters.clients[name] as WebSocket
+        const ws = this.parameters.clients[name] as WebSocketWrapper
         const subscription = {
             name: `test-${Math.random()}`,
             filters: [{ [`#${tag}`]: [value] }],
@@ -122,23 +122,21 @@ When(
     },
 )
 
-When(/(\w+) sends a set_metadata event/, async function (name: string) {
-    const ws = this.parameters.clients[name] as WebSocket
+When(/(\w+) sends a set_metadata event/, async function (this: IWorld, name: string) {
+    const ws = this.parameters.clients[name] as WebSocketWrapper
     const { pubkey, privkey } = this.parameters.identities[name]
 
     const content = JSON.stringify({ name })
     const event: Event = await createEvent({ pubkey, kind: 0, content }, privkey)
-
     await sendEvent(ws, event)
     this.parameters.events[name].push(event)
 })
 
 When(
     /^(\w+) sends a text_note event with content "([^"]+)"$/,
-    async function (name: string, content: string) {
-        const ws = this.parameters.clients[name] as WebSocket
+    async function (this: IWorld, name: string, content: string) {
+        const ws = this.parameters.clients[name] as WebSocketWrapper
         const { pubkey, privkey } = this.parameters.identities[name]
-
         const event: Event = await createEvent(
             { pubkey, kind: 1, content },
             privkey,
@@ -152,12 +150,13 @@ When(
 When(
     /^(\w+) sends a text_note event with content "([^"]+)" and tag (\w) containing "([^"]+)"$/,
     async function (
+        this: IWorld,
         name: string,
         content: string,
         tag: string,
         value: string,
     ) {
-        const ws = this.parameters.clients[name] as WebSocket
+        const ws = this.parameters.clients[name] as WebSocketWrapper
         const { pubkey, privkey } = this.parameters.identities[name]
 
         const event: Event = await createEvent({
@@ -175,13 +174,14 @@ When(
 When(
     /^(\w+) sends a text_note event with content "([^"]+)" on (\d+)$/,
     async function (
+        this: IWorld,
         name: string,
         content: string,
         createdAt: string,
     ) {
-        const ws = this.parameters.clients[name] as WebSocket
+        const ws = this.parameters.clients[name] as WebSocketWrapper
         const { pubkey, privkey } = this.parameters.identities[name]
-
+    
         const event: Event = await createEvent({
             pubkey,
             kind: 1,
@@ -196,7 +196,7 @@ When(
 
 When(
     /(\w+) drafts a text_note event with invalid signature/,
-    async function (name: string) {
+    async function (this: IWorld, name: string) {
         const { pubkey, privkey } = this.parameters.identities[name]
 
         const event: Event = await createEvent({
@@ -215,8 +215,8 @@ When(
 
 When(
     /(\w+) sends a recommend_server event with content "(.+?)"/,
-    async function (name: string, content: string) {
-        const ws = this.parameters.clients[name] as WebSocket
+    async function (this: IWorld, name: string, content: string) {
+        const ws = this.parameters.clients[name] as WebSocketWrapper
         const { pubkey, privkey } = this.parameters.identities[name]
 
         const event: Event = await createEvent(
@@ -231,8 +231,8 @@ When(
 
 Then(
     /(\w+) receives a set_metadata event from (\w+)/,
-    async function (name: string, author: string) {
-        const ws = this.parameters.clients[name] as WebSocket
+    async function (this: IWorld, name: string, author: string) {
+        const ws = this.parameters.clients[name] as WebSocketWrapper
         const subscription = this.parameters
             .subscriptions[name][this.parameters.subscriptions[name].length - 1]
         const event = this.parameters.events[author][this.parameters.events[author].length - 1]
@@ -252,8 +252,8 @@ Then(
 
 Then(
     /(\w+) receives a text_note event from (\w+) with content "([^"]+?)"/,
-    async function (name: string, author: string, content: string) {
-        const ws = this.parameters.clients[name] as WebSocket
+    async function (this: IWorld, name: string, author: string, content: string) {
+        const ws = this.parameters.clients[name] as WebSocketWrapper
         const subscription = this.parameters
             .subscriptions[name][this.parameters.subscriptions[name].length - 1]
         const receivedEvent = await waitForNextEvent(
@@ -272,12 +272,13 @@ Then(
 Then(
     /(\w+) receives a text_note event from (\w+) with content "(.+?)" on (\d+)/,
     async function (
+        this: IWorld,
         name: string,
         author: string,
         content: string,
         createdAt: string,
     ) {
-        const ws = this.parameters.clients[name] as WebSocket
+        const ws = this.parameters.clients[name] as WebSocketWrapper
         const subscription = this.parameters
             .subscriptions[name][this.parameters.subscriptions[name].length - 1]
         const receivedEvent = await waitForNextEvent(
@@ -296,11 +297,12 @@ Then(
 )
 
 Then(/(\w+) receives (\d+) text_note events from (\w+)/, async function (
+    this: IWorld,
     name: string,
     count: string,
     author: string,
 ) {
-    const ws = this.parameters.clients[name] as WebSocket
+    const ws = this.parameters.clients[name] as WebSocketWrapper
     const subscription = this.parameters
         .subscriptions[name][this.parameters.subscriptions[name].length - 1]
     const events = await waitForEventCount(
@@ -318,12 +320,13 @@ Then(/(\w+) receives (\d+) text_note events from (\w+)/, async function (
 })
 
 Then(/(\w+) receives (\d+) events from (\w+) and (\w+)/, async function (
+    this: IWorld,
     name: string,
     count: string,
     author1: string,
     author2: string,
 ) {
-    const ws = this.parameters.clients[name] as WebSocket
+    const ws = this.parameters.clients[name] as WebSocketWrapper
     const subscription = this.parameters
         .subscriptions[name][this.parameters.subscriptions[name].length - 1]
     const events = await waitForEventCount(
@@ -342,8 +345,8 @@ Then(/(\w+) receives (\d+) events from (\w+) and (\w+)/, async function (
 
 Then(
     /(\w+) receives a recommend_server event from (\w+) with content "(.+?)"/,
-    async function (name: string, author: string, content: string) {
-        const ws = this.parameters.clients[name] as WebSocket
+    async function (this: IWorld, name: string, author: string, content: string) {
+        const ws = this.parameters.clients[name] as WebSocketWrapper
         const subscription = this.parameters
             .subscriptions[name][this.parameters.subscriptions[name].length - 1]
         const receivedEvent = await waitForNextEvent(
@@ -362,8 +365,8 @@ Then(
 
 Then(
     /(\w+) receives a notice with (.*)/,
-    async function (name: string, pattern: string) {
-        const ws = this.parameters.clients[name] as WebSocket
+    async function (this: IWorld, name: string, pattern: string) {
+        const ws = this.parameters.clients[name] as WebSocketWrapper
         const actualNotice = await waitForNotice(ws)
 
         expect(actualNotice).to.contain(pattern)
@@ -372,10 +375,11 @@ Then(
 
 Then(
     /(\w+) receives an? (\w+) result/,
-    async function (name: string, successful: string) {
-        const ws = this.parameters.clients[name] as WebSocket
+    async function (this: IWorld, name: string, successful: string) {
+        const ws = this.parameters.clients[name] as WebSocketWrapper
         const command = await waitForCommand(ws)
 
         expect(command[2]).to.equal(successful === 'successful')
     },
 )
+startTest(import.meta.url)

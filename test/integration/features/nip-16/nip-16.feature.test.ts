@@ -1,16 +1,18 @@
-import { Then, When } from '@cucumber/cucumber'
+import { Then, When, startTest} from '../shared.ts'
 import { expect } from 'chai'
 
 import { Event } from '../../../../src/@types/event.ts'
-import { createEvent, sendEvent, waitForEventCount, waitForNextEvent } from '../helpers.ts'
+import { createEvent, sendEvent, waitForEventCount, waitForNextEvent, WebSocketWrapper } from '../helpers.ts'
+import type { IWorld } from '../types.ts'
 
 When(
     /^(\w+) sends a replaceable_event_0 event with content "([^"]+)"$/,
     async function (
+        this: IWorld,
         name: string,
         content: string,
     ) {
-        const ws = this.parameters.clients[name] as WebSocket
+        const ws = this.parameters.clients[name] as WebSocketWrapper
         const { pubkey, privkey } = this.parameters.identities[name]
 
         const event: Event = await createEvent(
@@ -25,8 +27,8 @@ When(
 
 Then(
     /(\w+) receives a replaceable_event_0 event from (\w+) with content "([^"]+?)"/,
-    async function (name: string, author: string, content: string) {
-        const ws = this.parameters.clients[name] as WebSocket
+    async function (this: IWorld, name: string, author: string, content: string) {
+        const ws = this.parameters.clients[name] as WebSocketWrapper
         const subscription = this.parameters
             .subscriptions[name][this.parameters.subscriptions[name].length - 1]
         const receivedEvent = await waitForNextEvent(ws, subscription.name)
@@ -42,12 +44,13 @@ Then(
 Then(
     /(\w+) receives (\d+) replaceable_event_0 events? from (\w+) with content "([^"]+?)" and EOSE/,
     async function (
+        this: IWorld,
         name: string,
         count: string,
         author: string,
         content: string,
     ) {
-        const ws = this.parameters.clients[name] as WebSocket
+        const ws = this.parameters.clients[name] as WebSocketWrapper
         const subscription = this.parameters
             .subscriptions[name][this.parameters.subscriptions[name].length - 1]
         const events = await waitForEventCount(
@@ -69,10 +72,11 @@ Then(
 When(
     /^(\w+) sends a ephemeral_event_0 event with content "([^"]+)"$/,
     async function (
+        this: IWorld,
         name: string,
         content: string,
     ) {
-        const ws = this.parameters.clients[name] as WebSocket
+        const ws = this.parameters.clients[name] as WebSocketWrapper
         const { pubkey, privkey } = this.parameters.identities[name]
 
         const event: Event = await createEvent(
@@ -87,8 +91,8 @@ When(
 
 Then(
     /(\w+) receives a ephemeral_event_0 event from (\w+) with content "([^"]+?)"/,
-    async function (name: string, author: string, content: string) {
-        const ws = this.parameters.clients[name] as WebSocket
+    async function (this: IWorld, name: string, author: string, content: string) {
+        const ws = this.parameters.clients[name] as WebSocketWrapper
         const subscription = this.parameters
             .subscriptions[name][this.parameters.subscriptions[name].length - 1]
         const receivedEvent = await waitForNextEvent(ws, subscription.name)
@@ -102,10 +106,11 @@ Then(
 )
 
 Then(/(\w+) receives (\d+) ephemeral_event_0 events? and EOSE/, async function (
+    this: IWorld,
     name: string,
     count: string,
 ) {
-    const ws = this.parameters.clients[name] as WebSocket
+    const ws = this.parameters.clients[name] as WebSocketWrapper
     const subscription = this.parameters
         .subscriptions[name][this.parameters.subscriptions[name].length - 1]
     const events = await waitForEventCount(
@@ -117,3 +122,5 @@ Then(/(\w+) receives (\d+) ephemeral_event_0 events? and EOSE/, async function (
 
     expect(events.length).to.equal(Number(count))
 })
+
+startTest(import.meta.url)
