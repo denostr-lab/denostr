@@ -1,7 +1,7 @@
 import { WebSocketServerAdapter } from '../adapters/web-socket-server-adapter.ts'
 import { AppWorker } from '../app/worker.ts'
 import { api, LocalBroker, WebSocketServerService } from '../core-services/index.ts'
-import { getMasterDbClient, getReadReplicaDbClient } from '../database/client.ts'
+import { getMasterDbClient, getReadReplicaDbClient } from '../database/client1.ts'
 import { createSettings } from '../factories/settings-factory.ts'
 import { EventRepository } from '../repositories/event-repository.ts'
 import { UserRepository } from '../repositories/user-repository.ts'
