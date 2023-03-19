@@ -65,8 +65,8 @@ const debug = createLogger('event-repository')
 
 export class EventRepository implements IEventRepository {
     public constructor(
-        private readonly masterDbClient: DatabaseClient,
-        private readonly readReplicaDbClient: DatabaseClient,
+        private readonly masterDbClient: mongoose.Connection,
+        private readonly readReplicaDbClient: mongoose.Connection,
     ) {}
 
     public findByFilters(filters: SubscriptionFilter[]): mongoose.Aggregate<IEvent[]> {
@@ -74,9 +74,14 @@ export class EventRepository implements IEventRepository {
         if (!Array.isArray(filters) || !filters.length) {
             throw new Error('Filters cannot be empty')
         }
-        const pipelines = filters.map((currentFilter) => {
+
+        const pipelines: any[] = []
+        filters.forEach((currentFilter: SubscriptionFilter) => {
             const $match: any = {}
             const $and: any[] = []
+            const $or: any[] = []
+            let $limit = 500
+            const $sort = { event_created_at: 1 }
 
             for (const [filterName, filterValue] of Object.entries(currentFilter)) {
                 const isGenericTag = isGenericTagQuery(filterName)
@@ -88,13 +93,11 @@ export class EventRepository implements IEventRepository {
                     const fieldNames = ['event_pubkey', 'event_delegator', 'authors', 'kinds', 'limit', 'until', 'since', 'ids']
                     const fieldName: any = fieldNames.find((name) => currentFilter.hasOwnProperty(name))
                     const fieldValue = currentFilter[fieldName]
-                    // $match[fieldName] = { $in: fieldValue }
 
                     if (fieldName === 'kinds' && Array.isArray(fieldValue)) {
                         $match['event_kind'] = { $in: fieldValue }
-                        // builder.whereIn('event_kind', currentFilter.kinds)
                     }
-        
+
                     if (fieldName === 'since' && typeof fieldValue === 'number') {
                         $match['event_created_at'] = { $gte: fieldValue }
                     }
@@ -104,131 +107,48 @@ export class EventRepository implements IEventRepository {
                     }
 
                     if (fieldName === 'limit' && typeof fieldValue === 'number') {
-                        // $match['event_created_at'] = { $lte: fieldValue }
-                    } else {
-                        //
+                        $limit = fieldValue
+                        $sort.event_created_at = -1
                     }
-
-                    // if (typeof currentFilter.limit === 'number') {
-                    //     // builder.limit(currentFilter.limit).orderBy('event_created_at', 'DESC')
-                    // } else {
-                    //     // builder.limit(500).orderBy('event_created_at', 'asc')
-                    // }
                 }
+            }
+
+            const $andSubOr: any[] = []
+            forEachObjIndexed(
+                (tableFields: string[], filterName: string | number) => {
+                    const filterValue = currentFilter[filterName]
+                    if (filterValue) {
+                        tableFields.forEach((field) => {
+                            $andSubOr.push({ [field]: filterValue.map(toBuffer) })
+                        })
+                    }
+                },
+            )({
+                authors: ['event_pubkey', 'event_delegator'],
+                ids: ['event_id'],
+            })
+
+            if ($andSubOr.length > 0) {
+                $and.push($andSubOr)
             }
 
             if ($and.length > 0) {
                 $match.$and = $and
             }
 
-            return {
-                $match,
+            if ($or.length > 0) {
+                $match.$or = $or
             }
+            pipelines.push([
+                { $match },
+                { $sort },
+                { $limit },
+            ])
         })
 
-        return EventsModel.aggregate([...pipelines])
-
-        // debug('querying for %o', filters)
-        // if (!Array.isArray(filters) || !filters.length) {
-        //     throw new Error('Filters cannot be empty')
-        // }
-        // const queries = filters.map((currentFilter) => {
-        //     const builder = this.readReplicaDbClient<DBEvent>('events')
-
-        //     forEachObjIndexed(
-        //         (tableFields: string[], filterName: string | number) => {
-        //             builder.andWhere((bd) => {
-        //                 cond([
-        //                     [isEmpty, () => void bd.whereRaw('1 = 0')],
-        //                     [
-        //                         complement(isNil),
-        //                         pipe(
-        //                             groupByLengthSpec,
-        //                             evolve({
-        //                                 exact: (pubkeys: string[]) => tableFields.forEach((tableField) => bd.orWhereIn(tableField, pubkeys.map(toBuffer))),
-        //                                 even: forEach((prefix: string) =>
-        //                                     tableFields.forEach((tableField) =>
-        //                                         bd.orWhereRaw(
-        //                                             `substring("${tableField}" from 1 for ?) = ?`,
-        //                                             [prefix.length >> 1, toBuffer(prefix)],
-        //                                         )
-        //                                     )
-        //                                 ),
-        //                                 odd: forEach((prefix: string) =>
-        //                                     tableFields.forEach((tableField) =>
-        //                                         bd.orWhereRaw(
-        //                                             `substring("${tableField}" from 1 for ?) BETWEEN ? AND ?`,
-        //                                             [
-        //                                                 (prefix.length >> 1) + 1,
-        //                                                 `\\x${prefix}0`,
-        //                                                 `\\x${prefix}f`,
-        //                                             ],
-        //                                         )
-        //                                     )
-        //                                 ),
-        //                             } as any),
-        //                         ),
-        //                     ],
-        //                 ])(currentFilter[filterName] as string[])
-        //             })
-        //         },
-        //     )({
-        //         authors: ['event_pubkey', 'event_delegator'],
-        //         ids: ['event_id'],
-        //     })
-
-        //     if (Array.isArray(currentFilter.kinds)) {
-        //         builder.whereIn('event_kind', currentFilter.kinds)
-        //     }
-
-        //     if (typeof currentFilter.since === 'number') {
-        //         builder.where('event_created_at', '>=', currentFilter.since)
-        //     }
-
-        //     if (typeof currentFilter.until === 'number') {
-        //         builder.where('event_created_at', '<=', currentFilter.until)
-        //     }
-
-        //     if (typeof currentFilter.limit === 'number') {
-        //         builder.limit(currentFilter.limit).orderBy('event_created_at', 'DESC')
-        //     } else {
-        //         builder.limit(500).orderBy('event_created_at', 'asc')
-        //     }
-
-        //     const andWhereRaw = invoker(1, 'andWhereRaw')
-        //     const orWhereRaw = invoker(2, 'orWhereRaw')
-
-        //     pipe(
-        //         toPairs,
-        //         filter(pipe(nth(0) as () => string, isGenericTagQuery)) as any,
-        //         forEach(([filterName, criteria]: [string, string[]]) => {
-        //             builder.andWhere((bd) => {
-        //                 ifElse(
-        //                     isEmpty,
-        //                     () => andWhereRaw('1 = 0', bd),
-        //                     forEach((criterion: string) =>
-        //                         void orWhereRaw(
-        //                             '"event_tags" @> ?',
-        //                             [
-        //                                 JSON.stringify([[filterName[1], criterion]]) as any,
-        //                             ],
-        //                             bd,
-        //                         )
-        //                     ),
-        //                 )(criteria)
-        //             })
-        //         }),
-        //     )(currentFilter as any)
-
-        //     return builder
-        // })
-
-        // const [query, ...subqueries] = queries
-        // if (subqueries.length) {
-        //     query.union(subqueries, true)
-        // }
-
-        // return query
+        return this.readReplicaDbClient
+            .model(EventsModel.name, EventsModel.schema)
+            .aggregate([...pipelines])
     }
 
     public async create(event: Event): Promise<number> {
@@ -263,7 +183,10 @@ export class EventRepository implements IEventRepository {
         })(event)
 
         try {
-            const result = await EventsModel.collection.insertOne(row)
+            const result = await this.masterDbClient
+                .model(EventsModel.name, EventsModel.schema)
+                .collection
+                .insertOne(row)
             return { rowCount: result.insertedId ? 1 : 0 }
         } catch (err) {
             if (!String(err).indexOf('E11000 duplicate key error collection')) {
@@ -271,11 +194,6 @@ export class EventRepository implements IEventRepository {
             }
             return { rowCount: 0 }
         }
-
-        // return this.masterDbClient('events')
-        //     .insert(row)
-        //     .onConflict()
-        //     .ignore()
     }
 
     public async upsert(event: Event): Promise<number> {
@@ -311,50 +229,28 @@ export class EventRepository implements IEventRepository {
             ),
         })(event)
 
-        const query = EventsModel.updateOne(
-            {
-                event_pubkey: row.event_pubkey,
-                event_kind: row.event_kind,
-                event_deduplication: row.event_deduplication,
-                $or: [
-                    { event_kind: { $eq: 0 } },
-                    { event_kind: { $eq: 3 } },
-                    { event_kind: { $eq: 41 } },
-                    { event_kind: { $gte: 10000, $lt: 20000 } },
-                    { event_kind: { $gte: 30000, $lt: 40000 } },
-                ],
-                event_created_at: { $lt: row.event_created_at },
-            },
-            {
-                $set: row,
-            },
-            { upsert: true },
-        )
-        return tryCatchUpdate(query)
-
-        // const query = this.masterDbClient('events')
-        //     .insert(row)
-        //     // NIP-16: Replaceable Events
-        //     // NIP-33: Parameterized Replaceable Events
-        //     .onConflict(
-        //         this.masterDbClient.raw(
-        //             '(event_pubkey, event_kind, event_deduplication) WHERE (event_kind = 0 OR event_kind = 3 OR event_kind = 41 OR (event_kind >= 10000 AND event_kind < 20000)) OR (event_kind >= 30000 AND event_kind < 40000)',
-        //         ),
-        //     )
-        //     .merge(omit(['event_pubkey', 'event_kind', 'event_deduplication'])(row))
-        //     .where('events.event_created_at', '<', row.event_created_at)
-
-        // return {
-        //     then: <T1, T2>(
-        //         onfulfilled: (value: number) => T1 | PromiseLike<T1>,
-        //         onrejected: (reason: any) => T2 | PromiseLike<T2>,
-        //     ) => query.then(prop('rowCount') as () => number).then(
-        //         onfulfilled,
-        //         onrejected,
-        //     ),
-        //     catch: <T>(onrejected: (reason: any) => T | PromiseLike<T>) => query.catch(onrejected),
-        //     toString: (): string => query.toString(),
-        // } as Promise<number>
+        const query = this.masterDbClient
+            .model(EventsModel.name, EventsModel.schema)
+            .updateOne(
+                {
+                    event_pubkey: row.event_pubkey,
+                    event_kind: row.event_kind,
+                    event_deduplication: row.event_deduplication,
+                    $or: [
+                        { event_kind: { $eq: 0 } },
+                        { event_kind: { $eq: 3 } },
+                        { event_kind: { $eq: 41 } },
+                        { event_kind: { $gte: 10000, $lt: 20000 } },
+                        { event_kind: { $gte: 30000, $lt: 40000 } },
+                    ],
+                    event_created_at: { $lt: row.event_created_at },
+                },
+                {
+                    $set: row,
+                },
+                { upsert: true },
+            )
+        return ignoreUpdateConflicts(query)
     }
 
     public async insertStubs(
@@ -380,7 +276,9 @@ export class EventRepository implements IEventRepository {
         )
 
         try {
-            const result = await EventsModel.insertMany(stubs, { ordered: false })
+            const result = await this.masterDbClient
+                .model(EventsModel.name, EventsModel.schema)
+                .insertMany(stubs, { ordered: false })
             return result.length
         } catch (err) {
             if (!String(err).indexOf('E11000 duplicate key error collection')) {
@@ -395,19 +293,20 @@ export class EventRepository implements IEventRepository {
         eventIdsToDelete: EventId[],
     ): Promise<number> {
         debug('deleting events from %s: %o', pubkey, eventIdsToDelete)
-        const query = EventsModel.updateMany(
-            {
-                event_pubkey: toBuffer(pubkey),
-                event_id: { $in: eventIdsToDelete.map(toBuffer) },
-                deleted_at: null,
-            },
-            { deleted_at: new Date() },
-        )
-        return tryCatchUpdate(query)
+        const query = this.masterDbClient
+            .model(EventsModel.name, EventsModel.schema)
+            .updateMany(
+                {
+                    event_pubkey: toBuffer(pubkey),
+                    event_id: { $in: eventIdsToDelete.map(toBuffer) },
+                    deleted_at: null,
+                },
+                { deleted_at: new Date() },
+            )
+        return ignoreUpdateConflicts(query)
     }
 }
-
-async function tryCatchUpdate(query: any) {
+async function ignoreUpdateConflicts(query: any) {
     try {
         const result = await query
 
