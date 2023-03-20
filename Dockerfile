@@ -1,32 +1,21 @@
-FROM node:18-alpine3.16 as build
-
-WORKDIR /build
-
-COPY ["package.json", "package-lock.json", "./"]
-
-RUN npm install --quiet
-
-COPY . .
-
-RUN npm run build
-
-FROM node:18-alpine3.16
+FROM denoland/deno:alpine-1.31.3 as build
 
 LABEL org.opencontainers.image.title="Nostream"
-LABEL org.opencontainers.image.source=https://github.com/Cameri/nostream
+LABEL org.opencontainers.image.source=https://github.com/Guakamoli/nostream
 LABEL org.opencontainers.image.description="nostream"
-LABEL org.opencontainers.image.authors="Ricardo Arturo Cabral Mejía"
+LABEL org.opencontainers.image.authors="GUAKAMOLI"
 LABEL org.opencontainers.image.licenses=MIT
 
 WORKDIR /app
+
+USER deno
+
+COPY ["package.json", "package-lock.json", "./"]
+
+COPY . .
+
 RUN apk add --no-cache --update git
 
-ADD resources /app/resources
+RUN deno cache main.ts
 
-COPY --from=build /build/dist .
-
-RUN npm install --omit=dev --quiet
-
-USER node:node
-
-CMD ["node", "src/index.js"]
+CMD ["deno", "task", "start"]

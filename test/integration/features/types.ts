@@ -1,7 +1,7 @@
 
 export type RegexFunc = {
     reg: RegExp
-    func: Function
+    func: () => any
 }
 export interface IWorld {
     parameters: Record<string, any>

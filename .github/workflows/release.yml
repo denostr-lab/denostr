@@ -8,7 +8,7 @@ on:
 jobs:
   build-and-push-image:
     name: Build and push container image
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     env:
       REGISTRY: ghcr.io
       IMAGE_NAME: ${{ github.repository }}
