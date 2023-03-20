@@ -130,7 +130,6 @@ export async function createSubscription(
             subscriptionName,
             ...subscriptionFilters,
         ])
-
         ws.send(data)
         resolve()
     })
@@ -190,7 +189,6 @@ export async function waitForNextEvent(
         const observable = streams.get(ws) as Observable<OutgoingMessage>
 
         observable.subscribe((message: OutgoingMessage) => {
-            console.info(message, '拿到的数据')
             if (message[0] === MessageType.EVENT && message[1] === subscription) {
                 const event = message[2] as Event
                 if (typeof content !== 'string' || event.content === content) {

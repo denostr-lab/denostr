@@ -50,76 +50,83 @@ let cacheClient: CacheClient
 
 export const streams = new WeakMap<WebSocketWrapper, Observable<unknown>>()
 
-export const startTest = async(pathUrl: string) => {
+export const startTest = async(pathUrl: string, registerEvent: Function) => {
     pathUrl = new URL(pathUrl).pathname
     const testDesc = pathUrl.replace(Deno.cwd(), '')
     const featPath: string = pathUrl.replace('.ts', '')
-    Given(/someone called (\w+)/, async function (this: IWorld, name: string) {
-        const connection = await connect(name)
-        World.parameters.identities[name] = World.parameters.identities[name] ??
-            createIdentity(name)
-        World.parameters.clients[name] = connection
-        World.parameters.subscriptions[name] = []
-        World.parameters.events[name] = []
-        const subject = new Subject()
-        connection.once('close', subject.next.bind(subject))
-        const project = (raw: MessageEvent) => JSON.parse(raw.data.toString('utf8'))
-        const replaySubject = new ReplaySubject(2, 1000)
-        fromEvent(connection, 'message').pipe(map(project) as any, takeUntil(subject))
-            .subscribe(replaySubject)
-        streams.set(
-            connection,
-            replaySubject,
-        )
-    })
-
-    When(
-        /(\w+) subscribes to author (\w+)$/,
-        async function (this: IWorld, from: string, to: string) {
-            const ws = World.parameters.clients[from] as WebSocketWrapper
-            const pubkey = World.parameters.identities[to].pubkey
-            const subscription = {
-                name: `test-${Math.random()}`,
-                filters: [{ authors: [pubkey] }],
-            }
-            World.parameters.subscriptions[from].push(subscription)
-
-            await createSubscription(ws, subscription.name, subscription.filters)
-        },
-    )
-
-    Then(/(\w+) unsubscribes from author \w+/, async function (this: IWorld, from: string) {
-        const ws = World.parameters.clients[from] as WebSocketWrapper
-        const subscription = World.parameters.subscriptions[from].pop()
-        return new Promise<void>((resolve, reject) => {
-            ws.send(
-                JSON.stringify(['CLOSE', subscription.name]),
-            )
-            resolve()
-        })
-    })
-
-    Then(
-        /^(\w+) sends their last draft event (successfully|unsuccessfully)$/,
-        async function (
-            this: IWorld,
-            name: string,
-            successfullyOrNot: string,
-        ) {
-            const ws = World.parameters.clients[name] as WebSocketWrapper
-
-            const event = World.parameters.events[name].findLast((event: Event) => event[isDraft])
-
-            delete event[isDraft]
-
-            await sendEvent(ws, event, (successfullyOrNot) === 'successfully')
-        },
-    )
-
-    
     describe(testDesc, () => {
+        console.info(testDesc, 'testDesc')
         beforeAll(async function () {
-            console.info(12123)
+            World.functions = {
+                Given: [],
+                When: [],
+                Then: [],
+            }
+
+            registerEvent?.()
+
+            Given(/someone called (\w+)/, async function (this: IWorld, name: string) {
+                const connection = await connect(name)
+                World.parameters.identities[name] = World.parameters.identities[name] ??
+                    createIdentity(name)
+        
+                World.parameters.clients[name] = connection
+                World.parameters.subscriptions[name] = []
+                World.parameters.events[name] = []
+                const subject = new Subject()
+                connection.once('close', subject.next.bind(subject))
+                const project = (raw: MessageEvent) => JSON.parse(raw.data.toString('utf8'))
+                const replaySubject = new ReplaySubject(2, 1000)
+                fromEvent(connection, 'message').pipe(map(project) as any, takeUntil(subject))
+                    .subscribe(replaySubject)
+                streams.set(
+                    connection,
+                    replaySubject,
+                )
+            })
+        
+            When(
+                /(\w+) subscribes to author (\w+)$/,
+                async function (this: IWorld, from: string, to: string) {
+                    const ws = World.parameters.clients[from] as WebSocketWrapper
+                    const pubkey = World.parameters.identities[to].pubkey
+                    const subscription = {
+                        name: `test-${Math.random()}`,
+                        filters: [{ authors: [pubkey] }],
+                    }
+                    World.parameters.subscriptions[from].push(subscription)
+        
+                    await createSubscription(ws, subscription.name, subscription.filters)
+                },
+            )
+        
+            Then(/(\w+) unsubscribes from author \w+/, async function (this: IWorld, from: string) {
+                const ws = World.parameters.clients[from] as WebSocketWrapper
+                const subscription = World.parameters.subscriptions[from].pop()
+                return new Promise<void>((resolve, reject) => {
+                    ws.send(
+                        JSON.stringify(['CLOSE', subscription.name]),
+                    )
+                    resolve()
+                })
+            })
+        
+            Then(
+                /^(\w+) sends their last draft event (successfully|unsuccessfully)$/,
+                async function (
+                    this: IWorld,
+                    name: string,
+                    successfullyOrNot: string,
+                ) {
+                    const ws = World.parameters.clients[name] as WebSocketWrapper
+        
+                    const event = World.parameters.events[name].findLast((event: Event) => event[isDraft])
+        
+                    delete event[isDraft]
+        
+                    await sendEvent(ws, event, (successfullyOrNot) === 'successfully')
+                },
+            )
             dbClient = getMasterDbClient()
             dbClient = await dbClient.asPromise()
             Config.RELAY_PORT = '18808'
@@ -130,7 +137,6 @@ export const startTest = async(pathUrl: string) => {
 
             Sinon.stub(SettingsStatic, 'watchSettings')
             const settings = SettingsStatic.createSettings()
-            console.info(12123333)
 
             SettingsStatic._settings = pipe(
                 assocPath(['limits', 'event', 'createdAt', 'maxPositiveDelta'], 0),
@@ -177,10 +183,15 @@ export const startTest = async(pathUrl: string) => {
         }
         for (let scenario of scenarioList) {
             let desc = scenario.line.trim()
-            console.info('desc', desc)
             describe(desc, () => {
                 
-                beforeAll(() => {
+                beforeAll(async() => {
+                    const names = ['Alice', 'Bob', 'Charlie']
+
+                    await EventsModel.find({
+                        event_pubkey: {$in:names.map((name)=>createIdentity(name))
+                            .map(({ pubkey }) => Buffer.from(pubkey, 'hex')),
+                    }}).deleteMany()
                     World.parameters.identities = {}
                     World.parameters.subscriptions = {}
                     World.parameters.clients = {}
@@ -203,12 +214,12 @@ export const startTest = async(pathUrl: string) => {
 
                     // const dbClient = getMasterDbClient()
                     await EventsModel.find({
-                        event_pubkey: Object
+                        event_pubkey: {$in:Object
                             .values(
                                 World.parameters.identities as Record<string, { pubkey: string }>,
                             )
                             .map(({ pubkey }) => Buffer.from(pubkey, 'hex')),
-                    }).deleteMany()
+                    }}).deleteMany()
 
                     World.parameters.identities = {}
 
@@ -226,10 +237,7 @@ export const startTest = async(pathUrl: string) => {
                         const matList = matchLine.match(funObje.reg)
 
                         if (matList?.[0]) {
-                        console.info(matList, matchLine, '命中', funObje.reg, key)
-
                             await funObje.func.bind(World)(...matList.slice(1))
-                            console.info('结合素了吗')
                             return matList?.[0]
                         }
                       
@@ -243,9 +251,8 @@ export const startTest = async(pathUrl: string) => {
                                 break
                             }
                         }
-                        console.info('')
+                        console.info(line, '结束了')
                     }
-                    console.info('结束了')
                 })
             })
         }
