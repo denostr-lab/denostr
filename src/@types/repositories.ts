@@ -42,8 +42,8 @@ export interface IInvoiceRepository {
 export interface IUserRepository {
     findByPubkey(
         pubkey: Pubkey,
-        client?: DatabaseClient,
+        client?: mongoose.Connection,
     ): Promise<User | undefined>
-    upsert(user: Partial<User>, client?: DatabaseClient): Promise<number>
-    getBalanceByPubkey(pubkey: Pubkey, client?: DatabaseClient): Promise<bigint>
+    upsert(user: Partial<User>, client?: mongoose.Connection): Promise<number>
+    getBalanceByPubkey(pubkey: Pubkey, client?: mongoose.Connection): Promise<bigint>
 }

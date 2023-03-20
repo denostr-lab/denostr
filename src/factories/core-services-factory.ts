@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // deno-lint-ignore-file ban-ts-comment
 import { api } from '../core-services/index.ts'
-import { getMasterDbClient, getReadReplicaDbClient } from '../database/client1.ts'
+import { getMasterDbClient, getReadReplicaDbClient } from '../database/client.ts'
 import { DatabaseWatcher } from '../database/DatabaseWatcher.ts'
 import { initWatchers } from '../database/watchers.ts'
 
@@ -25,10 +25,4 @@ export const coreServicesFactory = async () => {
     })
 
     initWatchers(watcher, api.broadcastLocal.bind(api))
-
-    setInterval(function _checkDatabaseWatcher() {
-        if (watcher.isLastDocDelayed()) {
-            console.error('No real time data received recently')
-        }
-    }, 20000)
 }

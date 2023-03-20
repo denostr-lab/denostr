@@ -1,5 +1,5 @@
-import { EventsModel } from './models/index.ts'
+import { masterEventsModel } from './models/index.ts'
 
 export default [
-    EventsModel.collection.collectionName,
+    masterEventsModel.collection.collectionName,
 ]

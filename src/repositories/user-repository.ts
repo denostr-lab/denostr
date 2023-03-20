@@ -1,24 +1,26 @@
-import { always, applySpec, omit, pipe, prop } from 'ramda'
+import mongoose from 'npm:mongoose'
 
-import { DatabaseClient, Pubkey } from '../@types/base.ts'
+import { Pubkey } from '../@types/base.ts'
 import { IUserRepository } from '../@types/repositories.ts'
-import { DBUser, User } from '../@types/user.ts'
+import { User } from '../@types/user.ts'
+import { UsersModel } from '../database/models/index.ts'
 import { createLogger } from '../factories/logger-factory.ts'
 import { fromDBUser, toBuffer } from '../utils/transform.ts'
 
 const debug = createLogger('user-repository')
 
 export class UserRepository implements IUserRepository {
-    public constructor(private readonly dbClient: DatabaseClient) {}
+    public constructor(private readonly dbClient: mongoose.Connection) {}
 
     public async findByPubkey(
         pubkey: Pubkey,
-        client: DatabaseClient = this.dbClient,
+        client: mongoose.Connection = this.dbClient,
     ): Promise<User | undefined> {
         debug('find by pubkey: %s', pubkey)
-        const [dbuser] = await client<DBUser>('users')
-            .where('pubkey', toBuffer(pubkey))
-            .select()
+        const dbuser = await client.model(UsersModel.name, UsersModel.schema)
+            .findOne({
+                pubkey: toBuffer(pubkey),
+            })
 
         if (!dbuser) {
             return
@@ -29,54 +31,37 @@ export class UserRepository implements IUserRepository {
 
     public async upsert(
         user: User,
-        client: DatabaseClient = this.dbClient,
+        client: mongoose.Connection = this.dbClient,
     ): Promise<number> {
         debug('upsert: %o', user)
 
         const date = new Date()
 
-        const row = applySpec<DBUser>({
-            pubkey: pipe(prop('pubkey'), toBuffer),
-            is_admitted: prop('isAdmitted'),
-            tos_accepted_at: prop('tosAcceptedAt'),
-            updated_at: always(date),
-            created_at: always(date),
-        })(user)
+        const row = {
+            pubkey: Buffer.from(user.pubkey, 'hex'),
+            is_admitted: user.isAdmitted,
+            tos_accepted_at: user.tosAcceptedAt,
+            updated_at: date,
+            created_at: date,
+        }
 
-        const query = client<DBUser>('users')
-            .insert(row)
-            .onConflict('pubkey')
-            .merge(
-                omit([
-                    'pubkey',
-                    'balance',
-                    'created_at',
-                ])(row),
-            )
+        const filter = { pubkey: row.pubkey }
+        const options = { upsert: true }
 
-        return {
-            then: <T1, T2>(
-                onfulfilled: (value: number) => T1 | PromiseLike<T1>,
-                onrejected: (reason: any) => T2 | PromiseLike<T2>,
-            ) => query.then(prop('rowCount') as () => number).then(
-                onfulfilled,
-                onrejected,
-            ),
-            catch: <T>(onrejected: (reason: any) => T | PromiseLike<T>) => query.catch(onrejected),
-            toString: (): string => query.toString(),
-        } as Promise<number>
+        const model = client.model(UsersModel.name, UsersModel.schema)
+        const result = await model.updateOne(filter, { $set: row }, options)
+
+        return result.upsertedCount ?? result.modifiedCount
     }
 
     public async getBalanceByPubkey(
         pubkey: Pubkey,
-        client: DatabaseClient = this.dbClient,
+        client: mongoose.Connection = this.dbClient,
     ): Promise<bigint> {
         debug('get balance for pubkey: %s', pubkey)
 
-        const [user] = await client<DBUser>('users')
-            .select('balance')
-            .where('pubkey', toBuffer(pubkey))
-            .limit(1)
+        const user = await client.model(UsersModel.name, UsersModel.schema)
+            .findOne({ pubkey: toBuffer(pubkey) }, { balance: 1 })
 
         if (!user) {
             return 0n

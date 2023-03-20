@@ -1,7 +1,7 @@
 import mongoose from 'npm:mongoose'
 
 import { Tag } from '../../@types/base.ts'
-import { getMasterDbClient } from '../client1.ts'
+import { getMasterDbClient, getReadReplicaDbClient } from '../client.ts'
 
 export interface EventInput {
     event_id: Buffer
@@ -17,6 +17,8 @@ export interface EventInput {
 }
 
 export interface EventDocument extends EventInput, mongoose.Document {
+    created_at: Date
+    updated_at: Date
     expires_at?: number
 }
 
@@ -66,7 +68,11 @@ EventSchema.index({ 'event_signature': 1 }, {
     background: true,
 })
 
-export const EventsModel = getMasterDbClient().model<EventDocument>(
+export const EventsModel = (dbClient: mongoose.Connection) => dbClient.model<EventDocument>(
     'Events',
     EventSchema,
+    'events',
 )
+
+export const masterEventsModel = EventsModel(getMasterDbClient())
+export const readReplicaEventsModel = EventsModel(getReadReplicaDbClient())

@@ -6,7 +6,7 @@ import { Buffer } from 'Buffer'
 import { Event } from '../../../../src/@types/event.ts'
 import { createEvent, sendEvent, waitForEventCount, waitForNextEvent, WebSocketWrapper } from '../helpers.ts'
 import type { IWorld } from '../types.ts'
-import { EventsModel } from '../../../../src/database/models/Events.ts'
+import { masterEventsModel } from '../../../../src/database/models/Events.ts'
 
 
 startTest(import.meta.url, ()=> {
@@ -45,7 +45,7 @@ startTest(import.meta.url, ()=> {
             const ws = this.parameters.clients[name] as WebSocketWrapper
             const subscription = this.parameters
                 .subscriptions[name][this.parameters.subscriptions[name].length - 1]
-            const a = await EventsModel.find({
+            const a = await masterEventsModel.find({
                 event_pubkey: {$in:Object
                     .values(
                         this.parameters.identities as Record<string, { pubkey: string }>,
