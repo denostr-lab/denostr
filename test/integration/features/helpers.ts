@@ -13,9 +13,10 @@ import { serializeEvent } from '../../../src/utils/event.ts'
 import { streams } from './shared.ts'
 import type { IWebSocketWrapper } from './types.ts'
 // secp256k1.utils.sha256Sync = (...messages: Uint8Array[]) =>
-//   messages.reduce((hash: Hash, message: Uint8Array) => hash.update(message),  createHash('sha256')).digest()
+//   messages.reduce((hash, message: Uint8Array) => hash.update(message),  createHash('sha256')).digest()
 
 export class WebSocketWrapper extends EventEmitter implements IWebSocketWrapper{
+
     private host: string
     public readyState: number
     private ws: WebSocket | undefined
@@ -189,6 +190,7 @@ export async function waitForNextEvent(
         const observable = streams.get(ws) as Observable<OutgoingMessage>
 
         observable.subscribe((message: OutgoingMessage) => {
+            console.info(message, '拿到的数据')
             if (message[0] === MessageType.EVENT && message[1] === subscription) {
                 const event = message[2] as Event
                 if (typeof content !== 'string' || event.content === content) {

@@ -1,24 +1,25 @@
 // deno-lint-ignore-file
 import { Buffer } from 'Buffer'
 import fs from 'node:fs'
+
 import { assocPath, pipe } from 'ramda'
 import { fromEvent, map, Observable, ReplaySubject, Subject, takeUntil } from 'npm:rxjs@7.8.0'
 import Sinon from 'sinon'
 import { afterAll, beforeAll, describe, it } from 'jest'
-import { DatabaseClient } from '../../../src/@types/base.ts'
+import { DatabaseClient1 as DatabaseClient } from '../../../src/@types/base.ts'
 import { CacheClient } from '../../../src/@types/cache.ts'
 import { Event } from '../../../src/@types/event.ts'
 import { AppWorker } from '../../../src/app/worker.ts'
 import { getCacheClient } from '../../../src/cache/client.ts'
 import Config from '../../../src/config/index.ts'
-import { getMasterDbClient, getReadReplicaDbClient } from '../../../src/database/client.ts'
+import { getMasterDbClient, getReadReplicaDbClient } from '../../../src/database/client1.ts'
 import { workerFactory } from '../../../src/factories/worker-factory.ts'
 import { SettingsStatic } from '../../../src/utils/settings.ts'
 import type { IWorld } from './types.ts'
 import { connect, createIdentity, createSubscription, sendEvent, WebSocketWrapper } from './helpers.ts'
+import { EventsModel } from '../../../src/database/models/Events.ts'
 
 export const isDraft = Symbol('draft')
-
 
 const World: IWorld = {
     parameters: {
@@ -30,14 +31,14 @@ const World: IWorld = {
         Then: [],
     },
 }
-export const Given = (reg: RegExp, func: ()=>void) => {
+export const Given = (reg: RegExp, func: Function) => {
     World.functions.Given.push({ reg, func })
 }
-export const When = (reg: RegExp, func: ()=>void) => {
+export const When = (reg: RegExp, func: Function) => {
     World.functions.When.push({ reg, func })
 }
 
-export const Then = (reg: RegExp, func: ()=>void) => {
+export const Then = (reg: RegExp, func: Function) => {
     World.functions.Then.push({ reg, func })
 }
 
@@ -49,7 +50,7 @@ let cacheClient: CacheClient
 
 export const streams = new WeakMap<WebSocketWrapper, Observable<unknown>>()
 
-export const startTest = (pathUrl: string) => {
+export const startTest = async(pathUrl: string) => {
     pathUrl = new URL(pathUrl).pathname
     const testDesc = pathUrl.replace(Deno.cwd(), '')
     const featPath: string = pathUrl.replace('.ts', '')
@@ -114,15 +115,22 @@ export const startTest = (pathUrl: string) => {
             await sendEvent(ws, event, (successfullyOrNot) === 'successfully')
         },
     )
+
+    
     describe(testDesc, () => {
         beforeAll(async function () {
-            Config.RELAY_PORT = '18808'
-            cacheClient = await getCacheClient()
+            console.info(12123)
             dbClient = getMasterDbClient()
-            rrDbClient = getReadReplicaDbClient()
-            await dbClient.raw('SELECT 1=1')
+            dbClient = await dbClient.asPromise()
+            Config.RELAY_PORT = '18808'
+
+            cacheClient = await getCacheClient()
+            rrDbClient = rrDbClient = getReadReplicaDbClient()
+            await rrDbClient.asPromise()
+
             Sinon.stub(SettingsStatic, 'watchSettings')
             const settings = SettingsStatic.createSettings()
+            console.info(12123333)
 
             SettingsStatic._settings = pipe(
                 assocPath(['limits', 'event', 'createdAt', 'maxPositiveDelta'], 0),
@@ -136,23 +144,26 @@ export const startTest = (pathUrl: string) => {
             worker.run()
         })
         afterAll(async function () {
-
+            
             worker.close(async () => {
-                await Promise.all([
-                    cacheClient.close(),
-                    dbClient.destroy(),
-                    rrDbClient.destroy(),
-                ])
+                try {
+                    await Promise.all([
+                        cacheClient.close(),
+                        dbClient.destroy(true),
+                        rrDbClient.destroy(true),
+                    ])
+                } catch (e) {
+                    console.info(e, 'close error')
+                }
             })
         })
-
+  
         const defaultSettingsFileContent = fs.readFileSync(featPath, {
             encoding: 'utf-8',
         })
 
         const contentList = defaultSettingsFileContent.split('\n').slice(1)
         let scenarioList = []
-        let prevKey = ''
         let currentList: string[] = []
         for (let line of contentList) {
             line = line.trim()
@@ -166,7 +177,7 @@ export const startTest = (pathUrl: string) => {
         }
         for (let scenario of scenarioList) {
             let desc = scenario.line.trim()
-            
+            console.info('desc', desc)
             describe(desc, () => {
                 
                 beforeAll(() => {
@@ -190,47 +201,51 @@ export const startTest = (pathUrl: string) => {
                     }
                     World.parameters.clients = {}
 
-                    const dbClient = getMasterDbClient()
+                    // const dbClient = getMasterDbClient()
+                    await EventsModel.find({
+                        event_pubkey: Object
+                            .values(
+                                World.parameters.identities as Record<string, { pubkey: string }>,
+                            )
+                            .map(({ pubkey }) => Buffer.from(pubkey, 'hex')),
+                    }).deleteMany()
 
-                    await dbClient('events')
-                        .where({
-                            event_pubkey: Object
-                                .values(
-                                    World.parameters.identities as Record<string, { pubkey: string }>,
-                                )
-                                .map(({ pubkey }) => Buffer.from(pubkey, 'hex')),
-                        }).del()
                     World.parameters.identities = {}
 
                 })
-                const statuFunction = async(line: string, key: string)=> {
+                const statuFunction = async(line: string, key: string, replaceAnd: boolean)=> {
                     const regfuncList = World.functions[key]
                     for (const funObje of regfuncList) {
-                        const matchLine = line.replace(key, '').trim()
-                        const matList = matchLine.match(funObje.reg)
-                        if (matList?.[0]) {
-                            prevKey = key
-                            await funObje.func.bind(World)(...matList.slice(1))
-                            break
+                        let matchLine = line
+                        if (replaceAnd) {
+                            matchLine = matchLine.replace('And', '').trim()
+
+                        } else {
+                            matchLine = line.replace(key, '').trim()
                         }
+                        const matList = matchLine.match(funObje.reg)
+
+                        if (matList?.[0]) {
+                        console.info(matList, matchLine, '命中', funObje.reg, key)
+
+                            await funObje.func.bind(World)(...matList.slice(1))
+                            console.info('结合素了吗')
+                            return matList?.[0]
+                        }
+                      
                     }
                 }
                 it(`start task, ${desc}`, async() => {
-                    let hitGroup = false
                     for (let line of scenario.list) {
-                        hitGroup = false
                         for (let key in World.functions) {
-                            if (line.startsWith(key)) {
-                                hitGroup = true
-                                prevKey = key
-                                await statuFunction(line, key)
+                            const res = await statuFunction(line, key, line.startsWith('And'))
+                            if (res) {
                                 break
                             }
                         }
-                        if (!hitGroup && prevKey && line.startsWith('And')) {
-                            await statuFunction(line, prevKey)
-                        }
+                        console.info('')
                     }
+                    console.info('结束了')
                 })
             })
         }
