@@ -3,14 +3,14 @@ import sinonChai from 'sinon-chai'
 
 import { Event } from '../../../../src/@types/event.ts'
 import { createEvent, createSubscription, sendEvent, waitForCommand, waitForEOSE, waitForEventCount, waitForNextEvent, waitForNotice, WebSocketWrapper } from '../helpers.ts'
-import { isDraft, Then, When, World, startTest } from '../shared.ts'
-import type { WorldType } from '../types.ts'
+import { isDraft, Then, When, startTest } from '../shared.ts'
+import type { IWorld } from '../types.ts'
 chai.use(sinonChai)
 const { expect } = chai
 
 When(
     /(\w+) subscribes to last event from (\w+)$/,
-    async function (this: WorldType, from: string, to: string) {
+    async function (this: IWorld, from: string, to: string) {
         const ws = this.parameters.clients[from] as WebSocketWrapper
         const event = this.parameters.events[to].pop()
         const subscription = {
@@ -143,6 +143,7 @@ When(
         )
 
         await sendEvent(ws, event)
+        console.info(event, '发出去了ma ')
         this.parameters.events[name].push(event)
     },
 )
@@ -256,11 +257,14 @@ Then(
         const ws = this.parameters.clients[name] as WebSocketWrapper
         const subscription = this.parameters
             .subscriptions[name][this.parameters.subscriptions[name].length - 1]
+            console.info('subscription', subscription)
+
         const receivedEvent = await waitForNextEvent(
             ws,
             subscription.name,
             content,
         )
+        console.info('u屁啦打算')
         expect(receivedEvent.kind).to.equal(1)
         expect(receivedEvent.pubkey).to.equal(
             this.parameters.identities[author].pubkey,

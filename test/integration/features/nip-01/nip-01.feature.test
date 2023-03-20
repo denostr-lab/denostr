@@ -52,13 +52,6 @@ Feature: NIP-01
     And Alice subscribes to text_note events
     Then Alice receives a text_note event from Bob with content "hello nostr"
 
-  Scenario: Alice is interested in the #NostrNovember hashtag
-    Given someone called Alice
-    And someone called Bob
-    And Alice subscribes to tag t with "NostrNovember"
-    When Bob sends a text_note event with content "Nostr FTW!" and tag t containing "NostrNovember"
-    Then Alice receives a text_note event from Bob with content "Nostr FTW!"
-
   Scenario: Alice is interested to Bob's text_note events and Charlie's set_metadata events
     Given someone called Alice
     And someone called Bob

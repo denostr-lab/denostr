@@ -1,6 +1,7 @@
+
 export type RegexFunc = {
     reg: RegExp
-    func: ()=> void
+    func: Function
 }
 export interface IWorld {
     parameters: Record<string, any>
