@@ -1,6 +1,6 @@
 import mongoose from 'npm:mongoose'
 
-import { getMasterDbClient } from '../client1.ts'
+import { getMasterDbClient } from '../client.ts'
 
 export interface InstanceStatusInput {
     name: string

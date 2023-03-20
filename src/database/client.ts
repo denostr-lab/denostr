@@ -1,87 +1,67 @@
-import 'pg'
-import 'pg-query-stream'
-
-import knex, { Knex } from 'knex'
+import mongoose from 'npm:mongoose'
 
 import Config from '../config/index.ts'
 import { createLogger } from '../factories/logger-factory.ts'
-;((knex) => {
-    const lastUpdate = {}
-    knex.Client.prototype.releaseConnection = function (connection) {
-        const released = this.pool.release(connection)
 
-        if (released) {
-            const now = new Date().getTime()
-            const { tag } = this.config
-            lastUpdate[tag] = lastUpdate[tag] ?? now
-            if (now - lastUpdate[tag] >= 60000) {
-                lastUpdate[tag] = now
-                console.log(
-                    `${tag} connection pool: ${this.pool.numUsed()} used / ${this.pool.numFree()} free / ${this.pool.numPendingAcquires()} pending`,
-                )
-            }
-        }
-
-        return Promise.resolve()
+const getMasterConfig = () => {
+    const mongoUri = (Deno.env.get('MONGO_URI') || '').trim()
+    if (!mongoUri) {
+        return Deno.exit(1)
     }
-})(knex)
 
-const getMasterConfig = (): Knex.Config => ({
-    tag: 'master',
-    client: 'pg',
-    connection: Config.DB_URI ? Config.DB_URI : {
-        host: Config.DB_HOST,
-        port: Number(Config.DB_PORT),
-        user: Config.DB_USER,
-        password: Config.DB_PASSWORD,
-        database: Config.DB_NAME,
-    },
-    pool: {
-        min: Config.DB_MIN_POOL_SIZE ? Number(Config.DB_MIN_POOL_SIZE) : 0,
-        max: Config.DB_MAX_POOL_SIZE ? Number(Config.DB_MAX_POOL_SIZE) : 3,
-        idleTimeoutMillis: 60000,
-        propagateCreateError: false,
-        acquireTimeoutMillis: Config.DB_ACQUIRE_CONNECTION_TIMEOUT ? Number(Config.DB_ACQUIRE_CONNECTION_TIMEOUT) : 60000,
-    },
-    acquireConnectionTimeout: Config.DB_ACQUIRE_CONNECTION_TIMEOUT ? Number(Config.DB_ACQUIRE_CONNECTION_TIMEOUT) : 60000,
-} as any)
+    return {
+        connection: mongoUri,
+        pool: {
+            min: Config.DB_MIN_POOL_SIZE ? Number(Config.DB_MIN_POOL_SIZE) : 0,
+            max: Config.DB_MAX_POOL_SIZE ? Number(Config.DB_MAX_POOL_SIZE) : 3,
+        },
+        tag: mongoose.mongo.ReadPreference.PRIMARY,
+    }
+}
 
-const getReadReplicaConfig = (): Knex.Config => ({
-    tag: 'read-replica',
-    client: 'pg',
-    connection: {
-        host: Config.RR_DB_HOST,
-        port: Number(Config.RR_DB_PORT),
-        user: Config.RR_DB_USER,
-        password: Config.RR_DB_PASSWORD,
-        database: Config.RR_DB_NAME,
-    },
-    pool: {
-        min: Config.RR_DB_MIN_POOL_SIZE ? Number(Config.RR_DB_MIN_POOL_SIZE) : 0,
-        max: Config.RR_DB_MAX_POOL_SIZE ? Number(Config.RR_DB_MAX_POOL_SIZE) : 3,
-        idleTimeoutMillis: 60000,
-        propagateCreateError: false,
-        acquireTimeoutMillis: Config.RR_DB_ACQUIRE_CONNECTION_TIMEOUT ? Number(Config.RR_DB_ACQUIRE_CONNECTION_TIMEOUT) : 60000,
-    },
-} as any)
-
-let writeClient: Knex
+let writeClient: mongoose.Connection
 
 export const getMasterDbClient = () => {
     const debug = createLogger('database-client:get-db-client')
     if (!writeClient) {
         const config = getMasterConfig()
         debug('config: %o', config)
-        writeClient = knex(config)
+        writeClient = mongoose.createConnection(config.connection, {
+            readPreference: config.tag,
+            maxPoolSize: config.pool.max,
+            minPoolSize: config.pool.min,
+        })
+        writeClient.on('open', () => {
+            console.log('Connected to database')
+        })
+        writeClient.on('error', () => {
+            console.log('Unable to connect to database')
+        })
     }
 
     return writeClient
 }
 
-let readClient: Knex
+const getReadReplicaConfig = () => {
+    const mongoUri = (Deno.env.get('MONGO_URI') || '').trim()
+    if (!mongoUri) {
+        return Deno.exit(1)
+    }
+
+    return {
+        connection: mongoUri,
+        pool: {
+            min: Config.DB_MIN_POOL_SIZE ? Number(Config.DB_MIN_POOL_SIZE) : 0,
+            max: Config.DB_MAX_POOL_SIZE ? Number(Config.DB_MAX_POOL_SIZE) : 3,
+        },
+        tag: mongoose.mongo.ReadPreference.SECONDARY,
+    }
+}
+
+let readClient: mongoose.Connection
 
 export const getReadReplicaDbClient = () => {
-    if (Config.READ_REPLICA_ENABLED !== 'true') {
+    if (!Config.READ_REPLICA_ENABLED) {
         return getMasterDbClient()
     }
 
@@ -89,7 +69,17 @@ export const getReadReplicaDbClient = () => {
     if (!readClient) {
         const config = getReadReplicaConfig()
         debug('config: %o', config)
-        readClient = knex(config)
+        readClient = mongoose.createConnection(config.connection, {
+            readPreference: config.tag,
+            maxPoolSize: config.pool.max,
+            minPoolSize: config.pool.min,
+        })
+        readClient.on('open', () => {
+            console.log('Connected to secondary database')
+        })
+        readClient.on('error', () => {
+            console.log('Unable to connect to secondary database')
+        })
     }
 
     return readClient

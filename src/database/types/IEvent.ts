@@ -2,7 +2,6 @@ import type { Tag } from '../../@types/base.ts'
 import type { IRecord } from './IRecord.ts'
 
 export interface IEvent extends IRecord {
-    _id: string
     event_id: Buffer
     event_pubkey: Buffer
     event_kind: number

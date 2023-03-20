@@ -3,39 +3,24 @@ import {
     __,
     always,
     applySpec,
-    complement,
-    cond,
-    equals,
-    evolve,
-    filter,
-    forEach,
     forEachObjIndexed,
-    groupBy,
     identity,
     ifElse,
-    invoker,
     is,
-    isEmpty,
     isNil,
-    map,
-    modulo,
-    nth,
-    omit,
     path,
     paths,
     pipe,
     prop,
     propSatisfies,
-    T,
-    toPairs,
 } from 'ramda'
 
-import { DatabaseClient, EventId } from '../@types/base.ts'
-import { DBEvent, Event } from '../@types/event.ts'
-import { IEventRepository, IQueryResult } from '../@types/repositories.ts'
+import { EventId } from '../@types/base.ts'
+import { Event } from '../@types/event.ts'
+import { IEventRepository } from '../@types/repositories.ts'
 import { SubscriptionFilter } from '../@types/subscription.ts'
 import { ContextMetadataKey, EventDeduplicationMetadataKey, EventDelegatorMetadataKey, EventExpirationTimeMetadataKey } from '../constants/base.ts'
-import { EventsModel } from '../database/models/index.ts'
+import { masterEventsModel, readReplicaEventsModel } from '../database/models/Events.ts'
 import { IEvent } from '../database/types/index.ts'
 import { createLogger } from '../factories/logger-factory.ts'
 import { isGenericTagQuery } from '../utils/filter.ts'
@@ -48,40 +33,39 @@ const toJSON = (input: any) => {
     // return JSON.stringify(input)
 }
 
-const even = pipe(modulo(__, 2), equals(0))
-
-const groupByLengthSpec = groupBy<string, 'exact' | 'even' | 'odd'>(
-    pipe(
-        prop('length'),
-        cond([
-            [equals(64), always('exact')],
-            [even, always('even')],
-            [T, always('odd')],
-        ]),
-    ),
-)
-
 const debug = createLogger('event-repository')
 
 export class EventRepository implements IEventRepository {
-    public constructor(
-        private readonly masterDbClient: mongoose.Connection,
-        private readonly readReplicaDbClient: mongoose.Connection,
-    ) {}
-
     public findByFilters(filters: SubscriptionFilter[]): mongoose.Aggregate<IEvent[]> {
         debug('querying for %o', filters)
         if (!Array.isArray(filters) || !filters.length) {
             throw new Error('Filters cannot be empty')
         }
 
-        const pipelines: any[] = []
+        const $match: any = {}
+        const $and: any[] = []
+        const $or: any[] = []
+        const $sort = { event_created_at: 1 }
+        const limit = {
+            $limit: 500,
+        }
+        const pipelines: any[] = [
+            {
+                $match,
+            },
+            {
+                $sort,
+            },
+            limit,
+        ]
+
         filters.forEach((currentFilter: SubscriptionFilter) => {
-            const $match: any = {}
-            const $and: any[] = []
-            const $or: any[] = []
-            let $limit = 500
-            const $sort = { event_created_at: 1 }
+            const $andSub: any[] = []
+            const $orSub: any[] = []
+            let $sub = $andSub
+            if (filters.length > 1) {
+                $sub = $orSub
+            }
 
             for (const [filterName, filterValue] of Object.entries(currentFilter)) {
                 const isGenericTag = isGenericTagQuery(filterName)
@@ -90,36 +74,38 @@ export class EventRepository implements IEventRepository {
                         event_tags: { $elemMatch: { $eq: [filterName[1], ...filterValue] } },
                     })
                 } else {
-                    const fieldNames = ['event_pubkey', 'event_delegator', 'authors', 'kinds', 'limit', 'until', 'since', 'ids']
-                    const fieldName: any = fieldNames.find((name) => currentFilter.hasOwnProperty(name))
-                    const fieldValue = currentFilter[fieldName]
+                    const fieldNames = ['kinds', 'limit', 'until', 'since']
+                    if (fieldNames.includes(filterName)) {
+                        if (filterName === 'kinds' && Array.isArray(filterValue)) {
+                            $sub.push({ event_kind: { $in: filterValue } })
+                        }
 
-                    if (fieldName === 'kinds' && Array.isArray(fieldValue)) {
-                        $match['event_kind'] = { $in: fieldValue }
-                    }
+                        if (filterName === 'since' && typeof filterValue === 'number') {
+                            $and.push({ event_created_at: { $gte: filterValue } })
+                        }
 
-                    if (fieldName === 'since' && typeof fieldValue === 'number') {
-                        $match['event_created_at'] = { $gte: fieldValue }
-                    }
+                        if (filterName === 'until' && typeof filterValue === 'number') {
+                            $and.push({ event_created_at: { $lte: filterValue } })
+                        }
 
-                    if (fieldName === 'until' && typeof fieldValue === 'number') {
-                        $match['event_created_at'] = { $lte: fieldValue }
-                    }
-
-                    if (fieldName === 'limit' && typeof fieldValue === 'number') {
-                        $limit = fieldValue
-                        $sort.event_created_at = -1
+                        if (filterName === 'limit' && typeof filterValue === 'number') {
+                            limit.$limit = filterValue
+                            $sort.event_created_at = -1
+                        }
                     }
                 }
             }
 
-            const $andSubOr: any[] = []
             forEachObjIndexed(
-                (tableFields: string[], filterName: string | number) => {
-                    const filterValue = currentFilter[filterName]
+                (tableFields: string[], fieldName: any) => {
+                    const filterValue = currentFilter[fieldName]
                     if (filterValue) {
-                        tableFields.forEach((field) => {
-                            $andSubOr.push({ [field]: filterValue.map(toBuffer) })
+                        tableFields.forEach((field: any) => {
+                            if (fieldName === 'authors') {
+                                $orSub.push({ [field]: { $in: filterValue.map(toBuffer) } })
+                            } else {
+                                $sub.push({ [field]: { $in: filterValue.map(toBuffer) } })
+                            }
                         })
                     }
                 },
@@ -128,27 +114,24 @@ export class EventRepository implements IEventRepository {
                 ids: ['event_id'],
             })
 
-            if ($andSubOr.length > 0) {
-                $and.push($andSubOr)
+            if ($andSub.length > 0) {
+                $and.push(...$andSub)
             }
 
-            if ($and.length > 0) {
-                $match.$and = $and
+            if ($orSub.length > 0) {
+                $or.push(...$orSub)
             }
-
-            if ($or.length > 0) {
-                $match.$or = $or
-            }
-            pipelines.push([
-                { $match },
-                { $sort },
-                { $limit },
-            ])
         })
 
-        return this.readReplicaDbClient
-            .model(EventsModel.name, EventsModel.schema)
-            .aggregate([...pipelines])
+        if ($and.length > 0) {
+            $match.$and = $and
+        }
+
+        if ($or.length > 0) {
+            $match.$or = $or
+        }
+
+        return readReplicaEventsModel.aggregate(pipelines)
     }
 
     public async create(event: Event): Promise<number> {
@@ -183,10 +166,7 @@ export class EventRepository implements IEventRepository {
         })(event)
 
         try {
-            const result = await this.masterDbClient
-                .model(EventsModel.name, EventsModel.schema)
-                .collection
-                .insertOne(row)
+            const result = await masterEventsModel.collection.insertOne(row)
             return { rowCount: result.insertedId ? 1 : 0 }
         } catch (err) {
             if (!String(err).indexOf('E11000 duplicate key error collection')) {
@@ -199,7 +179,7 @@ export class EventRepository implements IEventRepository {
     public async upsert(event: Event): Promise<number> {
         debug('upserting event: %o', event)
 
-        const row = applySpec<DBEvent>({
+        const row = applySpec<IEvent>({
             event_id: pipe(prop('id'), toBuffer),
             event_pubkey: pipe(prop('pubkey'), toBuffer),
             event_created_at: prop('created_at'),
@@ -229,8 +209,7 @@ export class EventRepository implements IEventRepository {
             ),
         })(event)
 
-        const query = this.masterDbClient
-            .model(EventsModel.name, EventsModel.schema)
+        const query = masterEventsModel
             .updateOne(
                 {
                     event_pubkey: row.event_pubkey,
@@ -276,9 +255,7 @@ export class EventRepository implements IEventRepository {
         )
 
         try {
-            const result = await this.masterDbClient
-                .model(EventsModel.name, EventsModel.schema)
-                .insertMany(stubs, { ordered: false })
+            const result = await masterEventsModel.insertMany(stubs, { ordered: false })
             return result.length
         } catch (err) {
             if (!String(err).indexOf('E11000 duplicate key error collection')) {
@@ -293,8 +270,7 @@ export class EventRepository implements IEventRepository {
         eventIdsToDelete: EventId[],
     ): Promise<number> {
         debug('deleting events from %s: %o', pubkey, eventIdsToDelete)
-        const query = this.masterDbClient
-            .model(EventsModel.name, EventsModel.schema)
+        const query = masterEventsModel
             .updateMany(
                 {
                     event_pubkey: toBuffer(pubkey),
@@ -309,16 +285,7 @@ export class EventRepository implements IEventRepository {
 async function ignoreUpdateConflicts(query: any) {
     try {
         const result = await query
-
-        if (result.matchedCount === 0) {
-            // 'No document matches the filter'
-            return 0
-        } else if (result.modifiedCount === 0) {
-            // 'All matched documents already have the updated value'
-            return 0
-        }
-
-        return result.modifiedCount
+        return result.upsertedCount || result.modifiedCount || 0
     } catch (err) {
         if (!String(err).indexOf('E11000 duplicate key error collection')) {
             console.error(String(err))

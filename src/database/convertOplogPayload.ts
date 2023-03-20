@@ -1,4 +1,4 @@
-// deno-lint-ignore-file no-explicit-any
+// deno-lint-ignore-file no-explicit-any no-prototype-builtins
 import type { RealTimeData } from './DatabaseWatcher.ts'
 import type { IRecord } from './types/IRecord.ts'
 

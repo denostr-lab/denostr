@@ -12,12 +12,12 @@ import { Event } from '../../../src/@types/event.ts'
 import { AppWorker } from '../../../src/app/worker.ts'
 import { getCacheClient } from '../../../src/cache/client.ts'
 import Config from '../../../src/config/index.ts'
-import { getMasterDbClient, getReadReplicaDbClient } from '../../../src/database/client1.ts'
+import { getMasterDbClient, getReadReplicaDbClient } from '../../../src/database/client.ts'
 import { workerFactory } from '../../../src/factories/worker-factory.ts'
 import { SettingsStatic } from '../../../src/utils/settings.ts'
 import type { IWorld } from './types.ts'
 import { connect, createIdentity, createSubscription, sendEvent, WebSocketWrapper } from './helpers.ts'
-import { EventsModel } from '../../../src/database/models/Events.ts'
+import { masterEventsModel } from '../../../src/database/models/Events.ts'
 
 export const isDraft = Symbol('draft')
 
@@ -188,7 +188,7 @@ export const startTest = async(pathUrl: string, registerEvent: Function) => {
                 beforeAll(async() => {
                     const names = ['Alice', 'Bob', 'Charlie']
 
-                    await EventsModel.find({
+                    await masterEventsModel.find({
                         event_pubkey: {$in:names.map((name)=>createIdentity(name))
                             .map(({ pubkey }) => Buffer.from(pubkey, 'hex')),
                     }}).deleteMany()
@@ -212,14 +212,13 @@ export const startTest = async(pathUrl: string, registerEvent: Function) => {
                     }
                     World.parameters.clients = {}
 
-                    // const dbClient = getMasterDbClient()
-                    await EventsModel.find({
-                        event_pubkey: {$in:Object
+                    await masterEventsModel.find({
+                        event_pubkey: Object
                             .values(
                                 World.parameters.identities as Record<string, { pubkey: string }>,
                             )
                             .map(({ pubkey }) => Buffer.from(pubkey, 'hex')),
-                    }}).deleteMany()
+                    }).deleteMany()
 
                     World.parameters.identities = {}
 
