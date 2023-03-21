@@ -6,7 +6,7 @@ import { createLogger } from '../factories/logger-factory.ts'
 const getMasterConfig = () => {
     const mongoUri = (Deno.env.get('MONGO_URI') || '').trim()
     if (!mongoUri) {
-        console.info('mongoUri not exit please export MONGO_URI env' )
+        console.error('mongoUri not exit please export MONGO_URI env' )
         return Deno.exit(1)
     }
 
@@ -46,7 +46,7 @@ export const getMasterDbClient = () => {
 const getReadReplicaConfig = () => {
     const mongoUri = (Deno.env.get('MONGO_URI') || '').trim()
     if (!mongoUri) {
-        console.info('mongoUri not exit please export MONGO_URI env' )
+        console.error('mongoUri not exit please export MONGO_URI env' )
         return Deno.exit(1)
     }
 
