@@ -7,7 +7,7 @@ import { getMasterDbClient, getReadReplicaDbClient} from '../../../src/database/
 import { workerFactory } from '../../../src/factories/worker-factory.ts'
 import { SettingsStatic } from '../../../src/utils/settings.ts'
 
-describe('workerFactory', () => {
+describe({name: 'workerFactory', fn: () => {
     let createSettingsStub: Sinon.SinonStub
     let getMasterDbClientStub: Sinon.SinonStub
     let getReadReplicaDbClientStub: Sinon.SinonStub
@@ -42,4 +42,4 @@ describe('workerFactory', () => {
         expect(worker).to.be.an.instanceOf(AppWorker)
         worker.close()
     })
-})
+},sanitizeOps: false, sanitizeResources: false })

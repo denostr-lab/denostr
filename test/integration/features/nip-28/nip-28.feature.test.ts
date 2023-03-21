@@ -23,6 +23,22 @@ startTest(import.meta.url, ()=> {
     )
     
     When(
+        /(\w+) subscribes to last event from (\w+)$/,
+        async function (this: IWorld, from: string, to: string) {
+            const ws = this.parameters.clients[from] as WebSocketWrapper
+            const event = this.parameters.events[to].pop()
+            const subscription = {
+                name: `test-${Math.random()}`,
+                filters: [{ ids: [event.id] }],
+            }
+            this.parameters.subscriptions[from].push(subscription)
+    
+            await createSubscription(ws, subscription.name, subscription.filters)
+    
+        },
+    )
+
+    When(
         /^(\w+) sends a channel_metadata event with content '([^']+)'$/,
         async function (this: IWorld, name: string, content: string) {
             const ws = this.parameters.clients[name] as WebSocketWrapper

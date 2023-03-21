@@ -5,6 +5,7 @@ import { IRunnable } from '../@types/base.ts'
 import Config from '../config/index.ts'
 import { createLogger } from '../factories/logger-factory.ts'
 import { SettingsStatic } from '../utils/settings.ts'
+import { getMasterDbClient } from '../database/client.ts'
 
 const debug = createLogger('app-worker')
 export class AppWorker implements IRunnable {
@@ -61,6 +62,8 @@ export class AppWorker implements IRunnable {
                 watcher.close()
             }
         }
+        const dbClient = getMasterDbClient()
+        dbClient.destroy();
         this.adapter.close(callback)
         debug('closed')
     }

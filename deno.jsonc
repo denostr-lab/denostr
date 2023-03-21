@@ -3,6 +3,8 @@
         "dev": "deno run --allow-all --watch src/index.ts",
         "start": "deno run --allow-all src/index.ts",
         "test": "deno test --no-check -A",
+        "test_unit": "deno test test/unit --no-check -A",
+        "test_integration": "deno test test/integration --no-check -A",
         "example:db:createInstance": "deno run --allow-all src/database/example/createInstance.ts",
         "example:db:node": "deno run --allow-all src/database/example/node.ts"
     },
@@ -12,7 +14,7 @@
         "redis": "https://deno.land/x/redis@v0.29.2/mod.ts",
         "debug": "https://deno.land/x/debuglog@v1.0.0/debug.ts",
         "websocket": "./vendor/deno.land/x/websocket@v0.1.4/mod.ts",
-        "jest": "https://deno.land/std@0.179.0/testing/bdd.ts",
+        "jest": "https://deno.land/std@0.180.0/testing/bdd.ts",
         "oak": "https://deno.land/x/oak@v12.1.0/mod.ts",
         "Buffer": "https://deno.land/std@0.139.0/node/buffer.ts",
         "secp256k1": "https://deno.land/x/secp256k1@1.7.1/mod.ts",
@@ -52,7 +54,7 @@
         "rules": {
             "tags": ["recommended"],
             "include": [],
-            "exclude": ["no-explicit-any", "require-await", "no-extra-semi"]
+            "exclude": ["no-explicit-any", "require-await", "no-extra-semi", "ban-types"]
         }
     }
 }
