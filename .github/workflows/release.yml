@@ -10,6 +10,10 @@ on:
 
 jobs:
   build-and-push-image:
+    strategy:
+      matrix:
+        worker_type: [worker, maintenance, static-mirroring]
+      fail-fast: true
     name: Build and push container image
     runs-on: ubuntu-22.04
     env:
@@ -37,5 +41,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.meta.outputs.tags }}-${{ matrix.worker_type }}
           labels: ${{ steps.meta.outputs.labels }}

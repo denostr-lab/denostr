@@ -1,0 +1,35 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    component: denostr
+  name: denostr
+
+---
+kind: Secret
+type: kubernetes.io/dockerconfigjson
+apiVersion: v1
+metadata:
+  name: ghcr
+  namespace: denostr
+  labels:
+    component: denostr
+data:
+  .dockerconfigjson: 替换为自行生成的凭证，可以查阅 docs/k8s-image-pull-secrets.md
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: denostr
+  name: denostr-svc
+  labels:
+    component: denostr
+spec:
+  ports:
+    - name: ws
+      port: 8008
+      targetPort: 8008
+  selector:
+    component: denostr

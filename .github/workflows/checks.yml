@@ -14,7 +14,7 @@ concurrency:
 jobs:
   commit-lint:
     name: Lint commits
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -29,7 +29,7 @@ jobs:
         uses: wagoid/commitlint-github-action@v5
   lint:
     name: Lint code
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -42,7 +42,7 @@ jobs:
         run: deno lint
   release:
     name: Release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: github.ref == 'refs/heads/main'
     environment: release
     steps:
@@ -51,9 +51,13 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: "~1.31"
-      - name: Install package dependencies
-        run: npm ci
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+      - name: Versions
+        run: |
+          deno --version
+          git --version
+      # - name: Install package dependencies
+      #   run: npm ci
+      # - name: Release
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   run: npx semantic-release
