@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import { afterEach, beforeEach, describe, it } from 'jest'
 import Sinon from 'sinon'
 
 import { AppWorker } from '../../../src/app/worker.ts'
@@ -6,21 +7,30 @@ import { getMasterDbClient, getReadReplicaDbClient} from '../../../src/database/
 import { workerFactory } from '../../../src/factories/worker-factory.ts'
 import { SettingsStatic } from '../../../src/utils/settings.ts'
 
-Deno.test({name: 'workerFactory', fn: async(t) => {
-    const createSettingsStub :Sinon.SinonStub = Sinon.stub(SettingsStatic, 'createSettings')
-    const getMasterDbClientStub: Sinon.SinonStub = Sinon.stub(
-        { getMasterDbClient },
-        'getMasterDbClient',
-    )
-    const getReadReplicaDbClientStub: Sinon.SinonStub = Sinon.stub(
-        { getReadReplicaDbClient },
-        'getReadReplicaDbClient',
-    )
+describe({name: 'workerFactory', fn: () => {
+    let createSettingsStub: Sinon.SinonStub
+    let getMasterDbClientStub: Sinon.SinonStub
+    let getReadReplicaDbClientStub: Sinon.SinonStub
 
+    beforeEach(() => {
+        createSettingsStub = Sinon.stub(SettingsStatic, 'createSettings')
+        getMasterDbClientStub = Sinon.stub(
+            { getMasterDbClient },
+            'getMasterDbClient',
+        )
+        getReadReplicaDbClientStub = Sinon.stub(
+            { getReadReplicaDbClient },
+            'getReadReplicaDbClient',
+        )
+    })
 
+    afterEach(() => {
+        getReadReplicaDbClientStub.restore()
+        getMasterDbClientStub.restore()
+        createSettingsStub.restore()
+    })
 
-
-    await t.step('returns an AppWorker', () => {
+    it('returns an AppWorker', () => {
         createSettingsStub.returns({
             info: {
                 relay_url: 'http://localhost:8008',
@@ -32,7 +42,4 @@ Deno.test({name: 'workerFactory', fn: async(t) => {
         expect(worker).to.be.an.instanceOf(AppWorker)
         worker.close()
     })
-    getReadReplicaDbClientStub.restore()
-    getMasterDbClientStub.restore()
-    createSettingsStub.restore()
-}, sanitizeResources: false, sanitizeOps: false})
+},sanitizeOps: false, sanitizeResources: false })

@@ -60,7 +60,7 @@ describe({name: 'SubscribeMessageHandler', fn: () => {
             objectMode: true,
         })
         eventRepositoryFindByFiltersStub = sandbox.fake.returns({
-            stream: () => stream,
+            cursor: () => stream,
         })
         eventRepository = {
             findByFilters: eventRepositoryFindByFiltersStub,
