@@ -28,9 +28,7 @@
         "rxjs": "https://cdn.skypack.dev/rxjs@7.8.0?dts",
         "chai-as-promised": "https://cdn.skypack.dev/chai-as-promised@7.1.1?dts",
         "events": "https://deno.land/std@0.177.0/node/events.ts"
-
     },
-    "importMap": "./vendor/import_map.json",
     "fmt": {
         "files": {
             // "include": ["src/"],
