@@ -1,5 +1,5 @@
 {
-    "name": "nostream",
+    "name": "denostr",
     "version": "1.22.6",
     "description": "A Nostr relay written in Typescript.",
     "supportedNips": [
@@ -50,7 +50,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/Cameri/nostream.git"
+        "url": "git+git@github.com:Guakamoli/denostr.git"
     },
     "keywords": [
         "nostr",
@@ -60,9 +60,9 @@
     "author": "Ricardo Arturo Cabral Mejía (npub1qqqqqqyz0la2jjl752yv8h7wgs3v098mh9nztd4nr6gynaef6uqqt0n47m)",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/Cameri/nostream/issues"
+        "url": "https://github.com/Guakamoli/denostr/issues"
     },
-    "homepage": "https://github.com/Cameri/nostream#readme",
+    "homepage": "https://github.com/Guakamoli/denostr",
     "devDependencies": {
         "@commitlint/cli": "17.2.0",
         "@commitlint/config-conventional": "17.2.0",
