@@ -1,6 +1,6 @@
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
-import { afterEach, beforeEach, describe, it } from 'jest'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, it } from 'jest'
 import Sinon from 'sinon'
 import SinonChi from 'sinon-chai'
 
@@ -8,7 +8,7 @@ chai.use(chaiAsPromised)
 chai.use(SinonChi)
 
 import { IWebSocketAdapter } from '../../../../src/@types/adapters.ts'
-import { DatabaseClient } from '../../../../src/@types/base.ts'
+import { DatabaseClient1 as DatabaseClient } from '../../../../src/@types/base.ts'
 import { Event } from '../../../../src/@types/event.ts'
 import { IEventStrategy } from '../../../../src/@types/message-handlers.ts'
 import { MessageType } from '../../../../src/@types/messages.ts'
@@ -16,23 +16,30 @@ import { IEventRepository } from '../../../../src/@types/repositories.ts'
 import { WebSocketAdapterEvent } from '../../../../src/constants/adapter.ts'
 import { DefaultEventStrategy } from '../../../../src/handlers/event-strategies/default-event-strategy.ts'
 import { EventRepository } from '../../../../src/repositories/event-repository.ts'
+import { getMasterDbClient } from '../../../../src/database/client.ts'
 
 const { expect } = chai
 
-describe('DefaultEventStrategy', () => {
+describe({name: 'DefaultEventStrategy', fn: () => {
     const event: Event = {
         id: 'id',
     } as any
     let webSocket: IWebSocketAdapter
     let eventRepository: IEventRepository
-
+    let masterClient: DatabaseClient
     let webSocketEmitStub: Sinon.SinonStub
     let eventRepositoryCreateStub: Sinon.SinonStub
 
     let strategy: IEventStrategy<Event, Promise<void>>
 
     let sandbox: Sinon.SinonSandbox
-
+    beforeAll(async()=>{
+        masterClient = getMasterDbClient()
+        masterClient = await masterClient.asPromise()
+    })
+    afterAll(()=>{
+        masterClient.destroy()
+    })
     beforeEach(() => {
         sandbox = Sinon.createSandbox()
 
@@ -45,9 +52,8 @@ describe('DefaultEventStrategy', () => {
         webSocket = {
             emit: webSocketEmitStub,
         } as any
-        const masterClient: DatabaseClient = {} as any
-        const readReplicaClient: DatabaseClient = {} as any
-        eventRepository = new EventRepository(masterClient, readReplicaClient)
+
+        eventRepository = new EventRepository()
 
         strategy = new DefaultEventStrategy(webSocket, eventRepository)
     })
@@ -112,4 +118,4 @@ describe('DefaultEventStrategy', () => {
             expect(webSocketEmitStub).not.to.have.been.called
         })
     })
-})
+}, sanitizeOps: false, sanitizeResources: false})

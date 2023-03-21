@@ -33,7 +33,7 @@ const toDbEvent = (event: Event) => ({
     event_signature: Buffer.from(event.sig, 'hex'),
 })
 
-describe('SubscribeMessageHandler', () => {
+describe({name: 'SubscribeMessageHandler', fn: () => {
     const subscriptionId: SubscriptionId = 'subscriptionId'
     let filters: SubscriptionFilter[]
     let subscriptions: Map<SubscriptionId, SubscriptionFilter[]>
@@ -342,4 +342,4 @@ describe('SubscribeMessageHandler', () => {
             )
         })
     })
-})
+}, sanitizeOps: false, sanitizeResources: false})

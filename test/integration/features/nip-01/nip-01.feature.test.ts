@@ -206,7 +206,6 @@ startTest(import.meta.url, ()=>{
             }, privkey)
     
             event.sig = 'f'.repeat(128)
-    
             event[isDraft] = true
     
             this.parameters.events[name].push(event)

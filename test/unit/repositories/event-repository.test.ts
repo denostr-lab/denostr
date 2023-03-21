@@ -12,27 +12,21 @@ chai.use(sinonChai)
 
 const { expect } = chai
 
-import { DatabaseClient } from '../../../src/@types/base.ts'
+import { DatabaseClient1 as DatabaseClient } from '../../../src/@types/base.ts'
 import { ContextMetadataKey, EventDeduplicationMetadataKey } from '../../../src/constants/base.ts'
 import { EventRepository } from '../../../src/repositories/event-repository.ts'
+import { getMasterDbClient } from '../../../src/database/client.ts'
 
 describe('EventRepository', () => {
     let repository: IEventRepository
     let sandbox: sinon.SinonSandbox
     let dbClient: DatabaseClient
-    let rrDbClient: DatabaseClient
 
-    beforeEach(() => {
+    beforeEach(async() => {
         sandbox = sinon.createSandbox()
-
-        dbClient = knex({
-            client: 'pg',
-        })
-        rrDbClient = knex({
-            client: 'pg',
-        })
-
-        repository = new EventRepository(dbClient, rrDbClient)
+        dbClient = getMasterDbClient()
+        dbClient = await dbClient.asPromise()
+        repository = new EventRepository()
     })
 
     afterEach(() => {

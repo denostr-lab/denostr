@@ -1,6 +1,6 @@
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
-import { afterEach, beforeEach, describe, it } from 'jest'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, it } from 'jest'
 import Sinon from 'sinon'
 import SinonChi from 'sinon-chai'
 
@@ -8,7 +8,7 @@ chai.use(chaiAsPromised)
 chai.use(SinonChi)
 
 import { IWebSocketAdapter } from '../../../../src/@types/adapters.ts'
-import { DatabaseClient } from '../../../../src/@types/base.ts'
+import { DatabaseClient1 as DatabaseClient } from '../../../../src/@types/base.ts'
 import { Event } from '../../../../src/@types/event.ts'
 import { IEventStrategy } from '../../../../src/@types/message-handlers.ts'
 import { MessageType } from '../../../../src/@types/messages.ts'
@@ -17,10 +17,11 @@ import { WebSocketAdapterEvent } from '../../../../src/constants/adapter.ts'
 import { EventDeduplicationMetadataKey, EventTags } from '../../../../src/constants/base.ts'
 import { ParameterizedReplaceableEventStrategy } from '../../../../src/handlers/event-strategies/parameterized-replaceable-event-strategy.ts'
 import { EventRepository } from '../../../../src/repositories/event-repository.ts'
+import { getMasterDbClient } from '../../../../src/database/client.ts'
 
 const { expect } = chai
 
-describe('ParameterizedReplaceableEventStrategy', () => {
+describe({name: 'ParameterizedReplaceableEventStrategy', fn:() => {
     const event: Event = {
         id: 'id',
         tags: [
@@ -29,6 +30,7 @@ describe('ParameterizedReplaceableEventStrategy', () => {
     } as any
     let webSocket: IWebSocketAdapter
     let eventRepository: IEventRepository
+    let masterClient: DatabaseClient
 
     let webSocketEmitStub: Sinon.SinonStub
     let eventRepositoryUpsertStub: Sinon.SinonStub
@@ -36,7 +38,13 @@ describe('ParameterizedReplaceableEventStrategy', () => {
     let strategy: IEventStrategy<Event, Promise<void>>
 
     let sandbox: Sinon.SinonSandbox
-
+    beforeAll(async()=>{
+        masterClient = getMasterDbClient()
+        masterClient = await masterClient.asPromise()
+    })
+    afterAll(()=>{
+        masterClient.destroy()
+    })
     beforeEach(() => {
         sandbox = Sinon.createSandbox()
 
@@ -49,9 +57,7 @@ describe('ParameterizedReplaceableEventStrategy', () => {
         webSocket = {
             emit: webSocketEmitStub,
         } as any
-        const masterClient: DatabaseClient = {} as any
-        const readReplicaClient: DatabaseClient = {} as any
-        eventRepository = new EventRepository(masterClient, readReplicaClient)
+        eventRepository = new EventRepository()
 
         strategy = new ParameterizedReplaceableEventStrategy(
             webSocket,
@@ -144,4 +150,4 @@ describe('ParameterizedReplaceableEventStrategy', () => {
             expect(webSocketEmitStub).not.to.have.been.called
         })
     })
-})
+}, sanitizeResources: false, sanitizeOps: false})

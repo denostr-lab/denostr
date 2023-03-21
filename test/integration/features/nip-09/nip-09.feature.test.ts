@@ -7,13 +7,27 @@ import { createEvent, sendEvent, waitForEventCount, WebSocketWrapper } from '../
 import { isDraft, Given, Then, When, startTest } from '../shared.ts'
 import type { IWorld } from '../types.ts'
 startTest(import.meta.url, ()=> {
+    When(
+        /^(\w+) sends a text_note event with content "([^"]+)"$/,
+        async function (this: IWorld, name: string, content: string) {
+            const ws = this.parameters.clients[name] as WebSocketWrapper
+            const { pubkey, privkey } = this.parameters.identities[name]
+            const event: Event = await createEvent(
+                { pubkey, kind: 1, content },
+                privkey,
+            )
+    
+            await sendEvent(ws, event)
+            this.parameters.events[name].push(event)
+        },
+    )
+
     When(/^(\w+) sends a delete event for their last event$/, async function (
         this: IWorld,
         name: string,
     ) {
         const ws = this.parameters.clients[name] as WebSocketWrapper
         const { pubkey, privkey } = this.parameters.identities[name]
-    
         const tags: Tag[] = [
             [
                 EventTags.Event,

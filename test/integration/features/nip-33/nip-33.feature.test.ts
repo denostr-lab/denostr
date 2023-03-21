@@ -45,7 +45,7 @@ startTest(import.meta.url, ()=> {
             const ws = this.parameters.clients[name] as WebSocketWrapper
             const subscription = this.parameters
                 .subscriptions[name][this.parameters.subscriptions[name].length - 1]
-            const a = await masterEventsModel.find({
+            await masterEventsModel.find({
                 event_pubkey: {$in:Object
                     .values(
                         this.parameters.identities as Record<string, { pubkey: string }>,

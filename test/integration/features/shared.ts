@@ -54,8 +54,7 @@ export const startTest = async(pathUrl: string, registerEvent: Function) => {
     pathUrl = new URL(pathUrl).pathname
     const testDesc = pathUrl.replace(Deno.cwd(), '')
     const featPath: string = pathUrl.replace('.ts', '')
-    describe(testDesc, () => {
-        console.info(testDesc, 'testDesc')
+    describe({name: testDesc, fn: async() => {
         beforeAll(async function () {
             World.functions = {
                 Given: [],
@@ -250,10 +249,9 @@ export const startTest = async(pathUrl: string, registerEvent: Function) => {
                                 break
                             }
                         }
-                        console.info(line, '结束了')
                     }
                 })
             })
         }
-    })
+    } , sanitizeResources: false, sanitizeOps: false})
 }
