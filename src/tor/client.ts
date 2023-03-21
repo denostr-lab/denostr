@@ -2,7 +2,7 @@ import { readFile, writeFile } from 'node:fs/promises'
 import { homedir } from 'node:os'
 import { join } from 'node:path'
 
-import { Tor } from 'tor-control-ts'
+import { Tor } from 'npm:tor-control-ts@1.0.0'
 
 import { TorConfig } from '../@types/tor.ts'
 import Config from '../config/index.ts'

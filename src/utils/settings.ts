@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import { extname, join } from 'node:path'
 
-import yaml from 'js-yaml'
+import yaml from 'npm:js-yaml@4.1.0'
 import { mergeDeepRight } from 'ramda'
 
 import { Settings } from '../@types/settings.ts'

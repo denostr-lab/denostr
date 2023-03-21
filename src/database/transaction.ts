@@ -1,4 +1,4 @@
-import { Knex } from 'knex'
+import { Knex } from 'npm:knex@2.4.2'
 
 import { DatabaseClient, DatabaseTransaction } from '../@types/base.ts'
 import { ITransaction } from '../@types/database.ts'

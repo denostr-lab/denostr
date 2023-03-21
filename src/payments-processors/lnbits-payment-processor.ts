@@ -1,4 +1,4 @@
-import { AxiosInstance } from 'axios'
+import { AxiosInstance } from 'npm:axios@1.2.6'
 
 import { Factory } from '../@types/base.ts'
 import { Pubkey } from '../@types/base.ts'
