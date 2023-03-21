@@ -285,8 +285,10 @@ export class EventRepository implements IEventRepository {
 async function ignoreUpdateConflicts(query: any) {
     try {
         const result = await query
+        debug('ignoreUpdateConflicts result: %o', result)
         return result.upsertedCount || result.modifiedCount || 0
     } catch (err) {
+        debug('ignoreUpdateConflicts error: %o', err)
         if (!String(err).indexOf('E11000 duplicate key error collection')) {
             console.error(String(err))
         }

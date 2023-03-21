@@ -41,7 +41,7 @@ export class AppWorker implements IRunnable {
                 'Cannot read properties of undefined (reading \'__knexUid\')'
         ) {
             console.error(
-                'Unable to acquire connection. Please increase DB_MAX_POOL_SIZE, DB_ACQUIRE_CONNECTION_TIMEOUT and tune postgresql.conf to make use of server\'s resources.',
+                'Unable to acquire connection. Please increase MONGO_MAX_POOL_SIZE and tune postgresql.conf to make use of server\'s resources.',
             )
             return
         }

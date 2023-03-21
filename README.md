@@ -87,14 +87,8 @@ WARNING: Docker distributions from Snap, Brew or Debian repositories are NOT SUP
 Set the following environment variables:
 
 ```
-DB_HOST=127.0.0.1
-DB_PORT=5432
-DB_NAME=nostr_ts_relay
-DB_USER=DB_USER
-DB_PASSWORD=DB_PASSWORD
-REDIS_HOST=127.0.0.1
-REDIS_PORT=6379
 WORKER_TYPE=worker
+MONGO_URI=mongodb://user:pass@host:port/db?replicaSet=rs0&authSource=admin
 ```
 
 Clone repository and enter directory:
@@ -103,7 +97,6 @@ Clone repository and enter directory:
 git clone git@github.com:Guakamoli/denostr.git
 cd denostr
 ```
-
 
 
 Create .nostr folder inside denostr project folder and copy over the settings file:

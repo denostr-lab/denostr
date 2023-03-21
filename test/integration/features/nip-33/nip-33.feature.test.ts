@@ -52,7 +52,8 @@ startTest(import.meta.url, ()=> {
                     )
                     .map(({ pubkey }) => Buffer.from(pubkey, 'hex')),
             }})
-            const receivedEvent = await waitForNextEvent(ws, subscription.name)
+            const event = this.parameters.events[name][this.parameters.events[name].length - 1]
+            const receivedEvent = await waitForNextEvent(ws, subscription.name, event.content)
             expect(receivedEvent.kind).to.equal(30000)
             expect(receivedEvent.pubkey).to.equal(
                 this.parameters.identities[author].pubkey,

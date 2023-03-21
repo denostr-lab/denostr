@@ -14,7 +14,7 @@ export class WebSocketServerService extends ServiceClass {
         this.onEvent('WebSocketServer.broadcast', (event) => {
             const { clientAction, data } = event
             if (clientAction === 'inserted') {
-                debug('onEvent(WebSocketServer.broadcast) data: %o', data)
+                debug('WebSocketServer.broadcast %s data: %o', clientAction, data)
                 adapter.emit(WebSocketServerAdapterEvent.Broadcast, data)
             }
         })

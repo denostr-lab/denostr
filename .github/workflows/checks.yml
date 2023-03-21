@@ -6,10 +6,14 @@ on:
     branches:
       - main
       - next
+      - test
 
 concurrency:
   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
   cancel-in-progress: true
+
+env:
+  MONGO_URI: "mongodb://127.0.0.1:27017/denostr?replicaSet=rs0"
 
 jobs:
   commit-lint:
@@ -23,8 +27,6 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: "~1.31"
-      - name: Install package dependencies
-        run: npm ci
       - name: Run commitlint
         uses: wagoid/commitlint-github-action@v5
   lint:
@@ -36,28 +38,70 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: "~1.31"
-      - name: Install package dependencies
-        run: npm ci
-      - name: Run Lint
-        run: deno lint
-  release:
-    name: Release
+      # - name: Run Type check
+      #   run: deno check src/index.ts
+  test-units:
+    strategy:
+      matrix:
+        mongodb-version: ['4.4', '5.0']
+      fail-fast: true
+    name: Unit Tests
     runs-on: ubuntu-22.04
-    if: github.ref == 'refs/heads/main'
-    environment: release
+    needs:
+      - commit-lint
+      - lint
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - uses: denoland/setup-deno@v1
         with:
           deno-version: "~1.31"
-      - name: Versions
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.8.0
+        with:
+          mongodb-version: ${{ matrix.mongodb-version }}
+          mongodb-replica-set: rs0
+      - name: Run unit tests
         run: |
-          deno --version
-          git --version
-      # - name: Install package dependencies
-      #   run: npm ci
-      # - name: Release
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   run: npx semantic-release
+          export DEBUG=*
+          echo 'MONGO_URI=${{ env.MONGO_URI }}' >> .env
+          echo 'WORKER_TYPE=worker' >> .env
+          deno task test:unit
+  test-integrations:
+    strategy:
+      matrix:
+        mongodb-version: ['4.4', '5.0']
+      fail-fast: true
+    name: Integration Tests
+    runs-on: ubuntu-22.04
+    needs:
+      - commit-lint
+      - lint
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: "~1.31"
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.8.0
+        with:
+          mongodb-version: ${{ matrix.mongodb-version }}
+          mongodb-replica-set: rs0
+      - name: Run integration tests
+        run: |
+          export DEBUG=*
+          echo 'MONGO_URI=${{ env.MONGO_URI }}' >> .env
+          echo 'WORKER_TYPE=worker' >> .env
+          deno task test:integration
+  # post-tests:
+  #   name: Post Tests
+  #   needs: [test-units, test-integrations]
+  #   runs-on: ubuntu-22.04
+  #   if: ${{ always() }}
+  #   steps:
+  #   - name: Coveralls Finished
+  #     uses: coverallsapp/github-action@master
+  #     with:
+  #       github-token: ${{ secrets.GITHUB_TOKEN }}
+  #       parallel-finished: true

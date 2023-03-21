@@ -5,6 +5,7 @@ import type { EventSignatures } from '../core-services/index.ts'
 import { DatabaseWatcher } from './DatabaseWatcher.ts'
 import { masterEventsModel } from './models/index.ts'
 import type { IEvent } from './types/index.ts'
+import { createLogger } from '../factories/logger-factory.ts'
 
 export type Watcher = <T extends mongoose.Document>(
     model: mongoose.Model<T>,
@@ -18,11 +19,15 @@ export type BroadcastCallback = <T extends keyof EventSignatures>(
     ...args: Parameters<EventSignatures[T]>
 ) => Promise<void>
 
+const debug = createLogger('watchers:on')
+
 export function initWatchers(
     watcher: DatabaseWatcher,
     broadcast: BroadcastCallback,
 ): void {
     watcher.on<IEvent>(masterEventsModel.collection.collectionName, (event) => {
+        debug('events %o', event)
+
         const { clientAction, data, diff, id } = event
         broadcast('WebSocketServer.broadcast', { clientAction, data, diff, id })
     })

@@ -18,6 +18,7 @@ import { SettingsStatic } from '../../../src/utils/settings.ts'
 import type { IWorld } from './types.ts'
 import { connect, createIdentity, createSubscription, sendEvent, WebSocketWrapper } from './helpers.ts'
 import { masterEventsModel } from '../../../src/database/models/Events.ts'
+import { resolve } from 'node:path'
 
 export const isDraft = Symbol('draft')
 
@@ -186,7 +187,6 @@ export const startTest = async(pathUrl: string, registerEvent: Function) => {
                 
                 beforeAll(async() => {
                     const names = ['Alice', 'Bob', 'Charlie']
-
                     await masterEventsModel.find({
                         event_pubkey: {$in:names.map((name)=>createIdentity(name))
                             .map(({ pubkey }) => Buffer.from(pubkey, 'hex')),
@@ -212,11 +212,10 @@ export const startTest = async(pathUrl: string, registerEvent: Function) => {
                     World.parameters.clients = {}
 
                     await masterEventsModel.find({
-                        event_pubkey: Object
-                            .values(
-                                World.parameters.identities as Record<string, { pubkey: string }>,
-                            )
-                            .map(({ pubkey }) => Buffer.from(pubkey, 'hex')),
+                        event_pubkey: {
+                            $in: Object.values(World.parameters.identities as Record<string, { pubkey: string }>)
+                            .map(({ pubkey }) => Buffer.from(pubkey, 'hex'))
+                        },
                     }).deleteMany()
 
                     World.parameters.identities = {}

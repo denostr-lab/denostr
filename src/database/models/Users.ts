@@ -1,6 +1,7 @@
 import mongoose from 'npm:mongoose'
 
-import { getMasterDbClient } from '../client.ts'
+import { getMasterDbClient, getReadReplicaDbClient } from '../client.ts'
+import { Buffer } from 'Buffer'
 
 export interface UserInput {
     pubkey: Buffer
@@ -32,7 +33,11 @@ UserSchema.index({ 'balance': 1 }, {
     background: true,
 })
 
-export const UsersModel = getMasterDbClient().model<UserDocument>(
+export const UsersModel = (dbClient: mongoose.Connection) => dbClient.model<UserDocument>(
     'Users',
     UserSchema,
+    'users',
 )
+
+export const masterUsersModel = UsersModel(getMasterDbClient())
+export const readReplicaUsersModel = UsersModel(getReadReplicaDbClient())

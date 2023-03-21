@@ -14,7 +14,6 @@ export const slidingWindowRateLimiterFactory = async () => {
         let cache: ICacheAdapter | null = null
         if (Config.REDIS_HOST && Config.REDIS_PORT) {
             cache = new RedisAdapter(await getCacheClient())
-
         } else {
             cache = new RedisSetAdapter()
         }

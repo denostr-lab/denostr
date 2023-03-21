@@ -4,7 +4,7 @@ import Config from '../config/index.ts'
 import { createLogger } from '../factories/logger-factory.ts'
 
 const getMasterConfig = () => {
-    const mongoUri = (Deno.env.get('MONGO_URI') || '').trim()
+    const mongoUri = Config.MONGO_URI
     if (!mongoUri) {
         console.error('mongoUri not exit please export MONGO_URI env' )
         return Deno.exit(1)
@@ -13,8 +13,8 @@ const getMasterConfig = () => {
     return {
         connection: mongoUri,
         pool: {
-            min: Config.DB_MIN_POOL_SIZE ? Number(Config.DB_MIN_POOL_SIZE) : 0,
-            max: Config.DB_MAX_POOL_SIZE ? Number(Config.DB_MAX_POOL_SIZE) : 3,
+            min: Config.MONGO_MIN_POOL_SIZE ? Number(Config.MONGO_MIN_POOL_SIZE) : 0,
+            max: Config.MONGO_MAX_POOL_SIZE ? Number(Config.MONGO_MAX_POOL_SIZE) : 3,
         },
         tag: mongoose.mongo.ReadPreference.PRIMARY,
     }
@@ -44,7 +44,7 @@ export const getMasterDbClient = () => {
 }
 
 const getReadReplicaConfig = () => {
-    const mongoUri = (Deno.env.get('MONGO_URI') || '').trim()
+    const mongoUri = Config.MONGO_URI
     if (!mongoUri) {
         console.error('mongoUri not exit please export MONGO_URI env' )
         return Deno.exit(1)
@@ -53,8 +53,8 @@ const getReadReplicaConfig = () => {
     return {
         connection: mongoUri,
         pool: {
-            min: Config.DB_MIN_POOL_SIZE ? Number(Config.DB_MIN_POOL_SIZE) : 0,
-            max: Config.DB_MAX_POOL_SIZE ? Number(Config.DB_MAX_POOL_SIZE) : 3,
+            min: Config.MONGO_MIN_POOL_SIZE ? Number(Config.MONGO_MIN_POOL_SIZE) : 0,
+            max: Config.MONGO_MAX_POOL_SIZE ? Number(Config.MONGO_MAX_POOL_SIZE) : 3,
         },
         tag: mongoose.mongo.ReadPreference.SECONDARY,
     }
@@ -63,7 +63,7 @@ const getReadReplicaConfig = () => {
 let readClient: mongoose.Connection
 
 export const getReadReplicaDbClient = () => {
-    if (!Config.READ_REPLICA_ENABLED) {
+    if (!Config.MONGO_READ_REPLICA_ENABLED) {
         return getMasterDbClient()
     }
 
