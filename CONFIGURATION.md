@@ -32,8 +32,7 @@ The following environment variables can be set:
 | TOR_CONTROL_PORT                 | Tor control Port                                   | 9051                   |
 | TOR_PASSWORD                     | Tor control password                               | nostr_ts_relay         |
 | HIDDEN_SERVICE_PORT              | Tor hidden service port                            | 80                     |
-| REDIS_URI                        | Redis URI (overrides REDIS_HOST, REDIS_PORT, etc.) |                        |
-| REDIS_HOST                       |                                                    |                        |
+| REDIS_HOST                       | Redis Host                                         | 127.0.0.1              |
 | REDIS_PORT                       | Redis Port                                         | 6379                   |
 | REDIS_USER                       | Redis User                                         | default                |
 | REDIS_PASSWORD                   | Redis Password                                     | nostr_ts_relay         |
