@@ -1,6 +1,6 @@
 import net from 'node:net'
 
-import { Knex } from 'knex'
+import { Knex } from 'npm:knex@2.4.2'
 import mongoose from 'npm:mongoose'
 
 export type EventId = string

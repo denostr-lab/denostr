@@ -4,7 +4,7 @@
 // import { expect } from 'chai'
 // import { afterEach, beforeEach, describe, it } from 'jest'
 // import Sinon from 'sinon'
-// import { hiddenService, Tor } from 'tor-control-ts'
+// import { hiddenService, Tor } from 'npm:tor-control-ts@1.0.0'
 
 // import Config from '../../../src/config/index.ts'
 // import { addOnion, closeTorClient, createTorConfig, getTorClient } from '../../../src/tor/client.ts'
