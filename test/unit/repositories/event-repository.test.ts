@@ -2,8 +2,9 @@ import * as chai from 'chai'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, it } from 'jest'
 import * as sinon from 'sinon'
 import sinonChai from 'sinon-chai'
+// import { Event, ParameterizedReplaceableEvent } from '../../../src/@types/event.ts'
 
-import { Event, ParameterizedReplaceableEvent } from '../../../src/@types/event.ts'
+import { Event } from '../../../src/@types/event.ts'
 import { IEventRepository } from '../../../src/@types/repositories.ts'
 import { SubscriptionFilter } from '../../../src/@types/subscription.ts'
 
@@ -12,7 +13,7 @@ chai.use(sinonChai)
 const { expect } = chai
 
 import { DatabaseClient1 as DatabaseClient } from '../../../src/@types/base.ts'
-import { ContextMetadataKey, EventDeduplicationMetadataKey } from '../../../src/constants/base.ts'
+// import { ContextMetadataKey, EventDeduplicationMetadataKey } from '../../../src/constants/base.ts'
 import { EventRepository } from '../../../src/repositories/event-repository.ts'
 import { getMasterDbClient } from '../../../src/database/client.ts'
 // import { masterEventsModel } from '../../../src/database/models/Events.ts'
