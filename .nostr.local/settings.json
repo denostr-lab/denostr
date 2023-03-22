@@ -1,8 +1,8 @@
 {
     "info": {
-        "relay_url": "ws://192.168.0.132",
-        "name": "nostream.localtest.me",
-        "description": "A nostr relay written in Typescript.",
+        "relay_url": "ws://your-domain.com",
+        "name": "nostr relay by denostr",
+        "description": "Deno based, cloud native nostr implemention support by ByteTrade",
         "pubkey": "00000000827ffaa94bfea288c3dfce4422c794fbb96625b6b31e9049f729d700",
         "contact": "operator@your-domain.com"
     },
@@ -96,16 +96,16 @@
             ],
             "rateLimits": [
                 {
-                    "description": "6 events/min for event kinds 0, 3, 40 and 41",
+                    "description": "10 events/min for event kinds 0, 3, 40 and 41",
                     "kinds": [0, 3, 40, 41],
                     "period": 60000,
-                    "rate": 6
+                    "rate": 10
                 },
                 {
-                    "description": "12 events/min for event kinds 1, 2, 4 and 42",
+                    "description": "16 events/min for event kinds 1, 2, 4 and 42",
                     "kinds": [1, 2, 4, 42],
                     "period": 60000,
-                    "rate": 12
+                    "rate": 16
                 },
                 {
                     "description": "360 events/hour for event kinds 1, 2, 4 and 42",

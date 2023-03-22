@@ -38,3 +38,4 @@ dist
 .nostr
 
 deno.lock
+.cache/

@@ -1,9 +1,0 @@
-FROM node:18-alpine3.16
-
-WORKDIR /code
-
-COPY ["package.json", "package-lock.json", "./"]
-
-RUN npm install --quiet
-
-CMD ["true"]

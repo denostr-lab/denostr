@@ -5,15 +5,20 @@ on:
   push:
     branches:
       - main
+      - next
+      - test
 
 concurrency:
   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
   cancel-in-progress: true
 
+env:
+  MONGO_URI: "mongodb://127.0.0.1:27017/denostr?replicaSet=rs0"
+
 jobs:
   commit-lint:
     name: Lint commits
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -22,26 +27,26 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: "~1.31"
-      - name: Install package dependencies
-        run: npm ci
       - name: Run commitlint
         uses: wagoid/commitlint-github-action@v5
   lint:
     name: Lint code
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - uses: denoland/setup-deno@v1
         with:
           deno-version: "~1.31"
-      - name: Install package dependencies
-        run: npm ci
-      - name: Run Lint
-        run: deno lint
-  test-units-and-cover:
-    name: Unit Tests And Coverage
-    runs-on: ubuntu-latest
+      # - name: Run Type check
+      #   run: deno check src/index.ts
+  test-units:
+    strategy:
+      matrix:
+        mongodb-version: ['4.4', '5.0']
+      fail-fast: true
+    name: Unit Tests
+    runs-on: ubuntu-22.04
     needs:
       - commit-lint
       - lint
@@ -51,29 +56,24 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: "~1.31"
-      - name: Install package dependencies
-        run: npm ci
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.8.0
+        with:
+          mongodb-version: ${{ matrix.mongodb-version }}
+          mongodb-replica-set: rs0
       - name: Run unit tests
-        run: npm run test:unit
-      - name: Run coverage for unit tests
-        run: npm run cover:unit
-        if: ${{ always() }}
-      - uses: actions/upload-artifact@v3
-        name: Upload coverage report for unit tests
-        if: ${{ always() }}
-        with:
-          path: .coverage/*/lcov.info
-      - name: Coveralls
-        uses: coverallsapp/github-action@master
-        if: ${{ always() }}
-        with:
-          path-to-lcov: ./.coverage/unit/lcov.info
-          flag-name: Unit
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          parallel: true
-  test-integrations-and-cover:
-    name: Integration Tests and Coverage
-    runs-on: ubuntu-latest
+        run: |
+          export DEBUG=*
+          echo 'MONGO_URI=${{ env.MONGO_URI }}' >> .env
+          echo 'WORKER_TYPE=worker' >> .env
+          deno task test:unit
+  test-integrations:
+    strategy:
+      matrix:
+        mongodb-version: ['4.4', '5.0']
+      fail-fast: true
+    name: Integration Tests
+    runs-on: ubuntu-22.04
     needs:
       - commit-lint
       - lint
@@ -83,77 +83,25 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: "~1.31"
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.8.0
+        with:
+          mongodb-version: ${{ matrix.mongodb-version }}
+          mongodb-replica-set: rs0
       - name: Run integration tests
-        run: npm run docker:test:integration
-      - name: Generate Cucumber report annotations
-        uses: deblockt/cucumber-report-annotations-action@v1.7
-        if: ${{ always() }}
-        continue-on-error: true
-        with:
-          access-token: ${{ secrets.GITHUB_TOKEN }}
-          path: .test-reports/integration/report.json
-      - name: Run coverage for integration tests
-        run: npm run docker:cover:integration
-      - name: Coveralls
-        uses: coverallsapp/github-action@master
-        if: ${{ always() }}
-        with:
-          path-to-lcov: .coverage/integration/lcov.info
-          flag-name: Integration
-          parallel: true
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/upload-artifact@v3
-        name: Upload coverage report for integration tests
-        if: ${{ always() }}
-        with:
-          path: .coverage/*/lcov.info
-  sonarcloud:
-    name: Sonarcloud
-    needs: [test-units-and-cover, test-integrations-and-cover]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - uses: actions/download-artifact@v3
-        name: Download unit & integration coverage reports
-        with:
-          path: .coverage
-      - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  post-tests:
-    name: Post Tests
-    needs: [test-units-and-cover, test-integrations-and-cover]
-    runs-on: ubuntu-latest
-    if: ${{ always() }}
-    steps:
-    - name: Coveralls Finished
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        parallel-finished: true
-  release:
-    name: Release
-    runs-on: ubuntu-latest
-    needs: [test-units-and-cover, test-integrations-and-cover]
-    if: github.ref == 'refs/heads/main'
-    environment: release
-    env:
-      TELEGRAM_BOT_ID: ${{ secrets.TELEGRAM_BOT_ID }}
-      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - uses: denoland/setup-deno@v1
-        with:
-          deno-version: "~1.31"
-      - name: Install package dependencies
-        run: npm ci
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+        run: |
+          export DEBUG=*
+          echo 'MONGO_URI=${{ env.MONGO_URI }}' >> .env
+          echo 'WORKER_TYPE=worker' >> .env
+          deno task test:integration
+  # post-tests:
+  #   name: Post Tests
+  #   needs: [test-units, test-integrations]
+  #   runs-on: ubuntu-22.04
+  #   if: ${{ always() }}
+  #   steps:
+  #   - name: Coveralls Finished
+  #     uses: coverallsapp/github-action@master
+  #     with:
+  #       github-token: ${{ secrets.GITHUB_TOKEN }}
+  #       parallel-finished: true

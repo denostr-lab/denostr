@@ -1,5 +1,6 @@
 import type { Tag } from '../../@types/base.ts'
 import type { IRecord } from './IRecord.ts'
+import { Buffer } from 'Buffer'
 
 export interface IEvent extends IRecord {
     event_id: Buffer

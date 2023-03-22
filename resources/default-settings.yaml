@@ -1,7 +1,7 @@
 info:
-  relay_url: wss://nostream.your-domain.com
-  name: nostream.your-domain.com
-  description: A nostr relay written in Typescript.
+  relay_url: wss://your-domain.com
+  name: "nostr relay by denostr"
+  description: Deno based, cloud native nostr implemention support by ByteTrade
   pubkey: replace-with-your-pubkey-in-hex
   contact: operator@your-domain.com
 payments:
@@ -89,22 +89,22 @@ limits:
         - 9007199254740991
       maxLength: 98304
     rateLimits:
-    - description: 6 events/min for event kinds 0, 3, 40 and 41
+    - description: 10 events/min for event kinds 0, 3, 40 and 41
       kinds:
       - 0
       - 3
       - 40
       - 41
       period: 60000
-      rate: 6
-    - description: 12 events/min for event kinds 1, 2, 4 and 42
+      rate: 10
+    - description: 16 events/min for event kinds 1, 2, 4 and 42
       kinds:
       - 1
       - 2
       - 4
       - 42
       period: 60000
-      rate: 12
+      rate: 16
     - description: 30 events/min for event kind ranges 5-7 and 43-49
       kinds:
       - - 5

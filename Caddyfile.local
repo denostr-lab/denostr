@@ -1,9 +1,0 @@
-{
-	auto_https disable_certs
-}
-
-nostream.localtest.me {
-	tls /root/certs/nostream.localtest.me.pem /root/certs/nostream.localtest.me-key.pem
-
-	reverse_proxy nostream:8008
-}

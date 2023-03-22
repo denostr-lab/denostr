@@ -10,32 +10,20 @@ The following environment variables can be set:
 | RELAY_PORT                       | Relay's server port                                | 8008                   |
 | RELAY_PRIVATE_KEY                | Relay's private key in hex                         | (auto-generated)       |
 | WORKER_COUNT                     | Number of workers override                         | No. of available CPUs  |
-| DB_URI                           | PostgreSQL URI (overrides DB_HOST, DB_PORT, etc.)  |                        |
-| DB_HOST                          | PostgresSQL Hostname                               |                        |
-| DB_PORT                          | PostgreSQL Port                                    | 5432                   |
-| DB_USER                          | PostgreSQL Username                                | nostr_ts_relay         |
-| DB_PASSWORD                      | PostgreSQL Password                                | nostr_ts_relay         |
-| DB_NAME                          | PostgreSQL Database name                           | nostr_ts_relay         |
-| DB_MIN_POOL_SIZE                 | Min. connections per worker                        | 16                     |
-| DB_MAX_POOL_SIZE                 | Max. connections per worker                        | 32                     |
-| DB_ACQUIRE_CONNECTION_TIMEOUT    | New connection timeout (ms)                        | 60000                  |
-| READ_REPLICA_ENABLED             | Read Replica (RR) Toggle                           | 'false'                |
-| RR_DB_HOST                       | PostgresSQL Hostname (RR)                          |                        |
-| RR_DB_PORT                       | PostgreSQL Port (RR)                               | 5432                   |
-| RR_DB_USER                       | PostgreSQL Username (RR)                           | nostr_ts_relay         |
-| RR_DB_PASSWORD                   | PostgreSQL Password (RR)                           | nostr_ts_relay         |
-| RR_DB_NAME                       | PostgreSQL Database name (RR)                      | nostr_ts_relay         |
-| RR_DB_MIN_POOL_SIZE              | Min. connections per worker (RR)                   | 16                     |
-| RR_DB_MAX_POOL_SIZE              | Max. connections per worker (RR)                   | 32                     |
-| RR_DB_ACQUIRE_CONNECTION_TIMEOUT | New connection timeout (ms) (RR)                   | 60000                  |
+| MONGO_URI                        | MongoDB URI                                        |                        |
+| MONGO_MIN_POOL_SIZE              | Min. connections per worker                        | 0                      |
+| MONGO_MAX_POOL_SIZE              | Max. connections per worker                        | 3                      |
+| MONGO_REPLICA_ENABLED            | Read Replica (RR) Toggle                           | 'false'                |
 | TOR_HOST                         | Tor Hostname                                       |                        |
 | TOR_CONTROL_PORT                 | Tor control Port                                   | 9051                   |
 | TOR_PASSWORD                     | Tor control password                               | nostr_ts_relay         |
 | HIDDEN_SERVICE_PORT              | Tor hidden service port                            | 80                     |
-| REDIS_HOST                       | Redis Host                                         | 127.0.0.1              |
+| REDIS_HOST                       | Redis Host                                         |                        |
 | REDIS_PORT                       | Redis Port                                         | 6379                   |
-| REDIS_USER                       | Redis User                                         | default                |
-| REDIS_PASSWORD                   | Redis Password                                     | nostr_ts_relay         |
+| REDIS_DB                         | Redis DB                                           | 0                      |
+| REDIS_USER                       | Redis User                                         |                        |
+| REDIS_PASS                       | Redis Password                                     |                        |
+| REDIS_TLS                        | Redis TLS                                          | false                  |
 | NOSTR_CONFIG_DIR                 | Configuration directory                            | <project_root>/.nostr/ |
 | DEBUG                            | Debugging filter                                   |                        |
 | ZEBEDEE_API_KEY                  | Zebedee Project API Key                            |                        |
