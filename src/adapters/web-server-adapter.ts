@@ -24,9 +24,9 @@ export class WebServerAdapter extends EventEmitter implements IWebServerAdapter 
 
     public listen(port: number): void {
         debug('attempt to listen on port %d', port)
-        this.controller = new AbortController();
-        const { signal } = this.controller;
-        this.webServer.listen({ port , signal})
+        this.controller = new AbortController()
+        const { signal } = this.controller
+        this.webServer.listen({ port, signal })
     }
 
     private onListening() {
@@ -48,9 +48,9 @@ export class WebServerAdapter extends EventEmitter implements IWebServerAdapter 
         socket.end('HTTP/1.1 400 Bad Request\r\nContent-Type: text/html\r\n')
     }
 
-    public close( callback?: () => void): void {
+    public close(callback?: () => void): void {
         debug('closing')
-        this.controller?.abort?.();
+        this.controller?.abort?.()
         callback?.()
         this.removeAllListeners()
         debug('closed')

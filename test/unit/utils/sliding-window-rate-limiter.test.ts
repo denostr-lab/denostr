@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { describe, it, beforeEach, afterEach } from 'jest'
+import { afterEach, beforeEach, describe, it } from 'jest'
 import Sinon from 'sinon'
 
 import { ICacheAdapter } from '../../../src/@types/adapters.ts'

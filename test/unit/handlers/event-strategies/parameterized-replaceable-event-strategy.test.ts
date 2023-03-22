@@ -21,133 +21,138 @@ import { getMasterDbClient } from '../../../../src/database/client.ts'
 
 const { expect } = chai
 
-describe({name: 'ParameterizedReplaceableEventStrategy', fn:() => {
-    const event: Event = {
-        id: 'id',
-        tags: [
-            [EventTags.Deduplication, 'dedup'],
-        ],
-    } as any
-    let webSocket: IWebSocketAdapter
-    let eventRepository: IEventRepository
-    let masterClient: DatabaseClient
-
-    let webSocketEmitStub: Sinon.SinonStub
-    let eventRepositoryUpsertStub: Sinon.SinonStub
-
-    let strategy: IEventStrategy<Event, Promise<void>>
-
-    let sandbox: Sinon.SinonSandbox
-    beforeAll(async()=>{
-        masterClient = getMasterDbClient()
-        masterClient = await masterClient.asPromise()
-    })
-    afterAll(()=>{
-        masterClient.destroy()
-    })
-    beforeEach(() => {
-        sandbox = Sinon.createSandbox()
-
-        eventRepositoryUpsertStub = sandbox.stub(
-            EventRepository.prototype,
-            'upsert',
-        )
-
-        webSocketEmitStub = sandbox.stub()
-        webSocket = {
-            emit: webSocketEmitStub,
+describe({
+    name: 'ParameterizedReplaceableEventStrategy',
+    fn: () => {
+        const event: Event = {
+            id: 'id',
+            tags: [
+                [EventTags.Deduplication, 'dedup'],
+            ],
         } as any
-        eventRepository = new EventRepository()
+        let webSocket: IWebSocketAdapter
+        let eventRepository: IEventRepository
+        let masterClient: DatabaseClient
 
-        strategy = new ParameterizedReplaceableEventStrategy(
-            webSocket,
-            eventRepository,
-        )
-    })
+        let webSocketEmitStub: Sinon.SinonStub
+        let eventRepositoryUpsertStub: Sinon.SinonStub
 
-    afterEach(() => {
-        sandbox.restore()
-    })
+        let strategy: IEventStrategy<Event, Promise<void>>
 
-    describe('execute', () => {
-        it('upserts event without d tag', async () => {
-            event.tags = []
-            await strategy.execute(event)
-
-            expect(eventRepositoryUpsertStub).to.have.been.calledOnceWithExactly(
-                event,
-            )
-            expect(eventRepositoryUpsertStub.firstCall.firstArg).to.have.property(
-                EventDeduplicationMetadataKey,
-            ).and.deep.equal([''])
+        let sandbox: Sinon.SinonSandbox
+        beforeAll(async () => {
+            masterClient = getMasterDbClient()
+            masterClient = await masterClient.asPromise()
         })
-
-        it('upserts event with d tag and one string', async () => {
-            event.tags = [[EventTags.Deduplication, 'one']]
-            await strategy.execute(event)
-
-            expect(eventRepositoryUpsertStub).to.have.been.calledOnceWithExactly(
-                event,
-            )
-            expect(eventRepositoryUpsertStub.firstCall.firstArg).to.have.property(
-                EventDeduplicationMetadataKey,
-            ).and.deep.equal(['one'])
+        afterAll(() => {
+            masterClient.destroy()
         })
+        beforeEach(() => {
+            sandbox = Sinon.createSandbox()
 
-        it('upserts event with d tag and two strings', async () => {
-            event.tags = [[EventTags.Deduplication, 'one', 'two']]
-            await strategy.execute(event)
-
-            expect(eventRepositoryUpsertStub).to.have.been.calledOnceWithExactly(
-                event,
+            eventRepositoryUpsertStub = sandbox.stub(
+                EventRepository.prototype,
+                'upsert',
             )
-            expect(eventRepositoryUpsertStub.firstCall.firstArg).to.have.property(
-                EventDeduplicationMetadataKey,
-            ).and.deep.equal(['one', 'two'])
-        })
 
-        it('broadcast event if event is created', async () => {
-            eventRepositoryUpsertStub.resolves(1)
+            webSocketEmitStub = sandbox.stub()
+            webSocket = {
+                emit: webSocketEmitStub,
+            } as any
+            eventRepository = new EventRepository()
 
-            await strategy.execute(event)
-
-            expect(eventRepositoryUpsertStub).to.have.been.calledOnceWithExactly(
-                event,
-            )
-            expect(webSocketEmitStub).to.have.been.calledTwice
-            expect(webSocketEmitStub).to.have.been.calledWithExactly(
-                WebSocketAdapterEvent.Message,
-                [MessageType.OK, 'id', true, ''],
-            )
-            expect(webSocketEmitStub).to.have.been.calledWithExactly(
-                WebSocketAdapterEvent.Broadcast,
-                event,
+            strategy = new ParameterizedReplaceableEventStrategy(
+                webSocket,
+                eventRepository,
             )
         })
 
-        it('does not broadcast event if event is duplicate', async () => {
-            eventRepositoryUpsertStub.resolves(0)
-
-            await strategy.execute(event)
-
-            expect(webSocketEmitStub).to.have.been.calledOnceWithExactly(
-                WebSocketAdapterEvent.Message,
-                [MessageType.OK, 'id', true, 'duplicate:'],
-            )
+        afterEach(() => {
+            sandbox.restore()
         })
 
-        it('rejects if unable to upsert event', async () => {
-            const error = new Error()
-            eventRepositoryUpsertStub.rejects(error)
+        describe('execute', () => {
+            it('upserts event without d tag', async () => {
+                event.tags = []
+                await strategy.execute(event)
 
-            await expect(strategy.execute(event)).to.eventually.be.rejectedWith(
-                error,
-            )
+                expect(eventRepositoryUpsertStub).to.have.been.calledOnceWithExactly(
+                    event,
+                )
+                expect(eventRepositoryUpsertStub.firstCall.firstArg).to.have.property(
+                    EventDeduplicationMetadataKey,
+                ).and.deep.equal([''])
+            })
 
-            expect(eventRepositoryUpsertStub).to.have.been.calledOnceWithExactly(
-                event,
-            )
-            expect(webSocketEmitStub).not.to.have.been.called
+            it('upserts event with d tag and one string', async () => {
+                event.tags = [[EventTags.Deduplication, 'one']]
+                await strategy.execute(event)
+
+                expect(eventRepositoryUpsertStub).to.have.been.calledOnceWithExactly(
+                    event,
+                )
+                expect(eventRepositoryUpsertStub.firstCall.firstArg).to.have.property(
+                    EventDeduplicationMetadataKey,
+                ).and.deep.equal(['one'])
+            })
+
+            it('upserts event with d tag and two strings', async () => {
+                event.tags = [[EventTags.Deduplication, 'one', 'two']]
+                await strategy.execute(event)
+
+                expect(eventRepositoryUpsertStub).to.have.been.calledOnceWithExactly(
+                    event,
+                )
+                expect(eventRepositoryUpsertStub.firstCall.firstArg).to.have.property(
+                    EventDeduplicationMetadataKey,
+                ).and.deep.equal(['one', 'two'])
+            })
+
+            it('broadcast event if event is created', async () => {
+                eventRepositoryUpsertStub.resolves(1)
+
+                await strategy.execute(event)
+
+                expect(eventRepositoryUpsertStub).to.have.been.calledOnceWithExactly(
+                    event,
+                )
+                expect(webSocketEmitStub).to.have.been.calledTwice
+                expect(webSocketEmitStub).to.have.been.calledWithExactly(
+                    WebSocketAdapterEvent.Message,
+                    [MessageType.OK, 'id', true, ''],
+                )
+                expect(webSocketEmitStub).to.have.been.calledWithExactly(
+                    WebSocketAdapterEvent.Broadcast,
+                    event,
+                )
+            })
+
+            it('does not broadcast event if event is duplicate', async () => {
+                eventRepositoryUpsertStub.resolves(0)
+
+                await strategy.execute(event)
+
+                expect(webSocketEmitStub).to.have.been.calledOnceWithExactly(
+                    WebSocketAdapterEvent.Message,
+                    [MessageType.OK, 'id', true, 'duplicate:'],
+                )
+            })
+
+            it('rejects if unable to upsert event', async () => {
+                const error = new Error()
+                eventRepositoryUpsertStub.rejects(error)
+
+                await expect(strategy.execute(event)).to.eventually.be.rejectedWith(
+                    error,
+                )
+
+                expect(eventRepositoryUpsertStub).to.have.been.calledOnceWithExactly(
+                    event,
+                )
+                expect(webSocketEmitStub).not.to.have.been.called
+            })
         })
-    })
-}, sanitizeResources: false, sanitizeOps: false})
+    },
+    sanitizeResources: false,
+    sanitizeOps: false,
+})

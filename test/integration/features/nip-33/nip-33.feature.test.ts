@@ -1,4 +1,4 @@
-import { Then, When, startTest } from '../shared.ts'
+import { startTest, Then, When } from '../shared.ts'
 
 import { expect } from 'chai'
 import { Buffer } from 'Buffer'
@@ -8,8 +8,7 @@ import { createEvent, sendEvent, waitForEventCount, waitForNextEvent, WebSocketW
 import type { IWorld } from '../types.ts'
 import { masterEventsModel } from '../../../../src/database/models/Events.ts'
 
-
-startTest(import.meta.url, ()=> {
+startTest(import.meta.url, () => {
     When(
         /^(\w+) sends a parameterized_replaceable_event_0 event with content "([^"]+)" and tag (\w) containing "([^"]+)"$/,
         async function (
@@ -31,7 +30,7 @@ startTest(import.meta.url, ()=> {
             this.parameters.events[name].push(event)
         },
     )
-    
+
     Then(
         /(\w+) receives a parameterized_replaceable_event_0 event from (\w+) with content "([^"]+?)" and tag (\w+) containing "([^"]+?)"/,
         async function (
@@ -46,12 +45,14 @@ startTest(import.meta.url, ()=> {
             const subscription = this.parameters
                 .subscriptions[name][this.parameters.subscriptions[name].length - 1]
             await masterEventsModel.find({
-                event_pubkey: {$in:Object
-                    .values(
-                        this.parameters.identities as Record<string, { pubkey: string }>,
-                    )
-                    .map(({ pubkey }) => Buffer.from(pubkey, 'hex')),
-            }})
+                event_pubkey: {
+                    $in: Object
+                        .values(
+                            this.parameters.identities as Record<string, { pubkey: string }>,
+                        )
+                        .map(({ pubkey }) => Buffer.from(pubkey, 'hex')),
+                },
+            })
             const event = this.parameters.events[name][this.parameters.events[name].length - 1]
             const receivedEvent = await waitForNextEvent(ws, subscription.name, event.content)
             expect(receivedEvent.kind).to.equal(30000)
@@ -62,7 +63,7 @@ startTest(import.meta.url, ()=> {
             expect(receivedEvent.tags[0]).to.deep.equal([tagName, tagValue])
         },
     )
-    
+
     Then(
         /(\w+) receives (\d+) parameterized_replaceable_event_0 events? from (\w+) with content "([^"]+?)" and EOSE/,
         async function (

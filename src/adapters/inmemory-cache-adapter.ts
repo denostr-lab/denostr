@@ -32,8 +32,6 @@ export class RedisSetAdapter implements ICacheAdapter {
         min: number,
         max: number,
     ): Promise<any> {
-
-
         debug('remove %d..%d range from sorted set %s', min, max, key)
         const rowValue = this.client.get(key)
         const result = rowValue.filter((i: [number, RedisValue]) => i[0] < min || i[0] > max)
@@ -45,7 +43,6 @@ export class RedisSetAdapter implements ICacheAdapter {
         min: number,
         max: number,
     ): Promise<string[]> {
-
         debug('get %d..%d range from sorted set %s', min, max, key)
         const rowValue = this.client.get(key)
         const result = rowValue.filter((i: [number, RedisValue]) => i[0] >= min && i[0] <= max)
@@ -53,7 +50,6 @@ export class RedisSetAdapter implements ICacheAdapter {
     }
 
     public async setKeyExpiry(key: string, expiry: number): Promise<void> {
-
         debug('expire at %d from sorted set %s', expiry, key)
 
         await this.client.get(key, { updateAgeOnGet: true, ttl: expiry })
@@ -63,7 +59,6 @@ export class RedisSetAdapter implements ICacheAdapter {
         key: string,
         set: Record<string, string>,
     ): Promise<any> {
-  
         debug('add %o to sorted set %s', set, key)
         const members: [number, RedisValue][] = Object
             .entries(set)

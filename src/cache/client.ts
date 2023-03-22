@@ -26,10 +26,10 @@ export const getCacheClient = async (): Promise<CacheClient> => {
             instance = await connect(config)
         } else {
             return {
-                close: ()=>{}
+                close: () => {},
             }
         }
-    } 
+    }
 
     return instance
 }

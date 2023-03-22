@@ -1,19 +1,5 @@
 import mongoose from 'npm:mongoose'
-import {
-    __,
-    always,
-    applySpec,
-    forEachObjIndexed,
-    identity,
-    ifElse,
-    is,
-    isNil,
-    path,
-    paths,
-    pipe,
-    prop,
-    propSatisfies,
-} from 'ramda'
+import { __, always, applySpec, forEachObjIndexed, identity, ifElse, is, isNil, path, paths, pipe, prop, propSatisfies } from 'ramda'
 
 import { EventId } from '../@types/base.ts'
 import { Event } from '../@types/event.ts'

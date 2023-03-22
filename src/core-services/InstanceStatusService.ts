@@ -7,13 +7,13 @@ export class InstanceStatusService extends ServiceClass {
         super()
 
         this.onEvent('watch.instanceStatus', (event) => {
-          const { clientAction, data } = event
-          if (clientAction === 'inserted') {
-            console.log(
-              '[services] InstanceStatus onEvent(watch.instanceStatus)',
-              data,
-            )
-          }
+            const { clientAction, data } = event
+            if (clientAction === 'inserted') {
+                console.log(
+                    '[services] InstanceStatus onEvent(watch.instanceStatus)',
+                    data,
+                )
+            }
         })
     }
 

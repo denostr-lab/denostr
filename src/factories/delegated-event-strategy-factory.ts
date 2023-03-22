@@ -10,7 +10,7 @@ import { isDeleteEvent, isEphemeralEvent, isReplaceableEvent } from '../utils/ev
 export const delegatedEventStrategyFactory = (
     eventRepository: IEventRepository,
 ): Factory<IEventStrategy<Event, Promise<void>>, [Event, IWebSocketAdapter]> =>
- ([event, adapter]: [Event, IWebSocketAdapter]) => {
+([event, adapter]: [Event, IWebSocketAdapter]) => {
     if (isEphemeralEvent(event)) {
         return new EphemeralEventStrategy(adapter)
     } else if (isReplaceableEvent(event) || isDeleteEvent(event)) {

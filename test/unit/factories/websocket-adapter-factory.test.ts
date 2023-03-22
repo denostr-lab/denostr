@@ -1,5 +1,5 @@
 import { Request } from 'oak'
-import { Buffer } from 'Buffer' 
+import { Buffer } from 'Buffer'
 import { expect } from 'chai'
 import { afterEach, beforeEach, describe, it } from 'jest'
 import Sinon from 'sinon'
@@ -37,8 +37,8 @@ describe('webSocketAdapterFactory', () => {
             on: onStub,
         } as any
         onStub.returns(client)
-        const headers : Map<string,string> = new Map([
-            ['sec-websocket-key', Buffer.from('key', 'utf8').toString('base64')]
+        const headers: Map<string, string> = new Map([
+            ['sec-websocket-key', Buffer.from('key', 'utf8').toString('base64')],
         ])
         const request: Request = {
             headers,

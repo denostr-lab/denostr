@@ -11,9 +11,7 @@ import { SettingsFileTypes, SettingsStatic } from '../../../src/utils/settings.t
 chai.use(SinonChi)
 describe('SettingsStatic', () => {
     describe('.getSettingsFilePath', () => {
-
         beforeEach(() => {
-        
         })
 
         afterEach(() => {
@@ -38,7 +36,6 @@ describe('SettingsStatic', () => {
     })
 
     describe('.getDefaultSettingsFilePath', () => {
-
         beforeEach(() => {
         })
 

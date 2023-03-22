@@ -33,11 +33,12 @@ UserSchema.index({ 'balance': 1 }, {
     background: true,
 })
 
-export const UsersModel = (dbClient: mongoose.Connection) => dbClient.model<UserDocument>(
-    'Users',
-    UserSchema,
-    'users',
-)
+export const UsersModel = (dbClient: mongoose.Connection) =>
+    dbClient.model<UserDocument>(
+        'Users',
+        UserSchema,
+        'users',
+    )
 
 export const masterUsersModel = UsersModel(getMasterDbClient())
 export const readReplicaUsersModel = UsersModel(getReadReplicaDbClient())
