@@ -43,3 +43,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}-${{ matrix.worker-type }}
           labels: ${{ steps.meta.outputs.labels }}
+          args: |
+            --build-arg WORKER_TYPE=${{ matrix.worker-type }}
