@@ -8,45 +8,45 @@ import { DatabaseWatcher } from '../DatabaseWatcher.ts'
 import { initWatchers } from '../watchers.ts'
 
 async function run() {
-  const mongoUri = Deno.env.get('MONGO_URI') as string
+    const mongoUri = Deno.env.get('MONGO_URI') as string
 
-  const conn = mongoose.createConnection(mongoUri, {
-    keepAlive: true,
-  })
-  conn.on('open', () => {
-    console.log('Connected to database')
-  })
-  await conn.asPromise()
+    const conn = mongoose.createConnection(mongoUri, {
+        keepAlive: true,
+    })
+    conn.on('open', () => {
+        console.log('Connected to database')
+    })
+    await conn.asPromise()
 
-  const mongo = conn as mongoose.Connection
-  const db = mongo.db
-  // @ts-ignore
-  const _oplogHandle = mongo?._oplogHandle
-  const watcher = new DatabaseWatcher({
-    db,
-    _oplogHandle,
-  })
-  watcher.watch().catch((err: Error) => {
-    console.error(err, 'Fatal error occurred when watching database')
-    Deno.exit(1)
-  })
+    const mongo = conn as mongoose.Connection
+    const db = mongo.db
+    // @ts-ignore
+    const _oplogHandle = mongo?._oplogHandle
+    const watcher = new DatabaseWatcher({
+        db,
+        _oplogHandle,
+    })
+    watcher.watch().catch((err: Error) => {
+        console.error(err, 'Fatal error occurred when watching database')
+        Deno.exit(1)
+    })
 
-  initWatchers(watcher, api.broadcastLocal.bind(api))
+    initWatchers(watcher, api.broadcastLocal.bind(api))
 
-  setInterval(function _checkDatabaseWatcher() {
-    if (watcher.isLastDocDelayed()) {
-      console.error('No real time data received recently')
-    }
-  }, 20000)
+    setInterval(function _checkDatabaseWatcher() {
+        if (watcher.isLastDocDelayed()) {
+            console.error('No real time data received recently')
+        }
+    }, 20000)
 
-  const broker = new LocalBroker()
-  broker.onBroadcast((eventName, ...args) => {
-    console.log('broadcast', [{ eventName, args }])
-  })
+    const broker = new LocalBroker()
+    broker.onBroadcast((eventName, ...args) => {
+        console.log('broadcast', [{ eventName, args }])
+    })
 
-  api.registerService(new InstanceStatusService())
-  api.setBroker(broker)
-  api.start()
+    api.registerService(new InstanceStatusService())
+    api.setBroker(broker)
+    api.start()
 }
 
 run()

@@ -13,12 +13,12 @@ describe('getRemoteAddress', () => {
     let request: Request
 
     beforeEach(() => {
-        const headers : Map<string,string> = new Map([
-            [header, address]
+        const headers: Map<string, string> = new Map([
+            [header, address],
         ])
         request = {
             headers,
-            
+
             socket: {
                 remoteAddress: socketAddress,
             },
@@ -47,11 +47,9 @@ describe('getRemoteAddress', () => {
     })
 
     it('returns address from socket when header is unset', () => {
-        
         expect(
             getRemoteAddress(
-                {...request, ip: socketAddress} as Request,
-               
+                { ...request, ip: socketAddress } as Request,
                 { network: {} } as Pick<Settings, 'network'>,
             ),
         ).to.equal(socketAddress)

@@ -19,5 +19,5 @@ export const getRunner = async () => {
     }
 }
 if (import.meta.main) {
-    (await getRunner()).run()
+    ;(await getRunner()).run()
 }

@@ -15,27 +15,26 @@ import type { IWebSocketWrapper } from './types.ts'
 // secp256k1.utils.sha256Sync = (...messages: Uint8Array[]) =>
 //   messages.reduce((hash, message: Uint8Array) => hash.update(message),  createHash('sha256')).digest()
 
-export class WebSocketWrapper extends EventEmitter implements IWebSocketWrapper{
-
+export class WebSocketWrapper extends EventEmitter implements IWebSocketWrapper {
     private host: string
     public readyState: number
     private ws: WebSocket | undefined
 
-    constructor (host: string) {
+    constructor(host: string) {
         super()
         this.readyState = WebSocket.CONNECTING
-        this.host= host
-        this.initSocket();
+        this.host = host
+        this.initSocket()
     }
-    public close () {
+    public close() {
         this.ws?.close()
         this.ws = undefined
         this.removeAllListeners()
     }
-    public send (data: string | ArrayBufferLike | Blob | ArrayBufferView){
+    public send(data: string | ArrayBufferLike | Blob | ArrayBufferView) {
         this.ws?.send(data)
     }
-    private initSocket(){
+    private initSocket() {
         this.ws = new WebSocket(this.host)
         this.ws.onopen = (e) => {
             this.readyState = WebSocket.OPEN
@@ -43,12 +42,10 @@ export class WebSocketWrapper extends EventEmitter implements IWebSocketWrapper{
         }
         this.ws.onmessage = (e) => {
             this.emit('message', e)
-
         }
-        this.ws.onerror = (e)=>{
+        this.ws.onerror = (e) => {
             this.readyState = WebSocket.CLOSED
             this.emit('error', e)
-
         }
         this.ws.onclose = (e) => {
             this.readyState = WebSocket.CLOSED
@@ -57,21 +54,19 @@ export class WebSocketWrapper extends EventEmitter implements IWebSocketWrapper{
     }
 }
 export async function connect(_name: string): Promise<WebSocketWrapper> {
-
     return new Promise<WebSocketWrapper>((resolve, reject) => {
         try {
-        const host = 'ws://localhost:18808'
-        const ws = new WebSocketWrapper(host)
-        ws.once('open', ()=> {
-            resolve(ws)
-        })
-        ws.once('error', ()=> {
-            reject(null)
-        })
-       
-    } catch (e) {
-        console.info(e, 'inie socket error')
-    }
+            const host = 'ws://localhost:18808'
+            const ws = new WebSocketWrapper(host)
+            ws.once('open', () => {
+                resolve(ws)
+            })
+            ws.once('error', () => {
+                reject(null)
+            })
+        } catch (e) {
+            console.info(e, 'inie socket error')
+        }
     })
 }
 
@@ -189,7 +184,7 @@ export async function waitForNextEvent(
         const observable = streams.get(ws) as Observable<OutgoingMessage>
 
         observable.subscribe(async (message: OutgoingMessage) => {
-            await new Promise(a => setTimeout(a, 100))
+            await new Promise((a) => setTimeout(a, 100))
             if (message[0] === MessageType.EVENT && message[1] === subscription) {
                 const event = message[2] as Event
                 if (typeof content !== 'string' || event.content === content) {

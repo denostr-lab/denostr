@@ -1,6 +1,5 @@
 #!/usr/bin/env sh
 # . "$(dirname -- "$0")/_/husky.sh"
-
 deno lint
 # npm run build:check
 # npm run test:unit

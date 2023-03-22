@@ -98,7 +98,6 @@ git clone git@github.com:Guakamoli/denostr.git
 cd denostr
 ```
 
-
 Create .nostr folder inside denostr project folder and copy over the settings file:
 
 ```
@@ -129,12 +128,12 @@ deno task test_unit
 ```
 
 ### Integration tests
+
 Run integration tests with:
 
 ```
 deno task test_integration
 ```
-
 
 ## Configuration
 

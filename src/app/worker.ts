@@ -29,7 +29,7 @@ export class AppWorker implements IRunnable {
         const port = Config.PORT || Config.RELAY_PORT || 8008
         this.adapter.listen(typeof port === 'number' ? port : Number(port))
     }
-    
+
     private onMessage(message: { eventName: string; event: unknown }): void {
         this.adapter.emit(message.eventName, message.event)
     }
@@ -63,7 +63,7 @@ export class AppWorker implements IRunnable {
             }
         }
         const dbClient = getMasterDbClient()
-        dbClient.destroy();
+        dbClient.destroy()
         this.adapter.close(callback)
         debug('closed')
     }

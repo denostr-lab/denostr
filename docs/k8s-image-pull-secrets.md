@@ -1,7 +1,6 @@
 # 拉取镜像凭证
 
-> 本文档演示使用到 github 提供的容器注册表服务 `ghcr.io`
-> 本文档默认了解 "kubernetes" "github" "个人访问令牌" "base64"
+> 本文档演示使用到 github 提供的容器注册表服务 `ghcr.io` 本文档默认了解 "kubernetes" "github" "个人访问令牌" "base64"
 
 ## 镜像凭证生成
 
@@ -16,11 +15,11 @@ echo -n "USERNAME:PAT_TOKEN" | base64
 
 ```json
 {
-  "auths": {
-    "ghcr.io": {
-      "auth": "base64编码后生成的凭证"
+    "auths": {
+        "ghcr.io": {
+            "auth": "base64编码后生成的凭证"
+        }
     }
-  }
 }
 ```
 

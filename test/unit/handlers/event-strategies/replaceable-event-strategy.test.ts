@@ -21,104 +21,108 @@ import { getMasterDbClient } from '../../../../src/database/client.ts'
 
 const { expect } = chai
 
-describe({name: 'ReplaceableEventStrategy', fn: () => {
-    const event: Event = {
-        id: 'id',
-    } as any
-    let webSocket: IWebSocketAdapter
-    let eventRepository: IEventRepository
-    let masterClient: DatabaseClient
-
-    let webSocketEmitStub: Sinon.SinonStub
-    let eventRepositoryUpsertStub: Sinon.SinonStub
-
-    let strategy: IEventStrategy<Event, Promise<void>>
-
-    let sandbox: Sinon.SinonSandbox
-    beforeAll(async()=>{
-        masterClient = getMasterDbClient()
-        masterClient = await masterClient.asPromise()
-    })
-    afterAll(()=>{
-        masterClient.destroy()
-    })
-    beforeEach(() => {
-        sandbox = Sinon.createSandbox()
-
-        eventRepositoryUpsertStub = sandbox.stub(
-            EventRepository.prototype,
-            'upsert',
-        )
-
-        webSocketEmitStub = sandbox.stub()
-        webSocket = {
-            emit: webSocketEmitStub,
+describe({
+    name: 'ReplaceableEventStrategy',
+    fn: () => {
+        const event: Event = {
+            id: 'id',
         } as any
-        eventRepository = new EventRepository()
+        let webSocket: IWebSocketAdapter
+        let eventRepository: IEventRepository
+        let masterClient: DatabaseClient
 
-        strategy = new ReplaceableEventStrategy(webSocket, eventRepository)
-    })
+        let webSocketEmitStub: Sinon.SinonStub
+        let eventRepositoryUpsertStub: Sinon.SinonStub
 
-    afterEach(() => {
-        sandbox.restore()
-    })
+        let strategy: IEventStrategy<Event, Promise<void>>
 
-    describe('execute', () => {
-        it('upserts event', async () => {
-            await strategy.execute(event)
+        let sandbox: Sinon.SinonSandbox
+        beforeAll(async () => {
+            masterClient = getMasterDbClient()
+            masterClient = await masterClient.asPromise()
+        })
+        afterAll(() => {
+            masterClient.destroy()
+        })
+        beforeEach(() => {
+            sandbox = Sinon.createSandbox()
 
-            expect(eventRepositoryUpsertStub).to.have.been.calledOnceWithExactly(
-                event,
+            eventRepositoryUpsertStub = sandbox.stub(
+                EventRepository.prototype,
+                'upsert',
             )
+
+            webSocketEmitStub = sandbox.stub()
+            webSocket = {
+                emit: webSocketEmitStub,
+            } as any
+            eventRepository = new EventRepository()
+
+            strategy = new ReplaceableEventStrategy(webSocket, eventRepository)
         })
 
-        it('broadcast event if event is created', async () => {
-            eventRepositoryUpsertStub.resolves(1)
-
-            await strategy.execute(event)
-
-            expect(eventRepositoryUpsertStub).to.have.been.calledOnceWithExactly(
-                event,
-            )
-            expect(webSocketEmitStub).to.have.been.calledTwice
-            expect(webSocketEmitStub).to.have.been.calledWithExactly(
-                WebSocketAdapterEvent.Message,
-                [MessageType.OK, 'id', true, ''],
-            )
-            expect(webSocketEmitStub).to.have.been.calledWithExactly(
-                WebSocketAdapterEvent.Broadcast,
-                event,
-            )
+        afterEach(() => {
+            sandbox.restore()
         })
 
-        it('does not broadcast event if event is duplicate', async () => {
-            eventRepositoryUpsertStub.resolves(0)
+        describe('execute', () => {
+            it('upserts event', async () => {
+                await strategy.execute(event)
 
-            await strategy.execute(event)
+                expect(eventRepositoryUpsertStub).to.have.been.calledOnceWithExactly(
+                    event,
+                )
+            })
 
-            expect(eventRepositoryUpsertStub).to.have.been.calledOnceWithExactly(
-                event,
-            )
-            expect(webSocketEmitStub).to.have.been.calledOnceWithExactly(
-                WebSocketAdapterEvent.Message,
-                ['OK', 'id', true, 'duplicate:'],
-            )
+            it('broadcast event if event is created', async () => {
+                eventRepositoryUpsertStub.resolves(1)
+
+                await strategy.execute(event)
+
+                expect(eventRepositoryUpsertStub).to.have.been.calledOnceWithExactly(
+                    event,
+                )
+                expect(webSocketEmitStub).to.have.been.calledTwice
+                expect(webSocketEmitStub).to.have.been.calledWithExactly(
+                    WebSocketAdapterEvent.Message,
+                    [MessageType.OK, 'id', true, ''],
+                )
+                expect(webSocketEmitStub).to.have.been.calledWithExactly(
+                    WebSocketAdapterEvent.Broadcast,
+                    event,
+                )
+            })
+
+            it('does not broadcast event if event is duplicate', async () => {
+                eventRepositoryUpsertStub.resolves(0)
+
+                await strategy.execute(event)
+
+                expect(eventRepositoryUpsertStub).to.have.been.calledOnceWithExactly(
+                    event,
+                )
+                expect(webSocketEmitStub).to.have.been.calledOnceWithExactly(
+                    WebSocketAdapterEvent.Message,
+                    ['OK', 'id', true, 'duplicate:'],
+                )
+            })
+
+            it('rejects if unable to upsert event', async () => {
+                const error = new Error()
+                eventRepositoryUpsertStub.rejects(error)
+
+                await strategy.execute(event)
+
+                expect(eventRepositoryUpsertStub).to.have.been.calledOnceWithExactly(
+                    event,
+                )
+                expect(webSocketEmitStub).to.have.been.calledOnceWithExactly(
+                    WebSocketAdapterEvent.Message,
+                    ['OK', 'id', false, 'error: '],
+                )
+            })
         })
-
-        it('rejects if unable to upsert event', async () => {
-            const error = new Error()
-            eventRepositoryUpsertStub.rejects(error)
-
-            await strategy.execute(event)
-
-            expect(eventRepositoryUpsertStub).to.have.been.calledOnceWithExactly(
-                event,
-            )
-            expect(webSocketEmitStub).to.have.been.calledOnceWithExactly(
-                WebSocketAdapterEvent.Message,
-                ['OK', 'id', false, 'error: '],
-            )
-        })
-    })
-}, sanitizeResources: false, sanitizeOps: false})
-
+    },
+    sanitizeResources: false,
+    sanitizeOps: false,
+})

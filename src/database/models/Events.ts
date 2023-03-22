@@ -68,11 +68,12 @@ EventSchema.index({ 'event_signature': 1 }, {
     background: true,
 })
 
-export const EventsModel = (dbClient: mongoose.Connection) => dbClient.model<EventDocument>(
-    'Events',
-    EventSchema,
-    'events',
-)
+export const EventsModel = (dbClient: mongoose.Connection) =>
+    dbClient.model<EventDocument>(
+        'Events',
+        EventSchema,
+        'events',
+    )
 
 export const masterEventsModel = EventsModel(getMasterDbClient())
 export const readReplicaEventsModel = EventsModel(getReadReplicaDbClient())
