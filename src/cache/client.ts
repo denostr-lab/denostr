@@ -20,15 +20,9 @@ let instance: CacheClient | undefined = undefined
 
 export const getCacheClient = async (): Promise<CacheClient> => {
     if (!instance) {
-        if (Config.REDIS_HOST) {
-            const config = getCacheConfig()
-            debug('config: %o', config)
-            instance = await connect(config)
-        } else {
-            return {
-                close: () => {},
-            }
-        }
+        const config = getCacheConfig()
+        debug('config: %o', config)
+        instance = await connect(config)
     }
 
     return instance

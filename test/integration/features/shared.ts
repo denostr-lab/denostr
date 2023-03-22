@@ -7,10 +7,8 @@ import { fromEvent, map, Observable, ReplaySubject, Subject, takeUntil } from 'n
 import Sinon from 'sinon'
 import { afterAll, beforeAll, describe, it } from 'jest'
 import { DatabaseClient1 as DatabaseClient } from '../../../src/@types/base.ts'
-import { CacheClient } from '../../../src/@types/cache.ts'
 import { Event } from '../../../src/@types/event.ts'
 import { AppWorker } from '../../../src/app/worker.ts'
-import { getCacheClient } from '../../../src/cache/client.ts'
 import Config from '../../../src/config/index.ts'
 import { getMasterDbClient, getReadReplicaDbClient } from '../../../src/database/client.ts'
 import { workerFactory } from '../../../src/factories/worker-factory.ts'
@@ -47,7 +45,6 @@ let worker: AppWorker
 
 let dbClient: DatabaseClient
 let rrDbClient: DatabaseClient
-let cacheClient: CacheClient
 
 export const streams = new WeakMap<WebSocketWrapper, Observable<unknown>>()
 
@@ -133,7 +130,6 @@ export const startTest = async (pathUrl: string, registerEvent: Function) => {
                 dbClient = await dbClient.asPromise()
                 Config.RELAY_PORT = '18808'
 
-                cacheClient = await getCacheClient()
                 rrDbClient = rrDbClient = getReadReplicaDbClient()
                 await rrDbClient.asPromise()
 
@@ -155,7 +151,6 @@ export const startTest = async (pathUrl: string, registerEvent: Function) => {
                 worker.close(async () => {
                     try {
                         await Promise.all([
-                            cacheClient.close(),
                             dbClient.destroy(true),
                             rrDbClient.destroy(true),
                         ])

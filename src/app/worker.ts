@@ -14,13 +14,6 @@ export class AppWorker implements IRunnable {
     public constructor(
         private readonly adapter: IWebSocketServerAdapter,
     ) {
-        // this.process
-        // .on('message', this.onMessage.bind(this))
-        // .on('SIGINT', this.onExit.bind(this))
-        // .on('SIGHUP', this.onExit.bind(this))
-        // .on('SIGTERM', this.onExit.bind(this))
-        // .on('uncaughtException', this.onError.bind(this))
-        // .on('unhandledRejection', this.onError.bind(this))
     }
 
     public run(): void {
@@ -28,31 +21,6 @@ export class AppWorker implements IRunnable {
 
         const port = Config.PORT || Config.RELAY_PORT || 8008
         this.adapter.listen(typeof port === 'number' ? port : Number(port))
-    }
-
-    private onMessage(message: { eventName: string; event: unknown }): void {
-        this.adapter.emit(message.eventName, message.event)
-    }
-
-    private onError(error: Error) {
-        if (
-            error.name === 'TypeError' &&
-            error.message ===
-                'Cannot read properties of undefined (reading \'__knexUid\')'
-        ) {
-            console.error(
-                'Unable to acquire connection. Please increase MONGO_MAX_POOL_SIZE and tune postgresql.conf to make use of server\'s resources.',
-            )
-            return
-        }
-        console.error('uncaught error:', error)
-    }
-
-    private onExit() {
-        debug('exiting')
-        // this.close(() => {
-        //   this.process.exit(0)
-        // })
     }
 
     public close(callback?: () => void) {
