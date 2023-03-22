@@ -6,7 +6,8 @@
         "test:unit": "deno test test/unit --no-check -A",
         "test:integration": "deno test test/integration --no-check -A",
         "example:db:createInstance": "deno run --allow-all src/database/example/createInstance.ts",
-        "example:db:node": "deno run --allow-all src/database/example/node.ts"
+        "example:db:node": "deno run --allow-all src/database/example/node.ts",
+        "git-hooks": "deno run --no-check=remote --allow-run=deno,git --allow-read --allow-write=.git-hooks https://deno.land/x/githooked/mod.ts install"
     },
     "imports": {
         "dotenv": "https://deno.land/x/dotenv@v3.2.0/mod.ts",
