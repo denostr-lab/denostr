@@ -36,6 +36,11 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          labels: |
+            org.opencontainers.image.title=denostr
+            org.opencontainers.image.description=Deno based, cloud native nostr implemention support by ByteTrade & Revo
+            org.opencontainers.image.licenses=MIT
+            org.opencontainers.image.version=next-${{ matrix.worker-type }}
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
@@ -43,5 +48,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}-${{ matrix.worker-type }}
           labels: ${{ steps.meta.outputs.labels }}
-          args: |
-            --build-arg WORKER_TYPE=${{ matrix.worker-type }}
+          build-args: |
+            WORKER_TYPE=${{ matrix.worker-type }}
