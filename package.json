@@ -30,6 +30,12 @@
         "relay",
         "typescript"
     ],
+    "husky": {
+        "hooks": {
+            "pre-commit": "deno lint && deno fmt && git add -A ."
+        },
+        "fail_fast": true
+    },
     "author": "Guakamoli <denostr@guakamoli.com>",
     "license": "MIT",
     "bugs": {
