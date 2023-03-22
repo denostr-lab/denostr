@@ -1,14 +1,12 @@
 import { anyPass, map, path } from 'ramda'
 
 import { IRunnable } from '../@types/base.ts'
-import { RelayedEvent } from '../@types/event.ts'
 import { OutgoingEventMessage } from '../@types/messages.ts'
 import { Mirror, Settings } from '../@types/settings.ts'
 import Config from '../config/index.ts'
-import { WebSocketServerAdapterEvent } from '../constants/adapter.ts'
 import { createLogger } from '../factories/logger-factory.ts'
 import { isEventIdValid, isEventMatchingFilter, isEventSignatureValid } from '../utils/event.ts'
-import { createRelayedEventMessage, createSubscriptionMessage } from '../utils/messages.ts'
+import { createSubscriptionMessage } from '../utils/messages.ts'
 
 const debug = createLogger('static-mirror-worker')
 
