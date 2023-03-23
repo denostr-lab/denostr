@@ -51,7 +51,7 @@ jobs:
           labels: |
             ${{ steps.meta.outputs.labels }}
             org.opencontainers.image.title=denostr
-            org.opencontainers.image.description=Deno based cloud native nostr implemention support by ByteTrade and Revo
+            org.opencontainers.image.description=Deno-based cloud-native nostr implementation supported
             org.opencontainers.image.version=${{ steps.set-tags.outputs.version }}
           build-args: |
             WORKER_TYPE=${{ matrix.worker-type }}

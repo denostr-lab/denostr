@@ -1,7 +1,7 @@
 FROM denoland/deno:alpine-1.31.3 as base
 
 LABEL org.opencontainers.image.title=denostr
-LABEL org.opencontainers.image.description='Deno based cloud native nostr implemention support by ByteTrade & Revo'
+LABEL org.opencontainers.image.description='Deno-based, cloud-native nostr implementation supported by ByteTrade and Revo, forked from nostream.'
 LABEL org.opencontainers.image.authors=GUAKAMOLI
 LABEL org.opencontainers.image.licenses=MIT
 LABEL org.opencontainers.image.url=https://github.com/guakamoli/denostr

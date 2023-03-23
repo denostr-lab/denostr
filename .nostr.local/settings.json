@@ -2,7 +2,7 @@
     "info": {
         "relay_url": "ws://your-domain.com",
         "name": "nostr relay by denostr",
-        "description": "Deno based, cloud native nostr implemention support by ByteTrade",
+        "description": "Deno-based, cloud-native nostr implementation supported by ByteTrade and Revo, forked from nostream.",
         "pubkey": "00000000827ffaa94bfea288c3dfce4422c794fbb96625b6b31e9049f729d700",
         "contact": "operator@your-domain.com"
     },

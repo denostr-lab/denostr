@@ -1,7 +1,7 @@
 {
     "name": "denostr",
     "version": "0.0.1",
-    "description": "Deno based, cloud native nostr implemention support by ByteTrade",
+    "description": "💪🏻 Deno-based, cloud-native nostr implementation supported by ByteTrade and Revo, forked from nostream.",
     "supportedNips": [
         1,
         2,

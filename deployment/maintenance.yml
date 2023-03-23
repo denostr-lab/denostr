@@ -58,7 +58,7 @@ data:
     info:
       relay_url: ws://your-domain.com
       name: "nostr relay by denostr"
-      description: Deno based, cloud native nostr implemention support by ByteTrade
+      description: Deno-based, cloud-native nostr implementation supported by ByteTrade and Revo, forked from nostream.
       pubkey: replace-with-your-pubkey-in-hex
       contact: operator@your-domain.com
     payments:
