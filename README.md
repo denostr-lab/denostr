@@ -1,10 +1,6 @@
 # [Denostr](https://github.com/Guakamoli/denostr)
 
 <p align="center">
-  <img alt="Denostr logo" height="256px" width="256px" src="https://user-images.githubusercontent.com/378886/198158439-86e0345a-adc8-4efe-b0ab-04ff3f74c1b2.jpg" />
-</p>
-
-<p align="center">
   <a href="https://github.com/Guakamoli/denostr/releases">
     <img alt="GitHub release" src="https://img.shields.io/github/v/release/Guakamoli/denostr">
   </a>
@@ -60,21 +56,14 @@ NIPs with a relay-specific implementation are listed here.
 
 ## Architecture
 
-```txt
 Todo
-```
 
 ## Requirements
 
-- Deno v1.31.x or later
+- Deno v1.30.x or later
 - Typescript
-- MongoDb 4.4, 5.0 6.0
+- MongoDb 4.4, 5.0, 6.0
 - Redis (Optional)
-
-### Docker setups
-
-- Docker v20.10
-- Docker Compose v2.10
 
 ### kubernetes setups
 
@@ -82,7 +71,7 @@ Todo
 
 ## Full Guide
 
-## Quick Start (Standalone)
+### Quick Start (Standalone)
 
 Create `.env` file inside denostr project folder
 
@@ -117,6 +106,10 @@ Or, start in production mode:
 ```sh
 deno task start
 ```
+
+### Apply for kubernetes
+
+Please refer to [this document](./docs/apply-for-k8s.md)
 
 ## Tests
 

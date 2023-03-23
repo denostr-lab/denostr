@@ -8,6 +8,9 @@ HOOK_DISABLE_NOTICE=0 # Set to 1 to disable the notice when the hook exits with 
 . "$(dirname "$0")/_util/git-hooked.sh"
 
 deno lint
-deno fmt && git add -A .
+
+if [[ -z $(git status -s) ]]; then
+  deno fmt && git add -A .
+fi
 
 exit 0
