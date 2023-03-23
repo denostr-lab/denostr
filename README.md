@@ -31,7 +31,7 @@ This is a [nostr](https://github.com/fiatjaf/nostr) relay, written in Typescript
 
 This implementation is production-ready. See below for supported features.
 
-The project master repository is available on [GitHub](https://github.com/Guakamoli/denostr).
+The project main repository is available on [GitHub](https://github.com/Guakamoli/denostr).
 
 ## Features
 
@@ -62,7 +62,7 @@ Todo
 
 - Deno v1.30.x or later
 - Typescript
-- MongoDb 4.4, 5.0, 6.0
+- MongoDB 4.4, 5.0, 6.0
 - Redis (Optional)
 
 ### kubernetes setups
