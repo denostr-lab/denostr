@@ -10,6 +10,7 @@ on:
 
 jobs:
   pr-title-checker:
+    name: PR title check and autolabeler
     runs-on: ubuntu-22.04
     steps:
       - uses: thehanimo/pr-title-checker@v1.3.7
