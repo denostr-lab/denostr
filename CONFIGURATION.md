@@ -13,7 +13,7 @@ The following environment variables can be set:
 | MONGO_URI             | MongoDB URI                 |                        |
 | MONGO_MIN_POOL_SIZE   | Min. connections per worker | 0                      |
 | MONGO_MAX_POOL_SIZE   | Max. connections per worker | 3                      |
-| MONGO_REPLICA_ENABLED | Read Replica (RR) Toggle    | 'false'                |
+| MONGO_REPLICA_ENABLED | Read Replica (RR) Toggle    | false                  |
 | TOR_HOST              | Tor Hostname                |                        |
 | TOR_CONTROL_PORT      | Tor control Port            | 9051                   |
 | TOR_PASSWORD          | Tor control password        | nostr_ts_relay         |

@@ -1,4 +1,4 @@
-# [denostr](https://github.com/Guakamoli/denostr)
+# [Denostr](https://github.com/Guakamoli/denostr)
 
 <p align="center">
   <img alt="Denostr logo" height="256px" width="256px" src="https://user-images.githubusercontent.com/378886/198158439-86e0345a-adc8-4efe-b0ab-04ff3f74c1b2.jpg" />
@@ -29,13 +29,13 @@
   </a>
 </p>
 
+💪🏻 Deno-based, cloud-native nostr implementation supported by ByteTrade and Revo, forked from nostream.
+
 This is a [nostr](https://github.com/fiatjaf/nostr) relay, written in Typescript.
 
 This implementation is production-ready. See below for supported features.
 
 The project master repository is available on [GitHub](https://github.com/Guakamoli/denostr).
-
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/Xfk5F7?referralCode=Kfv2ly)
 
 ## Features
 
@@ -58,62 +58,63 @@ NIPs with a relay-specific implementation are listed here.
 - [x] NIP-33: Parameterized Replaceable Events
 - [x] NIP-40: Expiration Timestamp
 
+## Architecture
+
+```txt
+Todo
+```
+
 ## Requirements
 
-### Standalone setup
-
-- Mongodb 6.0
-- Deno v1.31.1
+- Deno v1.31.x or later
 - Typescript
+- MongoDb 4.4, 5.0 6.0
+- Redis (Optional)
 
 ### Docker setups
 
 - Docker v20.10
 - Docker Compose v2.10
 
-### Local Docker setup
+### kubernetes setups
 
-- Docker Desktop v4.2.0 or newer
-- [mkcert](https://github.com/FiloSottile/mkcert)
-
-WARNING: Docker distributions from Snap, Brew or Debian repositories are NOT SUPPORTED and will result in errors. Install Docker from their [official guide](https://docs.docker.com/engine/install/) ONLY.
+- v1.18.8 or later
 
 ## Full Guide
 
-- [Set up a Nostr relay in under 5 minutes](https://andreneves.xyz/p/set-up-a-nostr-relay-server-in-under) by [André Neves](https://twitter.com/andreneves) (CTO & Co-Founder at [ZEBEDEE](https://zebedee.io/))
-
 ## Quick Start (Standalone)
+
+Create `.env` file inside denostr project folder
 
 Set the following environment variables:
 
-```
+```ini
 WORKER_TYPE=worker
 MONGO_URI=mongodb://user:pass@host:port/db?replicaSet=rs0&authSource=admin
 ```
 
 Clone repository and enter directory:
 
-```
-git clone git@github.com:Guakamoli/denostr.git
-cd denostr
+```sh
+git clone git@github.com:Guakamoli/denostr.git && cd denostr
 ```
 
-Create .nostr folder inside denostr project folder and copy over the settings file:
+Create `.nostr` folder inside **denostr project folder** and copy over the settings file:
 
-```
+```sh
 mkdir .nostr
 cp resources/default-settings.yaml .nostr/settings.yaml
 ```
 
 To start in development mode:
 
-```
+```sh
 deno task dev
 ```
 
 Or, start in production mode:
 
-```
+```sh
 deno task start
 ```
 
@@ -123,16 +124,16 @@ deno task start
 
 Run unit tests with:
 
-```
-deno task test_unit
+```sh
+deno task test:unit
 ```
 
 ### Integration tests
 
 Run integration tests with:
 
-```
-deno task test_integration
+```sh
+deno task test:integration
 ```
 
 ## Configuration

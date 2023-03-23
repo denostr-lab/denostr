@@ -1,0 +1,16 @@
+{
+    "LABEL": {
+        "name": "Invalid PR Title",
+        "color": "B60205"
+    },
+    "CHECKS": {
+        "regexp": "(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\\(.+\\))?: .{1,}",
+        "regexpFlags": "i",
+        "ignoreLabels": [
+            "[ignore-title]"
+        ]
+    },
+    "MESSAGES": {
+        "failure": "PR title is invalid. Please use one of the following formats: 'feat: add comments', 'fix: handle events on blur', 'refactor(FOW-1327): refactor authentication class'.\nmore info please check [commitlint](https://github.com/conventional-changelog/commitlint)"
+    }
+}
