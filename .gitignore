@@ -1,0 +1,40 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Linter
+.lint-reports/
+
+# Coverage
+.nyc_output
+.test-reports
+.coverage
+
+# Dependency directories
+node_modules/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Caches
+.eslintcache
+.dccache
+.DS_Store
+
+# generate output
+dist
+
+# IDE - VSCode
+.vscode/*
+
+# Env files
+.env
+
+# Nostr data folder
+.nostr
+
+.cache/

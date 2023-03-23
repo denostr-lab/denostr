@@ -1,0 +1,134 @@
+name: CI Checks
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - next
+
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+env:
+  MONGO_URI: "mongodb://127.0.0.1:27017/denostr?replicaSet=rs0"
+
+jobs:
+  commit-lint:
+    name: Lint commits
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+      - name: Run commitlint
+        uses: wagoid/commitlint-github-action@v5
+  lint:
+    name: Lint code
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+      # - name: Run Type check
+      #   run: deno check src/index.ts
+  test-units:
+    strategy:
+      matrix:
+        deno-version: ['~1.30', '~1.31']
+        mongodb-version: ['4.4', '5.0', '6.0']
+      fail-fast: true
+    name: Unit Tests
+    runs-on: ubuntu-22.04
+    needs:
+      - commit-lint
+      - lint
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: ${{ matrix.deno-version }}
+      - name: Set deno cache dir
+        id: set-deno-cache-dir
+        run: echo "dir=$HOME/.cache/deno" >> "$GITHUB_OUTPUT"
+      - name: Cache deno the cache dir
+        id: cache-deno-cache-dir
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.set-deno-cache-dir.outputs.dir }}
+          key: ${{ runner.OS }}-deno-cache-dir-${{ hashFiles('deno.lock') }}
+      - name: Run deno cache command
+        if: steps.cache-deno-cache-dir.outputs.cache-hit != 'true'
+        run: deno cache src/index.ts
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.8.0
+        with:
+          mongodb-version: ${{ matrix.mongodb-version }}
+          mongodb-replica-set: rs0
+      - name: Run unit tests
+        run: |
+          echo 'MONGO_URI=${{ env.MONGO_URI }}' >> .env
+          DEBUG=* WORKER_TYPE=worker deno task test:unit
+  test-integrations:
+    strategy:
+      matrix:
+        deno-version: ['~1.30', '~1.31']
+        mongodb-version: ['4.4', '5.0', '6.0']
+      fail-fast: true
+    name: Integration Tests
+    runs-on: ubuntu-22.04
+    needs:
+      - commit-lint
+      - lint
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: ${{ matrix.deno-version }}
+      - name: Set deno cache dir
+        id: set-deno-cache-dir
+        run: echo "dir=$HOME/.cache/deno" >> "$GITHUB_OUTPUT"
+      - name: Cache deno the cache dir
+        id: cache-deno-cache-dir
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.set-deno-cache-dir.outputs.dir }}
+          key: ${{ runner.OS }}-deno-cache-dir-${{ hashFiles('deno.lock') }}
+      - name: Run deno cache command
+        if: steps.cache-deno-cache-dir.outputs.cache-hit != 'true'
+        run: deno cache src/index.ts
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.8.0
+        with:
+          mongodb-version: ${{ matrix.mongodb-version }}
+          mongodb-replica-set: rs0
+      - name: Run integration tests
+        run: |
+          echo 'MONGO_URI=${{ env.MONGO_URI }}' >> .env
+          DEBUG=* WORKER_TYPE=worker deno task test:integration
+  # post-tests:
+  #   name: Post Tests
+  #   needs: [test-units, test-integrations]
+  #   runs-on: ubuntu-22.04
+  #   if: ${{ always() }}
+  #   steps:
+  #   - name: Coveralls Finished
+  #     uses: coverallsapp/github-action@master
+  #     with:
+  #       github-token: ${{ secrets.GITHUB_TOKEN }}
+  #       parallel-finished: true

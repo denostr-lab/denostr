@@ -1,0 +1,93 @@
+services:
+  tests:
+    build:
+      context: ../../
+      dockerfile: Dockerfile.test
+    environment:
+      RELAY_PORT: 18808
+      DB_HOST: db-test
+      DB_PORT: 5432
+      DB_NAME: nostr_ts_relay_test
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_MIN_POOL_SIZE: 1
+      DB_MAX_POOL_SIZE: 2
+      REDIS_HOST: cache-test
+      REDIS_PORT: 6379
+      REDIS_USER: default
+      REDIS_PASSWORD: nostr_ts_relay_test
+      NOSTR_CONFIG_DIR: /code
+      DEBUG: ""
+    volumes:
+      - ../../package.json:/code/package.json
+      - ../../resources:/code/resources
+      - ../../src:/code/src
+      - ../../test/integration:/code/test/integration
+      - ../../cucumber.js:/code/cucumber.js
+      - ../../.nycrc.json:/code/.nycrc.json
+      - ../../.coverage:/code/.coverage
+      - ../../.test-reports:/code/.test-reports
+      - ../../tsconfig.json:/code/tsconfig.json
+    working_dir: /code
+    depends_on:
+      cache-test:
+        condition: service_healthy
+      db-test:
+        condition: service_healthy
+      migrations-test:
+        condition: service_completed_successfully
+    networks:
+      - nostream-test
+    links:
+      - db-test
+  db-test:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: nostr_ts_relay_test
+    networks:
+      - nostream-test
+    ports:
+      - 25432:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      timeout: 5s
+      start_period: 10s
+      retries: 0
+  cache-test:
+    image: redis:7.0.5-alpine3.16
+    command: redis-server --loglevel warning --requirepass nostr_ts_relay_test
+    networks:
+      - nostream-test
+    restart: always
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping", "|", "grep", "PONG" ]
+      interval: 1s
+      timeout: 5s
+      retries: 5
+  migrations-test:
+    image: node:18-alpine3.16
+    environment:
+      DB_HOST: db-test
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: nostr_ts_relay_test
+    entrypoint:
+      - sh
+      - -c
+      - 'cd code && npm install --no-save --quiet knex@2.4.0 pg@8.8.0 && npx knex migrate:latest'
+    volumes:
+      - ../../migrations:/code/migrations
+      - ../../knexfile.js:/code/knexfile.js
+    depends_on:
+      db-test:
+        condition: service_healthy
+    networks:
+      - nostream-test
+    links:
+      - db-test
+
+networks:
+  nostream-test:

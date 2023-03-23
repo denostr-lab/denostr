@@ -1,0 +1,59 @@
+{
+    "tasks": {
+        "dev": "deno run --allow-all --watch src/index.ts",
+        "start": "deno run --allow-all src/index.ts",
+        "test": "deno test --no-check -A",
+        "test:unit": "deno test test/unit --no-check -A",
+        "test:integration": "deno test test/integration --no-check -A",
+        "example:db:createInstance": "deno run --allow-all src/database/example/createInstance.ts",
+        "example:db:node": "deno run --allow-all src/database/example/node.ts",
+        "git-hooks": "deno run --no-check=remote --allow-run=deno,git --allow-read --allow-write=.git-hooks https://deno.land/x/githooked/mod.ts install"
+    },
+    "imports": {
+        "dotenv": "https://deno.land/x/dotenv@v3.2.0/mod.ts",
+        "ramda": "https://deno.land/x/ramda@v0.27.2/mod.ts",
+        "redis": "https://deno.land/x/redis@v0.29.2/mod.ts",
+        "debug": "https://deno.land/x/debuglog@v1.0.0/debug.ts",
+        "websocket": "./vendor/deno.land/x/websocket@v0.1.4/mod.ts",
+        "jest": "https://deno.land/std@0.180.0/testing/bdd.ts",
+        "oak": "https://deno.land/x/oak@v12.1.0/mod.ts",
+        "Buffer": "https://deno.land/std@0.139.0/node/buffer.ts",
+        "secp256k1": "https://deno.land/x/secp256k1@1.7.1/mod.ts",
+        "crypto": "https://deno.land/std@0.177.0/node/crypto.ts",
+        "oak-csp": "https://deno.land/x/oak_csp@1.0.3/mod.ts",
+        "chai": "https://cdn.skypack.dev/chai@4.3.4?dts",
+        "sinon-chai": "https://cdn.skypack.dev/sinon-chai@3.7.0?dts",
+        "sinon": "https://cdn.skypack.dev/sinon@15.0.1?dts",
+        "@cucumber/cucumber": "https://cdn.skypack.dev/@cucumber/cucumber@9.0.0?dts",
+        "joi": "https://cdn.skypack.dev/joi@17.7.0?dts",
+        "rxjs": "https://cdn.skypack.dev/rxjs@7.8.0?dts",
+        "chai-as-promised": "https://cdn.skypack.dev/chai-as-promised@7.1.1?dts",
+        "events": "https://deno.land/std@0.177.0/node/events.ts"
+    },
+    "fmt": {
+        "files": {
+            // "include": ["src/"],
+            // "exclude": ["src/testdata/"]
+        },
+        "options": {
+            "useTabs": false,
+            "lineWidth": 240,
+            "indentWidth": 4,
+            "semiColons": false,
+            "singleQuote": true,
+            "proseWrap": "always"
+        }
+    },
+
+    "lint": {
+        "files": {
+            // "include": ["src/"],
+            // "exclude": ["test/", "src/"]
+        },
+        "rules": {
+            "tags": ["recommended"],
+            "include": [],
+            "exclude": ["no-explicit-any", "require-await", "no-extra-semi", "ban-types"]
+        }
+    }
+}

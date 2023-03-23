@@ -1,0 +1,39 @@
+{
+    "name": "denostr",
+    "version": "0.0.1",
+    "description": "💪🏻 Deno-based, cloud-native nostr implementation supported by ByteTrade and Revo, forked from nostream.",
+    "supportedNips": [
+        1,
+        2,
+        4,
+        9,
+        11,
+        12,
+        15,
+        16,
+        20,
+        22,
+        26,
+        28,
+        33,
+        40
+    ],
+    "supportedNipExtensions": [
+        "11a"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+git@github.com:Guakamoli/denostr.git"
+    },
+    "keywords": [
+        "nostr",
+        "relay",
+        "typescript"
+    ],
+    "author": "Guakamoli <denostr@guakamoli.com>",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/Guakamoli/denostr/issues"
+    },
+    "homepage": "https://github.com/Guakamoli/denostr"
+}

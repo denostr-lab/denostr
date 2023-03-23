@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# Configure the hook with these options.
+HOOK_DEBUG=0          # Set to 1 to enable debug mode. This will print additional output.
+HOOK_DISABLE_NOTICE=0 # Set to 1 to disable the notice when the hook exits with an error code.
+
+# Import the git-hooked wrapper to prepare the env and execute the script below.
+. "$(dirname "$0")/_util/git-hooked.sh"
+
+
+commit_msg=`cat $1`
+
+msg_re="^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\(.+\))?: .{1,100}"
+
+if [[ ! $commit_msg =~ $msg_re ]]
+then
+  echo -e "\033[41;37mError: Invalid commit message submission format. Please use the correct format.\033[0m"
+  echo -e ""
+  echo -e "\033[35mHere are some examples.\033[0m"
+  echo -e "\033[33m  feat: \033[37madd comments\033[0m"
+  echo -e "\033[33m  fix: \033[37mhandle events on blur (close \033[36m#28\033[0m)\033[0m"
+  echo -e "\033[33m  refactor(FOW-1327): \033[37mrefactor authentication class (close \033[36m#9999\033[0m)\033[0m"
+  echo -e ""
+  echo -e "You can refer to this guide. \033[36mhttps://github.com/conventional-changelog/commitlint\033[0m"
+  exit 1
+fi
+
+exit 0
