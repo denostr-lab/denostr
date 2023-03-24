@@ -21,7 +21,7 @@ spec:
         - name: ghcr
       containers:
         - name: relay
-          image: ghcr.io/guakamoli/denostr:next-worker
+          image: ghcr.io/guakamoli/denostr:v0.0.1-worker
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -32,21 +32,17 @@ spec:
               memory: "500Mi"
           env:
             - name: MONGO_URI
-              value: "mongodb://user:pass@host:port/db?replicaSet=rs0&authSource=admin"
-            - name: SECRET
-              value: 1234567890abcdefghijklmnopqrstuvwxyz
-            - name: WORKER_TYPE
-              value: worker
+              value: "mongodb://paiya:98764321@192.168.0.123:27017/watchman?replicaSet=rs0&authSource=admin"
           ports:
             - containerPort: 8008
               name: ws
           volumeMounts:
             - mountPath: /app/.nostr
-              name: denostr-config-val
+              name: denostr-worker-config-val
       volumes:
-        - name: denostr-config-val
+        - name: denostr-worker-config-val
           configMap:
-            name: denostr-config
+            name: denostr-worker-config
             items:
             - key: settings.yaml
               path: settings.yaml
@@ -211,5 +207,5 @@ kind: ConfigMap
 metadata:
   labels:
     component: denostr
-  name: denostr-config
+  name: denostr-worker-config
   namespace: denostr

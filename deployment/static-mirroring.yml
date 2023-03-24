@@ -21,7 +21,7 @@ spec:
         - name: ghcr
       containers:
         - name: relay
-          image: ghcr.io/guakamoli/denostr:next-static-mirroring
+          image: ghcr.io/guakamoli/denostr:v0.0.1-static-mirroring
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -33,20 +33,16 @@ spec:
           env:
             - name: MONGO_URI
               value: "mongodb://user:pass@host:port/db?replicaSet=rs0&authSource=admin"
-            - name: SECRET
-              value: 1234567890abcdefghijklmnopqrstuvwxyz
-            - name: WORKER_TYPE
-              value: maintenance
           ports:
             - containerPort: 8008
               name: ws
           volumeMounts:
             - mountPath: /app/.nostr
-              name: denostr-config-val
+              name: denostr-static-mirroring-config-val
       volumes:
-        - name: denostr-config-val
+        - name: denostr-static-mirroring-config-val
           configMap:
-            name: denostr-config
+            name: denostr-static-mirroring-config
             items:
             - key: settings.yaml
               path: settings.yaml
@@ -211,5 +207,5 @@ kind: ConfigMap
 metadata:
   labels:
     component: denostr
-  name: denostr-config
+  name: denostr-static-mirroring-config
   namespace: denostr
