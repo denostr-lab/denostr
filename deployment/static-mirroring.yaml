@@ -8,7 +8,7 @@ metadata:
     component: denostr
 spec:
   serviceName: denostr-svc
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       component: denostr

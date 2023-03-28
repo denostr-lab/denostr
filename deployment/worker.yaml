@@ -3,12 +3,12 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   namespace: denostr
-  name: denostr-maintenance-statefulset
+  name: denostr-worker-statefulset
   labels:
     component: denostr
 spec:
   serviceName: denostr-svc
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       component: denostr
@@ -21,7 +21,7 @@ spec:
         - name: ghcr
       containers:
         - name: relay
-          image: ghcr.io/guakamoli/denostr:v0.0.1-maintenance
+          image: ghcr.io/guakamoli/denostr:v0.0.1-worker
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -38,11 +38,11 @@ spec:
               name: ws
           volumeMounts:
             - mountPath: /app/.nostr
-              name: denostr-maintenance-config-val
+              name: denostr-worker-config-val
       volumes:
-        - name: denostr-maintenance-config-val
+        - name: denostr-worker-config-val
           configMap:
-            name: denostr-maintenance-config
+            name: denostr-worker-config
             items:
             - key: settings.yaml
               path: settings.yaml
@@ -207,5 +207,5 @@ kind: ConfigMap
 metadata:
   labels:
     component: denostr
-  name: denostr-maintenance-config
+  name: denostr-worker-config
   namespace: denostr
