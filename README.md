@@ -25,7 +25,7 @@
   </a>
 </p>
 
-💪🏻 Deno-based, cloud-native nostr implementation supported by ByteTrade and Revo, forked from nostream.
+💪🏻 Deno-based, cloud-native Nostr relay forked from `nostream`. Sponsored by ByteTrade and Revo.
 
 This is a [nostr](https://github.com/fiatjaf/nostr) relay, written in Typescript.
 
