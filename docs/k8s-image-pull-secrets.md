@@ -1,49 +1,53 @@
-# 拉取镜像凭证
+# Image Pull Credentials
 
-> 本文档演示使用到 github 提供的容器注册表服务 `ghcr.io` 本文档默认了解 "kubernetes" "github" "个人访问令牌" "base64"
+> 📢 It is assumed that you are familiar with "**Kubernetes**", "**GitHub personal access tokens**".
+>
+> 📢 In this document, we will demonstrate the usage of `ghcr.io`, which is the container registry service provided by **GitHub**.
 
-## 镜像凭证生成
+## Generating Image Credentials
 
-将 `用户名:个人访问令牌` 做 **base64编码**，得到 `auth` 凭证
+Encode `username:personal` access token in **base64 to obtain** the `auth` credential:
 
 ```sh
 echo -n "USERNAME:PAT_TOKEN" | base64
 # output: abcdefghijklmnopqrstuvwxyz
 ```
 
-准备如下结构的内容
+Prepare the following content structure:
 
 ```json
 {
     "auths": {
         "ghcr.io": {
-            "auth": "base64编码后生成的凭证"
+            "auth": "credential generated after base64 encoding"
         }
     }
 }
 ```
 
-进行 **base64编码**
+Encode it in **base64**:
 
 ```sh
-echo -n  '{"auths":{"ghcr.io":{"auth":"base64编码后生成的凭证"}}}' | base64
+echo -n  '{"auths":{"ghcr.io":{"auth":"credential generated after base64 encoding"}}}' | base64
 # output: eyJhdXRocyI6eyJnaGNyLmlvIjp7ImF1dGgiOiJiYXNlNjTnvJbnoIHlkI7nlJ/miJDnmoTlh63or4EifX19
 ```
 
-编写一个 **kubernetes secret**
+Create **Kubernetes secret**:
 
 ```yaml
 kind: Secret
 type: kubernetes.io/dockerconfigjson
 apiVersion: v1
 metadata:
-  name: ghcr # 凭证的名称
-  namespace: denostr # 命名空间
+  name: ghcr # the name of the credential
+  namespace: denostr # the namespace
 data:
   .dockerconfigjson: eyJhdXRocyI6eyJnaGNyLmlvIjp7ImF1dGgiOiJiYXNlNjTnvJbnoIHlkI7nlJ/miJDnmoTlh63or4EifX19
 ```
 
-### 使用 ghcr secret 拉取镜像
+### Using ghcr secret to pull images
+
+> There is no guarantee that the deployment will run successfully.
 
 ```yaml
 apiVersion: v1
@@ -54,24 +58,28 @@ metadata:
 spec:
   containers:
   - name: denostr
-    image: ghcr.io/username/imagename:latest
+    image: ghcr.io/guakamoli/denostr:v0.0.1-worker
     imagePullPolicy: Always
   imagePullSecrets:
-  - name: ghcr # 使用凭证
+  - name: ghcr # use the credential
 ```
 
 ## kubectl create secret
 
-也可以更直接一些
+You can also create the secret directly:
 
 ```sh
 kubectl create secret docker-registry ghcr --docker-server=https://ghcr.io --docker-username=github-username --docker-password=github-personal-access-token --docker-email=your-github-email
 ```
 
-## 交互式命令行生成
+## Command-Line
 
-当然你也可以体验交互式命令行生成 `kubernetes secret` 模板文件
+You can also try interactive command-line generation of `kubernetes secret` template files:
 
 ```sh
 bash deployment/k8s-image-pull-secrets.sh
 ```
+
+---
+
+> written in ChatGPT

@@ -3,12 +3,12 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   namespace: denostr
-  name: denostr-worker-statefulset
+  name: denostr-maintenance-statefulset
   labels:
     component: denostr
 spec:
   serviceName: denostr-svc
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       component: denostr
@@ -21,7 +21,7 @@ spec:
         - name: ghcr
       containers:
         - name: relay
-          image: ghcr.io/guakamoli/denostr:v0.0.1-worker
+          image: ghcr.io/guakamoli/denostr:v0.0.1-maintenance
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -32,17 +32,17 @@ spec:
               memory: "500Mi"
           env:
             - name: MONGO_URI
-              value: "mongodb://paiya:98764321@192.168.0.123:27017/watchman?replicaSet=rs0&authSource=admin"
+              value: "mongodb://user:pass@host:port/db?replicaSet=rs0&authSource=admin"
           ports:
             - containerPort: 8008
               name: ws
           volumeMounts:
             - mountPath: /app/.nostr
-              name: denostr-worker-config-val
+              name: denostr-maintenance-config-val
       volumes:
-        - name: denostr-worker-config-val
+        - name: denostr-maintenance-config-val
           configMap:
-            name: denostr-worker-config
+            name: denostr-maintenance-config
             items:
             - key: settings.yaml
               path: settings.yaml
@@ -207,5 +207,5 @@ kind: ConfigMap
 metadata:
   labels:
     component: denostr
-  name: denostr-worker-config
+  name: denostr-maintenance-config
   namespace: denostr
