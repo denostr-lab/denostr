@@ -2,7 +2,7 @@ import Config from '../config/index.ts'
 import { ICacheAdapter } from '../@types/adapters.ts'
 import { IRateLimiter } from '../@types/utils.ts'
 import { RedisAdapter } from '../adapters/redis-adapter.ts'
-import { RedisSetAdapter } from '../adapters/inmemory-cache-adapter.ts'
+import { InMemmoryCacheAdapter } from '../adapters/inmemory-cache-adapter.ts'
 
 import { getCacheClient } from '../cache/client.ts'
 import { SlidingWindowRateLimiter } from '../utils/sliding-window-rate-limiter.ts'
@@ -15,7 +15,7 @@ export const slidingWindowRateLimiterFactory = async () => {
         if (Config.REDIS_HOST && Config.REDIS_PORT) {
             cache = new RedisAdapter(await getCacheClient())
         } else {
-            cache = new RedisSetAdapter()
+            cache = new InMemmoryCacheAdapter()
         }
         instance = new SlidingWindowRateLimiter(cache)
     }

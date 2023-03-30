@@ -23,7 +23,7 @@ export class SlidingWindowRateLimiter implements IRateLimiter {
             this.cache.removeRangeByScoreFromSortedSet(key, 0, timestamp - period),
             this.cache.addToSortedSet(key, {
                 [`${timestamp}:${step}`]: timestamp.toString(),
-            }),
+            }, period),
             this.cache.getRangeFromSortedSet(key, 0, -1),
             this.cache.setKeyExpiry(key, period),
         ])

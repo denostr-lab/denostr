@@ -28,6 +28,7 @@ export interface ICacheAdapter {
     addToSortedSet(
         key: string,
         set: Record<string, string> | Record<string, string>[],
+        expiry?: number,
     ): Promise<number>
     removeRangeByScoreFromSortedSet(
         key: string,

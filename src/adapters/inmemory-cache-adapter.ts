@@ -1,30 +1,33 @@
-import { Bulk, RedisValue } from 'redis'
+import { Bulk } from 'redis'
 import TTLCache from 'npm:@isaacs/ttlcache'
 import { ICacheAdapter } from '../@types/adapters.ts'
 import { createLogger } from '../factories/logger-factory.ts'
 
 const debug = createLogger('redis-adapter')
 
-export class RedisSetAdapter implements ICacheAdapter {
-    private client: TTLCache<string, any>
+export class InMemmoryCacheAdapter implements ICacheAdapter {
+    #client: Map<any, any>
+
     public constructor() {
-        this.client = new TTLCache({ max: 100000, ttl: 1000 * 60 * 60 })
+        this.#client = new Map()
     }
 
     public async hasKey(key: string): Promise<boolean> {
         debug('has %s key', key)
 
-        return this.client.has(key)
+        return this.#client.has(key)
     }
 
     public async getKey(key: string): Promise<Bulk> {
         debug('get %s key', key)
-        return this.client.get(key) as Bulk
+
+        return this.#client.get(key) as Bulk
     }
 
     public async setKey(key: string, value: string): Promise<boolean> {
         debug('get %s key', key)
-        return !!this.client.set(key, value)
+
+        return !!this.#client.set(key, value)
     }
 
     public async removeRangeByScoreFromSortedSet(
@@ -33,9 +36,17 @@ export class RedisSetAdapter implements ICacheAdapter {
         max: number,
     ): Promise<any> {
         debug('remove %d..%d range from sorted set %s', min, max, key)
-        const rowValue = this.client.get(key)
-        const result = rowValue.filter((i: [number, RedisValue]) => i[0] < min || i[0] > max)
-        return this.client.set(key, result)
+
+        const sortedSet = this.#getSortedSet(key)
+        for (const key of sortedSet.keys()) {
+            if (sortedSet.has(key)) {
+                if (key >= min && key <= max) {
+                    sortedSet.delete(key)
+                }
+            }
+        }
+
+        return sortedSet.size
     }
 
     public async getRangeFromSortedSet(
@@ -43,27 +54,42 @@ export class RedisSetAdapter implements ICacheAdapter {
         min: number,
         max: number,
     ): Promise<string[]> {
+        const sortedSet = this.#getSortedSet(key)
+        if (max === -1) {
+            max = sortedSet.size
+        }
         debug('get %d..%d range from sorted set %s', min, max, key)
-        const rowValue = this.client.get(key)
-        const result = rowValue.filter((i: [number, RedisValue]) => i[0] >= min && i[0] <= max)
-        return result
+
+        return [...sortedSet.values()].slice(min, max)
     }
 
     public async setKeyExpiry(key: string, expiry: number): Promise<void> {
         debug('expire at %d from sorted set %s', expiry, key)
-
-        await this.client.get(key, { updateAgeOnGet: true, ttl: expiry })
+        // await this.#client.get(key, { updateAgeOnGet: true, ttl: expiry })
     }
 
     public async addToSortedSet(
         key: string,
         set: Record<string, string>,
+        expiry?: number,
     ): Promise<any> {
         debug('add %o to sorted set %s', set, key)
-        const members: [number, RedisValue][] = Object
-            .entries(set)
-            .map(([value, score]) => [Number(score), value])
-        const result = this.client.set(key, members)
-        return result
+
+        const sortedSet = this.#getSortedSet(key)
+        Object.entries(set).forEach(([value, score]) => {
+            sortedSet.set(Number(score), value, { ttl: expiry })
+        })
+
+        return 1
+    }
+
+    #getSortedSet(key: string) {
+        let rowValus = this.#client.get(`sorted-set:${key}`)
+        if (!rowValus) {
+            rowValus = new TTLCache({ max: 100000 })
+        }
+        this.#client.set(`sorted-set:${key}`, rowValus)
+
+        return (rowValus as TTLCache<any, string>)
     }
 }
