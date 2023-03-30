@@ -26,7 +26,7 @@ kubectl apply -f deployment/base.yaml
 
 这里 `ConfigMap` 用作启动配置项，你可以自定义配置内的任意参数，但这不是主要工作。
 
-**MongoDB** 作为应用程序必须依赖，你必须要替换 `StatefulSet` 中的 ***spec.template.spec.containers[].env[].name*** 为 `MONGO_URI` 的环境变量
+**MongoDB** 作为应用程序必须依赖，你必须要替换 `StatefulSet` 中的 _**spec.template.spec.containers[].env[].name**_ 为 `MONGO_URI` 的环境变量
 
 ```sh
 kubectl apply -f deployment/worker.yaml

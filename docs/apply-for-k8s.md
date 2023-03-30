@@ -26,7 +26,7 @@ kubectl apply -f deployment/base.yaml
 
 Here, `ConfigMap` is used as the startup configuration item. You can customize any parameters in the configuration, but this is not the main job.
 
-As a required dependency for the application, **MongoDB** must be replaced with the environment variable `MONGO_URI` in ***spec.template.spec.containers[].env[].name*** of the `StatefulSet`.
+As a required dependency for the application, **MongoDB** must be replaced with the environment variable `MONGO_URI` in _**spec.template.spec.containers[].env[].name**_ of the `StatefulSet`.
 
 ```sh
 kubectl apply -f deployment/worker.yaml
