@@ -29,7 +29,6 @@ export class EventRepository implements IEventRepository {
         }
 
         const $match: any = {}
-        const $and: any[] = []
         const $or: any[] = []
         const $sort = { event_created_at: 1 }
         const limit = {
@@ -46,32 +45,24 @@ export class EventRepository implements IEventRepository {
         ]
 
         filters.forEach((currentFilter: SubscriptionFilter) => {
-            const $andSub: any[] = []
-            const $orSub: any[] = []
-            let $sub = $andSub
-            if (filters.length > 1) {
-                $sub = $orSub
-            }
-
+            const subFilter: any = {}
             for (const [filterName, filterValue] of Object.entries(currentFilter)) {
                 const isGenericTag = isGenericTagQuery(filterName)
                 if (isGenericTag) {
-                    $and.push({
-                        event_tags: { $elemMatch: { $eq: [filterName[1], ...filterValue] } },
-                    })
+                    subFilter['event_tags'] = { $elemMatch: { $eq: [filterName[1], ...filterValue] } }
                 } else {
                     const fieldNames = ['kinds', 'limit', 'until', 'since']
                     if (fieldNames.includes(filterName)) {
                         if (filterName === 'kinds' && Array.isArray(filterValue)) {
-                            $sub.push({ event_kind: { $in: filterValue } })
+                            subFilter['event_kind'] = { $in: filterValue }
                         }
 
                         if (filterName === 'since' && typeof filterValue === 'number') {
-                            $and.push({ event_created_at: { $gte: filterValue } })
+                            subFilter['event_created_at'] = { $gte: filterValue }
                         }
 
                         if (filterName === 'until' && typeof filterValue === 'number') {
-                            $and.push({ event_created_at: { $lte: filterValue } })
+                            subFilter['event_created_at'] = { $lte: filterValue }
                         }
 
                         if (filterName === 'limit' && typeof filterValue === 'number') {
@@ -86,12 +77,11 @@ export class EventRepository implements IEventRepository {
                 (tableFields: string[], fieldName: any) => {
                     const filterValue = currentFilter[fieldName]
                     if (filterValue) {
+                        if (!subFilter['$or']) {
+                            subFilter['$or'] = []
+                        }
                         tableFields.forEach((field: any) => {
-                            if (fieldName === 'authors') {
-                                $orSub.push({ [field]: { $in: filterValue.map(toBuffer) } })
-                            } else {
-                                $sub.push({ [field]: { $in: filterValue.map(toBuffer) } })
-                            }
+                            subFilter['$or'].push({ [field]: { $in: filterValue.map(toBuffer) }})
                         })
                     }
                 },
@@ -100,18 +90,10 @@ export class EventRepository implements IEventRepository {
                 ids: ['event_id'],
             })
 
-            if ($andSub.length > 0) {
-                $and.push(...$andSub)
-            }
-
-            if ($orSub.length > 0) {
-                $or.push(...$orSub)
+            if (Object.keys(subFilter).length > 0) {
+                $or.push(subFilter)
             }
         })
-
-        if ($and.length > 0) {
-            $match.$and = $and
-        }
 
         if ($or.length > 0) {
             $match.$or = $or

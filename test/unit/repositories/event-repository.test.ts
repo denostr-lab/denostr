@@ -69,7 +69,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            '[{"$match":{"$or":[{"event_pubkey":{"$in":[]}},{"event_delegator":{"$in":[]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
+                            '[{"$match":{"$or":[{"$or":[{"event_pubkey":{"$in":[]}},{"event_delegator":{"$in":[]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
                         )
                     })
 
@@ -83,7 +83,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$or":[{"event_pubkey":{"$in":[{"type":"Buffer","data":[34,232,4,210,110,209,107,104,219,82,89,231,132,73,233,109,171,93,70,76,143,71,11,218,62,177,167,4,103,242,199,147]}]}},{"event_delegator":{"$in":[{"type":"Buffer","data":[34,232,4,210,110,209,107,104,219,82,89,231,132,73,233,109,171,93,70,76,143,71,11,218,62,177,167,4,103,242,199,147]}]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+                            `[{"$match":{"$or":[{"$or":[{"event_pubkey":{"$in":[{"type":"Buffer","data":[34,232,4,210,110,209,107,104,219,82,89,231,132,73,233,109,171,93,70,76,143,71,11,218,62,177,167,4,103,242,199,147]}]}},{"event_delegator":{"$in":[{"type":"Buffer","data":[34,232,4,210,110,209,107,104,219,82,89,231,132,73,233,109,171,93,70,76,143,71,11,218,62,177,167,4,103,242,199,147]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
                         )
                     })
 
@@ -100,7 +100,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$or":[{"event_pubkey":{"$in":[{"type":"Buffer","data":[34,232,4,210,110,209,107,104,219,82,89,231,132,73,233,109,171,93,70,76,143,71,11,218,62,177,167,4,103,242,199,147]},{"type":"Buffer","data":[50,225,130,118,53,69,14,187,60,90,125,18,193,248,231,178,181,20,67,154,193,10,103,238,243,217,253,156,92,104,226,69]}]}},{"event_delegator":{"$in":[{"type":"Buffer","data":[34,232,4,210,110,209,107,104,219,82,89,231,132,73,233,109,171,93,70,76,143,71,11,218,62,177,167,4,103,242,199,147]},{"type":"Buffer","data":[50,225,130,118,53,69,14,187,60,90,125,18,193,248,231,178,181,20,67,154,193,10,103,238,243,217,253,156,92,104,226,69]}]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+                            `[{"$match":{"$or":[{"$or":[{"event_pubkey":{"$in":[{"type":"Buffer","data":[34,232,4,210,110,209,107,104,219,82,89,231,132,73,233,109,171,93,70,76,143,71,11,218,62,177,167,4,103,242,199,147]},{"type":"Buffer","data":[50,225,130,118,53,69,14,187,60,90,125,18,193,248,231,178,181,20,67,154,193,10,103,238,243,217,253,156,92,104,226,69]}]}},{"event_delegator":{"$in":[{"type":"Buffer","data":[34,232,4,210,110,209,107,104,219,82,89,231,132,73,233,109,171,93,70,76,143,71,11,218,62,177,167,4,103,242,199,147]},{"type":"Buffer","data":[50,225,130,118,53,69,14,187,60,90,125,18,193,248,231,178,181,20,67,154,193,10,103,238,243,217,253,156,92,104,226,69]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
                         )
                     })
 
@@ -116,7 +116,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$or":[{"event_pubkey":{"$in":[{"type":"Buffer","data":[34,232,4]}]}},{"event_delegator":{"$in":[{"type":"Buffer","data":[34,232,4]}]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+                            `[{"$match":{"$or":[{"$or":[{"event_pubkey":{"$in":[{"type":"Buffer","data":[34,232,4]}]}},{"event_delegator":{"$in":[{"type":"Buffer","data":[34,232,4]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
                         )
                     })
 
@@ -132,7 +132,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$or":[{"event_pubkey":{"$in":[{"type":"Buffer","data":[34,232,4]}]}},{"event_delegator":{"$in":[{"type":"Buffer","data":[34,232,4]}]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+                            `[{"$match":{"$or":[{"$or":[{"event_pubkey":{"$in":[{"type":"Buffer","data":[34,232,4]}]}},{"event_delegator":{"$in":[{"type":"Buffer","data":[34,232,4]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
                         )
                     })
 
@@ -149,7 +149,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$or":[{"event_pubkey":{"$in":[{"type":"Buffer","data":[34,232,4]},{"type":"Buffer","data":[50,225,130]}]}},{"event_delegator":{"$in":[{"type":"Buffer","data":[34,232,4]},{"type":"Buffer","data":[50,225,130]}]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+                            `[{"$match":{"$or":[{"$or":[{"event_pubkey":{"$in":[{"type":"Buffer","data":[34,232,4]},{"type":"Buffer","data":[50,225,130]}]}},{"event_delegator":{"$in":[{"type":"Buffer","data":[34,232,4]},{"type":"Buffer","data":[50,225,130]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
                         )
                     })
                 })
@@ -161,7 +161,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            '[{"$match":{"$and":[{"event_id":{"$in":[]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
+                            '[{"$match":{"$or":[{"$or":[{"event_id":{"$in":[]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
                         )
                     })
 
@@ -175,7 +175,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$and":[{"event_id":{"$in":[{"type":"Buffer","data":[170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170]}]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+                            `[{"$match":{"$or":[{"$or":[{"event_id":{"$in":[{"type":"Buffer","data":[170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
                         )
                     })
 
@@ -192,7 +192,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$and":[{"event_id":{"$in":[{"type":"Buffer","data":[170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170]},{"type":"Buffer","data":[187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187]}]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+                            `[{"$match":{"$or":[{"$or":[{"event_id":{"$in":[{"type":"Buffer","data":[170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170]},{"type":"Buffer","data":[187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
                         )
                     })
 
@@ -208,7 +208,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$and":[{"event_id":{"$in":[{"type":"Buffer","data":[171,205]}]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+                            `[{"$match":{"$or":[{"$or":[{"event_id":{"$in":[{"type":"Buffer","data":[171,205]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
                         )
                     })
 
@@ -224,7 +224,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$and":[{"event_id":{"$in":[{"type":"Buffer","data":[171]}]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+                            `[{"$match":{"$or":[{"$or":[{"event_id":{"$in":[{"type":"Buffer","data":[171]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
                         )
                     })
 
@@ -241,7 +241,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$and":[{"event_id":{"$in":[{"type":"Buffer","data":[171,205,239]},{"type":"Buffer","data":[171]}]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+                            '[{"$match":{"$or":[{"$or":[{"event_id":{"$in":[{"type":"Buffer","data":[171,205,239]},{"type":"Buffer","data":[171]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
                         )
                     })
                 })
@@ -253,7 +253,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            '[{"$match":{"$and":[{"event_kind":{"$in":[]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
+                            '[{"$match":{"$or":[{"event_kind":{"$in":[]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
                         )
                     })
 
@@ -263,7 +263,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            '[{"$match":{"$and":[{"event_kind":{"$in":[1]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
+                            '[{"$match":{"$or":[{"event_kind":{"$in":[1]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
                         )
                     })
 
@@ -273,7 +273,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            '[{"$match":{"$and":[{"event_kind":{"$in":[1,2]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
+                            '[{"$match":{"$or":[{"event_kind":{"$in":[1,2]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
                         )
                     })
                 })
@@ -285,7 +285,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            '[{"$match":{"$and":[{"event_created_at":{"$gte":1000}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
+                            '[{"$match":{"$or":[{"event_created_at":{"$gte":1000}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
                         )
                     })
                 })
@@ -297,7 +297,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            '[{"$match":{"$and":[{"event_created_at":{"$lte":1000}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
+                            '[{"$match":{"$or":[{"event_created_at":{"$lte":1000}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
                         )
                     })
                 })
@@ -321,7 +321,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            '[{"$match":{"$and":[{"event_tags":{"$elemMatch":{"$eq":["e"]}}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
+                            '[{"$match":{"$or":[{"event_tags":{"$elemMatch":{"$eq":["e"]}}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
                         )
                     })
 
@@ -331,7 +331,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$and":[{"event_tags":{"$elemMatch":{"$eq":["e","aaaaaa"]}}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+                            `[{"$match":{"$or":[{"event_tags":{"$elemMatch":{"$eq":["e","aaaaaa"]}}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
                         )
                     })
 
@@ -341,7 +341,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$and":[{"event_tags":{"$elemMatch":{"$eq":["e","aaaaaa","bbbbbb"]}}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+                            `[{"$match":{"$or":[{"event_tags":{"$elemMatch":{"$eq":["e","aaaaaa","bbbbbb"]}}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
                         )
                     })
                 })
@@ -353,7 +353,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            '[{"$match":{"$and":[{"event_tags":{"$elemMatch":{"$eq":["p"]}}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
+                            '[{"$match":{"$or":[{"event_tags":{"$elemMatch":{"$eq":["p"]}}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
                         )
                     })
 
@@ -363,7 +363,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$and":[{"event_tags":{"$elemMatch":{"$eq":["p","aaaaaa"]}}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+                            `[{"$match":{"$or":[{"event_tags":{"$elemMatch":{"$eq":["p","aaaaaa"]}}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
                         )
                     })
 
@@ -373,7 +373,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$and":[{"event_tags":{"$elemMatch":{"$eq":["p","aaaaaa","bbbbbb"]}}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+                            `[{"$match":{"$or":[{"event_tags":{"$elemMatch":{"$eq":["p","aaaaaa","bbbbbb"]}}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
                         )
                     })
                 })
@@ -385,7 +385,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            '[{"$match":{"$and":[{"event_tags":{"$elemMatch":{"$eq":["r"]}}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
+                            '[{"$match":{"$or":[{"event_tags":{"$elemMatch":{"$eq":["r"]}}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
                         )
                     })
 
@@ -395,7 +395,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$and":[{"event_tags":{"$elemMatch":{"$eq":["r","aaaaaa"]}}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+                            `[{"$match":{"$or":[{"event_tags":{"$elemMatch":{"$eq":["r","aaaaaa"]}}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
                         )
                     })
 
@@ -405,7 +405,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$and":[{"event_tags":{"$elemMatch":{"$eq":["r","aaaaaa","bbbbbb"]}}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+                            `[{"$match":{"$or":[{"event_tags":{"$elemMatch":{"$eq":["r","aaaaaa","bbbbbb"]}}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
                         )
                     })
                 })
@@ -437,7 +437,7 @@ describe({
                     const query = repository.findByFilters(filters)
 
                     expect(JSON.stringify(query.pipeline())).to.equal(
-                        `[{"$match":{"$and":[{"event_created_at":{"$gte":1000}},{"event_created_at":{"$lte":1000}}],"$or":[{"event_kind":{"$in":[1]}},{"event_id":{"$in":[{"type":"Buffer","data":[170,170]}]}},{"event_pubkey":{"$in":[{"type":"Buffer","data":[187,187]}]}},{"event_delegator":{"$in":[{"type":"Buffer","data":[187,187]}]}}]}},{"$sort":{"event_created_at":-1}},{"$limit":1000}]`,
+                        `[{"$match":{"$or":[{"event_kind":{"$in":[1]}},{"$or":[{"event_id":{"$in":[{"type":"Buffer","data":[170,170]}]}}]},{"$or":[{"event_pubkey":{"$in":[{"type":"Buffer","data":[187,187]}]}},{"event_delegator":{"$in":[{"type":"Buffer","data":[187,187]}]}}]},{"event_created_at":{"$gte":1000}},{"event_created_at":{"$lte":1000}}]}},{"$sort":{"event_created_at":-1}},{"$limit":1000}]`,
                     )
                 })
             })
