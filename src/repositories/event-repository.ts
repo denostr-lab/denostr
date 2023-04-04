@@ -49,7 +49,10 @@ export class EventRepository implements IEventRepository {
             for (const [filterName, filterValue] of Object.entries(currentFilter)) {
                 const isGenericTag = isGenericTagQuery(filterName)
                 if (isGenericTag) {
-                    subFilter['event_tags'] = { $elemMatch: { $eq: [filterName[1], ...filterValue] } }
+                    if (Array.isArray(filterValue) && filterValue.length > 0) {
+                        const tags = filterValue.map((id) => ([filterName[1], id]))
+                        subFilter['event_tags'] = { $in: tags }
+                    }
                 } else {
                     const fieldNames = ['kinds', 'limit', 'until', 'since']
                     if (fieldNames.includes(filterName)) {
@@ -180,6 +183,7 @@ export class EventRepository implements IEventRepository {
         const query = masterEventsModel
             .updateOne(
                 {
+                    event_id: row.event_id,
                     event_pubkey: row.event_pubkey,
                     event_kind: row.event_kind,
                     event_deduplication: row.event_deduplication,

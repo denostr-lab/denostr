@@ -321,7 +321,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            '[{"$match":{"$or":[{"event_tags":{"$elemMatch":{"$eq":["e"]}}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
+                            '[{"$match":{}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
                         )
                     })
 
@@ -331,7 +331,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$or":[{"event_tags":{"$elemMatch":{"$eq":["e","aaaaaa"]}}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+                            `[{"$match":{"$or":[{"event_tags":{"$in":[["e","aaaaaa"]]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
                         )
                     })
 
@@ -341,7 +341,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$or":[{"event_tags":{"$elemMatch":{"$eq":["e","aaaaaa","bbbbbb"]}}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+                            `[{"$match":{"$or":[{"event_tags":{"$in":[["e","aaaaaa"],["e","bbbbbb"]]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
                         )
                     })
                 })
@@ -353,7 +353,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            '[{"$match":{"$or":[{"event_tags":{"$elemMatch":{"$eq":["p"]}}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
+                            '[{"$match":{}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
                         )
                     })
 
@@ -363,7 +363,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$or":[{"event_tags":{"$elemMatch":{"$eq":["p","aaaaaa"]}}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+                            `[{"$match":{"$or":[{"event_tags":{"$in":[["p","aaaaaa"]]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
                         )
                     })
 
@@ -373,7 +373,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$or":[{"event_tags":{"$elemMatch":{"$eq":["p","aaaaaa","bbbbbb"]}}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+                            `[{"$match":{"$or":[{"event_tags":{"$in":[["p","aaaaaa"],["p","bbbbbb"]]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
                         )
                     })
                 })
@@ -385,7 +385,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            '[{"$match":{"$or":[{"event_tags":{"$elemMatch":{"$eq":["r"]}}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
+                            '[{"$match":{}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
                         )
                     })
 
@@ -395,7 +395,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$or":[{"event_tags":{"$elemMatch":{"$eq":["r","aaaaaa"]}}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+                            `[{"$match":{"$or":[{"event_tags":{"$in":[["r","aaaaaa"]]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
                         )
                     })
 
@@ -405,7 +405,7 @@ describe({
                         const query = repository.findByFilters(filters)
 
                         expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$or":[{"event_tags":{"$elemMatch":{"$eq":["r","aaaaaa","bbbbbb"]}}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+                            `[{"$match":{"$or":[{"event_tags":{"$in":[["r","aaaaaa"],["r","bbbbbb"]]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
                         )
                     })
                 })
