@@ -46,12 +46,21 @@ export class EventRepository implements IEventRepository {
 
         filters.forEach((currentFilter: SubscriptionFilter) => {
             const subFilter: any = {}
+            const subFilterOr: any = [];
             for (const [filterName, filterValue] of Object.entries(currentFilter)) {
                 const isGenericTag = isGenericTagQuery(filterName)
                 if (isGenericTag) {
                     if (Array.isArray(filterValue) && filterValue.length > 0) {
-                        const tags = filterValue.map((id) => ([filterName[1], id]))
-                        subFilter['event_tags'] = { $in: tags }
+                        subFilterOr.push({ event_tags: { $size: 0 } })
+                        subFilterOr.push({
+                            event_tags: {
+                                $elemMatch: {
+                                    $elemMatch: {
+                                        $in: [filterName[1], ...filterValue],
+                                    },
+                                },
+                            },
+                        })
                     }
                 } else {
                     const fieldNames = ['kinds', 'limit', 'until', 'since']
@@ -80,11 +89,8 @@ export class EventRepository implements IEventRepository {
                 (tableFields: string[], fieldName: any) => {
                     const filterValue = currentFilter[fieldName]
                     if (filterValue) {
-                        if (!subFilter['$or']) {
-                            subFilter['$or'] = []
-                        }
                         tableFields.forEach((field: any) => {
-                            subFilter['$or'].push({ [field]: { $in: filterValue.map(toBuffer) }})
+                            subFilterOr.push({ [field]: { $in: filterValue.map(toBuffer) }})
                         })
                     }
                 },
@@ -92,6 +98,10 @@ export class EventRepository implements IEventRepository {
                 authors: ['event_pubkey', 'event_delegator'],
                 ids: ['event_id'],
             })
+
+            if (subFilterOr.length > 0) {
+                subFilter['$or'] = subFilterOr
+            }
 
             if (Object.keys(subFilter).length > 0) {
                 $or.push(subFilter)
