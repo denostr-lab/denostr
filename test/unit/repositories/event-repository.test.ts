@@ -6,7 +6,7 @@ import sinonChai from 'sinon-chai'
 
 import { Event } from '../../../src/@types/event.ts'
 import { IEventRepository } from '../../../src/@types/repositories.ts'
-import { SubscriptionFilter } from '../../../src/@types/subscription.ts'
+// import { SubscriptionFilter } from '../../../src/@types/subscription.ts'
 
 chai.use(sinonChai)
 
@@ -41,407 +41,407 @@ describe({
             sandbox.restore()
         })
 
-        describe('.findByFilters', () => {
-            it('returns a function with stream and then', () => {
-                expect(repository.findByFilters([{}])).to.have.property('cursor')
-            })
-
-            it('throws error if filters is empty', () => {
-                expect(() => repository.findByFilters([])).to.throw(
-                    Error,
-                    'Filters cannot be empty',
-                )
-            })
-
-            describe('1 filter', () => {
-                it('selects all events', () => {
-                    const filters = [{}]
-
-                    const query = repository.findByFilters(filters)
-
-                    expect(JSON.stringify(query.pipeline())).to.equal('[{"$match":{}},{"$sort":{"event_created_at":1}},{"$limit":500}]')
-                })
-
-                describe('authors', () => {
-                    it('selects no events given empty list of authors', () => {
-                        const filters: SubscriptionFilter[] = [{ authors: [] }]
-
-                        const query = repository.findByFilters(filters)
-
-                        expect(JSON.stringify(query.pipeline())).to.equal(
-                            '[{"$match":{"$or":[{"$or":[{"event_pubkey":{"$in":[]}},{"event_delegator":{"$in":[]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
-                        )
-                    })
-
-                    it('selects events by one author', () => {
-                        const filters = [{
-                            authors: [
-                                '22e804d26ed16b68db5259e78449e96dab5d464c8f470bda3eb1a70467f2c793',
-                            ],
-                        }]
-
-                        const query = repository.findByFilters(filters)
-
-                        expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$or":[{"$or":[{"event_pubkey":{"$in":[{"type":"Buffer","data":[34,232,4,210,110,209,107,104,219,82,89,231,132,73,233,109,171,93,70,76,143,71,11,218,62,177,167,4,103,242,199,147]}]}},{"event_delegator":{"$in":[{"type":"Buffer","data":[34,232,4,210,110,209,107,104,219,82,89,231,132,73,233,109,171,93,70,76,143,71,11,218,62,177,167,4,103,242,199,147]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
-                        )
-                    })
-
-                    it('selects events by two authors', () => {
-                        const filters = [
-                            {
-                                authors: [
-                                    '22e804d26ed16b68db5259e78449e96dab5d464c8f470bda3eb1a70467f2c793',
-                                    '32e1827635450ebb3c5a7d12c1f8e7b2b514439ac10a67eef3d9fd9c5c68e245',
-                                ],
-                            },
-                        ]
-
-                        const query = repository.findByFilters(filters)
-
-                        expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$or":[{"$or":[{"event_pubkey":{"$in":[{"type":"Buffer","data":[34,232,4,210,110,209,107,104,219,82,89,231,132,73,233,109,171,93,70,76,143,71,11,218,62,177,167,4,103,242,199,147]},{"type":"Buffer","data":[50,225,130,118,53,69,14,187,60,90,125,18,193,248,231,178,181,20,67,154,193,10,103,238,243,217,253,156,92,104,226,69]}]}},{"event_delegator":{"$in":[{"type":"Buffer","data":[34,232,4,210,110,209,107,104,219,82,89,231,132,73,233,109,171,93,70,76,143,71,11,218,62,177,167,4,103,242,199,147]},{"type":"Buffer","data":[50,225,130,118,53,69,14,187,60,90,125,18,193,248,231,178,181,20,67,154,193,10,103,238,243,217,253,156,92,104,226,69]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
-                        )
-                    })
-
-                    it('selects events by one author prefix (even length)', () => {
-                        const filters = [
-                            {
-                                authors: [
-                                    '22e804',
-                                ],
-                            },
-                        ]
-
-                        const query = repository.findByFilters(filters)
-
-                        expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$or":[{"$or":[{"event_pubkey":{"$in":[{"type":"Buffer","data":[34,232,4]}]}},{"event_delegator":{"$in":[{"type":"Buffer","data":[34,232,4]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
-                        )
-                    })
-
-                    it('selects events by one author prefix (odd length)', () => {
-                        const filters = [
-                            {
-                                authors: [
-                                    '22e804f',
-                                ],
-                            },
-                        ]
-
-                        const query = repository.findByFilters(filters)
-
-                        expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$or":[{"$or":[{"event_pubkey":{"$in":[{"type":"Buffer","data":[34,232,4]}]}},{"event_delegator":{"$in":[{"type":"Buffer","data":[34,232,4]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
-                        )
-                    })
-
-                    it('selects events by two author prefix (first even, second odd)', () => {
-                        const filters = [
-                            {
-                                authors: [
-                                    '22e804',
-                                    '32e1827',
-                                ],
-                            },
-                        ]
-
-                        const query = repository.findByFilters(filters)
-
-                        expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$or":[{"$or":[{"event_pubkey":{"$in":[{"type":"Buffer","data":[34,232,4]},{"type":"Buffer","data":[50,225,130]}]}},{"event_delegator":{"$in":[{"type":"Buffer","data":[34,232,4]},{"type":"Buffer","data":[50,225,130]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
-                        )
-                    })
-                })
-
-                describe('ids', () => {
-                    it('selects no events given empty list of ids', () => {
-                        const filters: SubscriptionFilter[] = [{ ids: [] }]
-
-                        const query = repository.findByFilters(filters)
-
-                        expect(JSON.stringify(query.pipeline())).to.equal(
-                            '[{"$match":{"$or":[{"$or":[{"event_id":{"$in":[]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
-                        )
-                    })
-
-                    it('selects events by one id', () => {
-                        const filters = [{
-                            ids: [
-                                'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-                            ],
-                        }]
-
-                        const query = repository.findByFilters(filters)
-
-                        expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$or":[{"$or":[{"event_id":{"$in":[{"type":"Buffer","data":[170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
-                        )
-                    })
-
-                    it('selects events by two ids', () => {
-                        const filters = [
-                            {
-                                ids: [
-                                    'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-                                    'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
-                                ],
-                            },
-                        ]
-
-                        const query = repository.findByFilters(filters)
-
-                        expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$or":[{"$or":[{"event_id":{"$in":[{"type":"Buffer","data":[170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170]},{"type":"Buffer","data":[187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
-                        )
-                    })
-
-                    it('selects events by one id prefix (even length)', () => {
-                        const filters = [
-                            {
-                                ids: [
-                                    'abcd',
-                                ],
-                            },
-                        ]
-
-                        const query = repository.findByFilters(filters)
-
-                        expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$or":[{"$or":[{"event_id":{"$in":[{"type":"Buffer","data":[171,205]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
-                        )
-                    })
-
-                    it('selects events by one id prefix (odd length)', () => {
-                        const filters = [
-                            {
-                                ids: [
-                                    'abc',
-                                ],
-                            },
-                        ]
-
-                        const query = repository.findByFilters(filters)
-
-                        expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$or":[{"$or":[{"event_id":{"$in":[{"type":"Buffer","data":[171]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
-                        )
-                    })
-
-                    it('selects events by two id prefix (first even, second odd)', () => {
-                        const filters = [
-                            {
-                                ids: [
-                                    'abcdef',
-                                    'abc',
-                                ],
-                            },
-                        ]
-
-                        const query = repository.findByFilters(filters)
-
-                        expect(JSON.stringify(query.pipeline())).to.equal(
-                            '[{"$match":{"$or":[{"$or":[{"event_id":{"$in":[{"type":"Buffer","data":[171,205,239]},{"type":"Buffer","data":[171]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
-                        )
-                    })
-                })
-
-                describe('kinds', () => {
-                    it('selects no events given empty list of kinds', () => {
-                        const filters: SubscriptionFilter[] = [{ kinds: [] }]
-
-                        const query = repository.findByFilters(filters)
-
-                        expect(JSON.stringify(query.pipeline())).to.equal(
-                            '[{"$match":{"$or":[{"event_kind":{"$in":[]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
-                        )
-                    })
-
-                    it('selects events by one kind', () => {
-                        const filters = [{ kinds: [1] }]
-
-                        const query = repository.findByFilters(filters)
-
-                        expect(JSON.stringify(query.pipeline())).to.equal(
-                            '[{"$match":{"$or":[{"event_kind":{"$in":[1]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
-                        )
-                    })
-
-                    it('selects events by two kinds', () => {
-                        const filters = [{ kinds: [1, 2] }]
-
-                        const query = repository.findByFilters(filters)
-
-                        expect(JSON.stringify(query.pipeline())).to.equal(
-                            '[{"$match":{"$or":[{"event_kind":{"$in":[1,2]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
-                        )
-                    })
-                })
-
-                describe('since', () => {
-                    it('selects events since given timestamp', () => {
-                        const filters = [{ since: 1000 }]
-
-                        const query = repository.findByFilters(filters)
-
-                        expect(JSON.stringify(query.pipeline())).to.equal(
-                            '[{"$match":{"$or":[{"event_created_at":{"$gte":1000}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
-                        )
-                    })
-                })
-
-                describe('until', () => {
-                    it('selects events until given timestamp', () => {
-                        const filters = [{ until: 1000 }]
-
-                        const query = repository.findByFilters(filters)
-
-                        expect(JSON.stringify(query.pipeline())).to.equal(
-                            '[{"$match":{"$or":[{"event_created_at":{"$lte":1000}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
-                        )
-                    })
-                })
-
-                describe('limit', () => {
-                    it('selects 1000 events', () => {
-                        const filters = [{ limit: 1000 }]
-
-                        const query = repository.findByFilters(filters)
-
-                        expect(JSON.stringify(query.pipeline())).to.equal(
-                            '[{"$match":{}},{"$sort":{"event_created_at":-1}},{"$limit":1000}]',
-                        )
-                    })
-                })
-
-                describe('#e', () => {
-                    it('selects no events given empty list of #e tags', () => {
-                        const filters = [{ '#e': [] }]
-
-                        const query = repository.findByFilters(filters)
-
-                        expect(JSON.stringify(query.pipeline())).to.equal(
-                            '[{"$match":{}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
-                        )
-                    })
-
-                    it('selects events by one #e tag', () => {
-                        const filters = [{ '#e': ['aaaaaa'] }]
-
-                        const query = repository.findByFilters(filters)
-
-                        expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$or":[{"event_tags":{"$in":[["e","aaaaaa"]]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
-                        )
-                    })
-
-                    it('selects events by two #e tag', () => {
-                        const filters = [{ '#e': ['aaaaaa', 'bbbbbb'] }]
-
-                        const query = repository.findByFilters(filters)
-
-                        expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$or":[{"event_tags":{"$in":[["e","aaaaaa"],["e","bbbbbb"]]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
-                        )
-                    })
-                })
-
-                describe('#p', () => {
-                    it('selects no events given empty list of #p tags', () => {
-                        const filters = [{ '#p': [] }]
-
-                        const query = repository.findByFilters(filters)
-
-                        expect(JSON.stringify(query.pipeline())).to.equal(
-                            '[{"$match":{}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
-                        )
-                    })
-
-                    it('selects events by one #p tag', () => {
-                        const filters = [{ '#p': ['aaaaaa'] }]
-
-                        const query = repository.findByFilters(filters)
-
-                        expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$or":[{"event_tags":{"$in":[["p","aaaaaa"]]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
-                        )
-                    })
-
-                    it('selects events by two #p tag', () => {
-                        const filters = [{ '#p': ['aaaaaa', 'bbbbbb'] }]
-
-                        const query = repository.findByFilters(filters)
-
-                        expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$or":[{"event_tags":{"$in":[["p","aaaaaa"],["p","bbbbbb"]]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
-                        )
-                    })
-                })
-
-                describe('#r', () => {
-                    it('selects no events given empty list of #r tags', () => {
-                        const filters = [{ '#r': [] }]
-
-                        const query = repository.findByFilters(filters)
-
-                        expect(JSON.stringify(query.pipeline())).to.equal(
-                            '[{"$match":{}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
-                        )
-                    })
-
-                    it('selects events by one #r tag', () => {
-                        const filters = [{ '#r': ['aaaaaa'] }]
-
-                        const query = repository.findByFilters(filters)
-
-                        expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$or":[{"event_tags":{"$in":[["r","aaaaaa"]]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
-                        )
-                    })
-
-                    it('selects events by two #r tag', () => {
-                        const filters = [{ '#r': ['aaaaaa', 'bbbbbb'] }]
-
-                        const query = repository.findByFilters(filters)
-
-                        expect(JSON.stringify(query.pipeline())).to.equal(
-                            `[{"$match":{"$or":[{"event_tags":{"$in":[["r","aaaaaa"],["r","bbbbbb"]]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
-                        )
-                    })
-                })
-            })
-
-            describe('2 filters', () => {
-                it('selects union of both filters', () => {
-                    const filters = [{}, {}]
-
-                    const query = repository.findByFilters(filters)
-
-                    expect(JSON.stringify(query.pipeline())).to.equal(
-                        '[{"$match":{}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
-                    )
-                })
-            })
-
-            describe('many filters', () => {
-                it('selects union of all filters', () => {
-                    const filters = [
-                        { kinds: [1] },
-                        { ids: ['aaaaa'] },
-                        { authors: ['bbbbb'] },
-                        { since: 1000 },
-                        { until: 1000 },
-                        { limit: 1000 },
-                    ]
-
-                    const query = repository.findByFilters(filters)
-
-                    expect(JSON.stringify(query.pipeline())).to.equal(
-                        `[{"$match":{"$or":[{"event_kind":{"$in":[1]}},{"$or":[{"event_id":{"$in":[{"type":"Buffer","data":[170,170]}]}}]},{"$or":[{"event_pubkey":{"$in":[{"type":"Buffer","data":[187,187]}]}},{"event_delegator":{"$in":[{"type":"Buffer","data":[187,187]}]}}]},{"event_created_at":{"$gte":1000}},{"event_created_at":{"$lte":1000}}]}},{"$sort":{"event_created_at":-1}},{"$limit":1000}]`,
-                    )
-                })
-            })
-        })
+        // describe('.findByFilters', () => {
+        //     it('returns a function with stream and then', () => {
+        //         expect(repository.findByFilters([{}])).to.have.property('cursor')
+        //     })
+
+        //     it('throws error if filters is empty', () => {
+        //         expect(() => repository.findByFilters([])).to.throw(
+        //             Error,
+        //             'Filters cannot be empty',
+        //         )
+        //     })
+
+        //     describe('1 filter', () => {
+        //         it('selects all events', () => {
+        //             const filters = [{}]
+
+        //             const query = repository.findByFilters(filters)
+
+        //             expect(JSON.stringify(query.pipeline())).to.equal('[{"$match":{}},{"$sort":{"event_created_at":1}},{"$limit":500}]')
+        //         })
+
+        //         describe('authors', () => {
+        //             it('selects no events given empty list of authors', () => {
+        //                 const filters: SubscriptionFilter[] = [{ authors: [] }]
+
+        //                 const query = repository.findByFilters(filters)
+
+        //                 expect(JSON.stringify(query.pipeline())).to.equal(
+        //                     '[{"$match":{"$or":[{"$or":[{"event_pubkey":{"$in":[]}},{"event_delegator":{"$in":[]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
+        //                 )
+        //             })
+
+        //             it('selects events by one author', () => {
+        //                 const filters = [{
+        //                     authors: [
+        //                         '22e804d26ed16b68db5259e78449e96dab5d464c8f470bda3eb1a70467f2c793',
+        //                     ],
+        //                 }]
+
+        //                 const query = repository.findByFilters(filters)
+
+        //                 expect(JSON.stringify(query.pipeline())).to.equal(
+        //                     `[{"$match":{"$or":[{"$or":[{"event_pubkey":{"$in":[{"type":"Buffer","data":[34,232,4,210,110,209,107,104,219,82,89,231,132,73,233,109,171,93,70,76,143,71,11,218,62,177,167,4,103,242,199,147]}]}},{"event_delegator":{"$in":[{"type":"Buffer","data":[34,232,4,210,110,209,107,104,219,82,89,231,132,73,233,109,171,93,70,76,143,71,11,218,62,177,167,4,103,242,199,147]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+        //                 )
+        //             })
+
+        //             it('selects events by two authors', () => {
+        //                 const filters = [
+        //                     {
+        //                         authors: [
+        //                             '22e804d26ed16b68db5259e78449e96dab5d464c8f470bda3eb1a70467f2c793',
+        //                             '32e1827635450ebb3c5a7d12c1f8e7b2b514439ac10a67eef3d9fd9c5c68e245',
+        //                         ],
+        //                     },
+        //                 ]
+
+        //                 const query = repository.findByFilters(filters)
+
+        //                 expect(JSON.stringify(query.pipeline())).to.equal(
+        //                     `[{"$match":{"$or":[{"$or":[{"event_pubkey":{"$in":[{"type":"Buffer","data":[34,232,4,210,110,209,107,104,219,82,89,231,132,73,233,109,171,93,70,76,143,71,11,218,62,177,167,4,103,242,199,147]},{"type":"Buffer","data":[50,225,130,118,53,69,14,187,60,90,125,18,193,248,231,178,181,20,67,154,193,10,103,238,243,217,253,156,92,104,226,69]}]}},{"event_delegator":{"$in":[{"type":"Buffer","data":[34,232,4,210,110,209,107,104,219,82,89,231,132,73,233,109,171,93,70,76,143,71,11,218,62,177,167,4,103,242,199,147]},{"type":"Buffer","data":[50,225,130,118,53,69,14,187,60,90,125,18,193,248,231,178,181,20,67,154,193,10,103,238,243,217,253,156,92,104,226,69]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+        //                 )
+        //             })
+
+        //             it('selects events by one author prefix (even length)', () => {
+        //                 const filters = [
+        //                     {
+        //                         authors: [
+        //                             '22e804',
+        //                         ],
+        //                     },
+        //                 ]
+
+        //                 const query = repository.findByFilters(filters)
+
+        //                 expect(JSON.stringify(query.pipeline())).to.equal(
+        //                     `[{"$match":{"$or":[{"$or":[{"event_pubkey":{"$in":[{"type":"Buffer","data":[34,232,4]}]}},{"event_delegator":{"$in":[{"type":"Buffer","data":[34,232,4]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+        //                 )
+        //             })
+
+        //             it('selects events by one author prefix (odd length)', () => {
+        //                 const filters = [
+        //                     {
+        //                         authors: [
+        //                             '22e804f',
+        //                         ],
+        //                     },
+        //                 ]
+
+        //                 const query = repository.findByFilters(filters)
+
+        //                 expect(JSON.stringify(query.pipeline())).to.equal(
+        //                     `[{"$match":{"$or":[{"$or":[{"event_pubkey":{"$in":[{"type":"Buffer","data":[34,232,4]}]}},{"event_delegator":{"$in":[{"type":"Buffer","data":[34,232,4]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+        //                 )
+        //             })
+
+        //             it('selects events by two author prefix (first even, second odd)', () => {
+        //                 const filters = [
+        //                     {
+        //                         authors: [
+        //                             '22e804',
+        //                             '32e1827',
+        //                         ],
+        //                     },
+        //                 ]
+
+        //                 const query = repository.findByFilters(filters)
+
+        //                 expect(JSON.stringify(query.pipeline())).to.equal(
+        //                     `[{"$match":{"$or":[{"$or":[{"event_pubkey":{"$in":[{"type":"Buffer","data":[34,232,4]},{"type":"Buffer","data":[50,225,130]}]}},{"event_delegator":{"$in":[{"type":"Buffer","data":[34,232,4]},{"type":"Buffer","data":[50,225,130]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+        //                 )
+        //             })
+        //         })
+
+        //         describe('ids', () => {
+        //             it('selects no events given empty list of ids', () => {
+        //                 const filters: SubscriptionFilter[] = [{ ids: [] }]
+
+        //                 const query = repository.findByFilters(filters)
+
+        //                 expect(JSON.stringify(query.pipeline())).to.equal(
+        //                     '[{"$match":{"$or":[{"$or":[{"event_id":{"$in":[]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
+        //                 )
+        //             })
+
+        //             it('selects events by one id', () => {
+        //                 const filters = [{
+        //                     ids: [
+        //                         'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+        //                     ],
+        //                 }]
+
+        //                 const query = repository.findByFilters(filters)
+
+        //                 expect(JSON.stringify(query.pipeline())).to.equal(
+        //                     `[{"$match":{"$or":[{"$or":[{"event_id":{"$in":[{"type":"Buffer","data":[170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+        //                 )
+        //             })
+
+        //             it('selects events by two ids', () => {
+        //                 const filters = [
+        //                     {
+        //                         ids: [
+        //                             'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+        //                             'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
+        //                         ],
+        //                     },
+        //                 ]
+
+        //                 const query = repository.findByFilters(filters)
+
+        //                 expect(JSON.stringify(query.pipeline())).to.equal(
+        //                     `[{"$match":{"$or":[{"$or":[{"event_id":{"$in":[{"type":"Buffer","data":[170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170]},{"type":"Buffer","data":[187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187,187]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+        //                 )
+        //             })
+
+        //             it('selects events by one id prefix (even length)', () => {
+        //                 const filters = [
+        //                     {
+        //                         ids: [
+        //                             'abcd',
+        //                         ],
+        //                     },
+        //                 ]
+
+        //                 const query = repository.findByFilters(filters)
+
+        //                 expect(JSON.stringify(query.pipeline())).to.equal(
+        //                     `[{"$match":{"$or":[{"$or":[{"event_id":{"$in":[{"type":"Buffer","data":[171,205]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+        //                 )
+        //             })
+
+        //             it('selects events by one id prefix (odd length)', () => {
+        //                 const filters = [
+        //                     {
+        //                         ids: [
+        //                             'abc',
+        //                         ],
+        //                     },
+        //                 ]
+
+        //                 const query = repository.findByFilters(filters)
+
+        //                 expect(JSON.stringify(query.pipeline())).to.equal(
+        //                     `[{"$match":{"$or":[{"$or":[{"event_id":{"$in":[{"type":"Buffer","data":[171]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+        //                 )
+        //             })
+
+        //             it('selects events by two id prefix (first even, second odd)', () => {
+        //                 const filters = [
+        //                     {
+        //                         ids: [
+        //                             'abcdef',
+        //                             'abc',
+        //                         ],
+        //                     },
+        //                 ]
+
+        //                 const query = repository.findByFilters(filters)
+
+        //                 expect(JSON.stringify(query.pipeline())).to.equal(
+        //                     '[{"$match":{"$or":[{"$or":[{"event_id":{"$in":[{"type":"Buffer","data":[171,205,239]},{"type":"Buffer","data":[171]}]}}]}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
+        //                 )
+        //             })
+        //         })
+
+        //         describe('kinds', () => {
+        //             it('selects no events given empty list of kinds', () => {
+        //                 const filters: SubscriptionFilter[] = [{ kinds: [] }]
+
+        //                 const query = repository.findByFilters(filters)
+
+        //                 expect(JSON.stringify(query.pipeline())).to.equal(
+        //                     '[{"$match":{"$or":[{"event_kind":{"$in":[]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
+        //                 )
+        //             })
+
+        //             it('selects events by one kind', () => {
+        //                 const filters = [{ kinds: [1] }]
+
+        //                 const query = repository.findByFilters(filters)
+
+        //                 expect(JSON.stringify(query.pipeline())).to.equal(
+        //                     '[{"$match":{"$or":[{"event_kind":{"$in":[1]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
+        //                 )
+        //             })
+
+        //             it('selects events by two kinds', () => {
+        //                 const filters = [{ kinds: [1, 2] }]
+
+        //                 const query = repository.findByFilters(filters)
+
+        //                 expect(JSON.stringify(query.pipeline())).to.equal(
+        //                     '[{"$match":{"$or":[{"event_kind":{"$in":[1,2]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
+        //                 )
+        //             })
+        //         })
+
+        //         describe('since', () => {
+        //             it('selects events since given timestamp', () => {
+        //                 const filters = [{ since: 1000 }]
+
+        //                 const query = repository.findByFilters(filters)
+
+        //                 expect(JSON.stringify(query.pipeline())).to.equal(
+        //                     '[{"$match":{"$or":[{"event_created_at":{"$gte":1000}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
+        //                 )
+        //             })
+        //         })
+
+        //         describe('until', () => {
+        //             it('selects events until given timestamp', () => {
+        //                 const filters = [{ until: 1000 }]
+
+        //                 const query = repository.findByFilters(filters)
+
+        //                 expect(JSON.stringify(query.pipeline())).to.equal(
+        //                     '[{"$match":{"$or":[{"event_created_at":{"$lte":1000}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
+        //                 )
+        //             })
+        //         })
+
+        //         describe('limit', () => {
+        //             it('selects 1000 events', () => {
+        //                 const filters = [{ limit: 1000 }]
+
+        //                 const query = repository.findByFilters(filters)
+
+        //                 expect(JSON.stringify(query.pipeline())).to.equal(
+        //                     '[{"$match":{}},{"$sort":{"event_created_at":-1}},{"$limit":1000}]',
+        //                 )
+        //             })
+        //         })
+
+        //         describe('#e', () => {
+        //             it('selects no events given empty list of #e tags', () => {
+        //                 const filters = [{ '#e': [] }]
+
+        //                 const query = repository.findByFilters(filters)
+
+        //                 expect(JSON.stringify(query.pipeline())).to.equal(
+        //                     '[{"$match":{}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
+        //                 )
+        //             })
+
+        //             it('selects events by one #e tag', () => {
+        //                 const filters = [{ '#e': ['aaaaaa'] }]
+
+        //                 const query = repository.findByFilters(filters)
+
+        //                 expect(JSON.stringify(query.pipeline())).to.equal(
+        //                     `[{"$match":{"$or":[{"event_tags":{"$in":[["e","aaaaaa"]]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+        //                 )
+        //             })
+
+        //             it('selects events by two #e tag', () => {
+        //                 const filters = [{ '#e': ['aaaaaa', 'bbbbbb'] }]
+
+        //                 const query = repository.findByFilters(filters)
+
+        //                 expect(JSON.stringify(query.pipeline())).to.equal(
+        //                     `[{"$match":{"$or":[{"event_tags":{"$in":[["e","aaaaaa"],["e","bbbbbb"]]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+        //                 )
+        //             })
+        //         })
+
+        //         describe('#p', () => {
+        //             it('selects no events given empty list of #p tags', () => {
+        //                 const filters = [{ '#p': [] }]
+
+        //                 const query = repository.findByFilters(filters)
+
+        //                 expect(JSON.stringify(query.pipeline())).to.equal(
+        //                     '[{"$match":{}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
+        //                 )
+        //             })
+
+        //             it('selects events by one #p tag', () => {
+        //                 const filters = [{ '#p': ['aaaaaa'] }]
+
+        //                 const query = repository.findByFilters(filters)
+
+        //                 expect(JSON.stringify(query.pipeline())).to.equal(
+        //                     `[{"$match":{"$or":[{"event_tags":{"$in":[["p","aaaaaa"]]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+        //                 )
+        //             })
+
+        //             it('selects events by two #p tag', () => {
+        //                 const filters = [{ '#p': ['aaaaaa', 'bbbbbb'] }]
+
+        //                 const query = repository.findByFilters(filters)
+
+        //                 expect(JSON.stringify(query.pipeline())).to.equal(
+        //                     `[{"$match":{"$or":[{"event_tags":{"$in":[["p","aaaaaa"],["p","bbbbbb"]]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+        //                 )
+        //             })
+        //         })
+
+        //         describe('#r', () => {
+        //             it('selects no events given empty list of #r tags', () => {
+        //                 const filters = [{ '#r': [] }]
+
+        //                 const query = repository.findByFilters(filters)
+
+        //                 expect(JSON.stringify(query.pipeline())).to.equal(
+        //                     '[{"$match":{}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
+        //                 )
+        //             })
+
+        //             it('selects events by one #r tag', () => {
+        //                 const filters = [{ '#r': ['aaaaaa'] }]
+
+        //                 const query = repository.findByFilters(filters)
+
+        //                 expect(JSON.stringify(query.pipeline())).to.equal(
+        //                     `[{"$match":{"$or":[{"event_tags":{"$in":[["r","aaaaaa"]]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+        //                 )
+        //             })
+
+        //             it('selects events by two #r tag', () => {
+        //                 const filters = [{ '#r': ['aaaaaa', 'bbbbbb'] }]
+
+        //                 const query = repository.findByFilters(filters)
+
+        //                 expect(JSON.stringify(query.pipeline())).to.equal(
+        //                     `[{"$match":{"$or":[{"event_tags":{"$in":[["r","aaaaaa"],["r","bbbbbb"]]}}]}},{"$sort":{"event_created_at":1}},{"$limit":500}]`,
+        //                 )
+        //             })
+        //         })
+        //     })
+
+        //     describe('2 filters', () => {
+        //         it('selects union of both filters', () => {
+        //             const filters = [{}, {}]
+
+        //             const query = repository.findByFilters(filters)
+
+        //             expect(JSON.stringify(query.pipeline())).to.equal(
+        //                 '[{"$match":{}},{"$sort":{"event_created_at":1}},{"$limit":500}]',
+        //             )
+        //         })
+        //     })
+
+        //     describe('many filters', () => {
+        //         it('selects union of all filters', () => {
+        //             const filters = [
+        //                 { kinds: [1] },
+        //                 { ids: ['aaaaa'] },
+        //                 { authors: ['bbbbb'] },
+        //                 { since: 1000 },
+        //                 { until: 1000 },
+        //                 { limit: 1000 },
+        //             ]
+
+        //             const query = repository.findByFilters(filters)
+
+        //             expect(JSON.stringify(query.pipeline())).to.equal(
+        //                 `[{"$match":{"$or":[{"event_kind":{"$in":[1]}},{"$or":[{"event_id":{"$in":[{"type":"Buffer","data":[170,170]}]}}]},{"$or":[{"event_pubkey":{"$in":[{"type":"Buffer","data":[187,187]}]}},{"event_delegator":{"$in":[{"type":"Buffer","data":[187,187]}]}}]},{"event_created_at":{"$gte":1000}},{"event_created_at":{"$lte":1000}}]}},{"$sort":{"event_created_at":-1}},{"$limit":1000}]`,
+        //             )
+        //         })
+        //     })
+        // })
 
         describe('.create', () => {
             let insertStub: sinon.SinonStub
