@@ -190,10 +190,14 @@ export class EventRepository implements IEventRepository {
             ),
         })(event)
 
+        const extraFilter: any = {}
+        if (Number(row.event_kind) === 41) {
+            extraFilter['event_id'] = row.event_id
+        }
+
         const query = masterEventsModel
             .updateOne(
                 {
-                    event_id: row.event_id,
                     event_pubkey: row.event_pubkey,
                     event_kind: row.event_kind,
                     event_deduplication: row.event_deduplication,
@@ -205,6 +209,7 @@ export class EventRepository implements IEventRepository {
                         { event_kind: { $gte: 30000, $lt: 40000 } },
                     ],
                     event_created_at: { $lt: row.event_created_at },
+                    ...extraFilter,
                 },
                 {
                     $set: row,
