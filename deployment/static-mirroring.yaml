@@ -21,8 +21,8 @@ spec:
         - name: ghcr
       containers:
         - name: relay
-          image: ghcr.io/guakamoli/denostr:v0.0.1-static-mirroring
-          imagePullPolicy: IfNotPresent
+          image: ghcr.io/guakamoli/denostr:v0.0.6-static-mirroring
+          imagePullPolicy: Always
           resources:
             requests:
               cpu: "100m"

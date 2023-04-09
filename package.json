@@ -1,7 +1,7 @@
 {
     "name": "denostr",
-    "version": "0.0.1",
-    "description": "💪🏻 Deno-based, cloud-native nostr implementation supported by ByteTrade and Revo, forked from nostream.",
+    "version": "0.0.6",
+    "description": "💪🏻 Deno-based, cloud-native Nostr relay forked from nostream. Sponsored by ByteTrade and Revo.",
     "supportedNips": [
         1,
         2,
@@ -26,8 +26,10 @@
         "url": "git+git@github.com:Guakamoli/denostr.git"
     },
     "keywords": [
+        "deno",
         "nostr",
         "relay",
+        "nostr-relay",
         "typescript"
     ],
     "author": "Guakamoli <denostr@guakamoli.com>",
