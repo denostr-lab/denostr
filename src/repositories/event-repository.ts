@@ -5,7 +5,7 @@ import { EventId } from '../@types/base.ts'
 import { Event } from '../@types/event.ts'
 import { IEventRepository } from '../@types/repositories.ts'
 import { SubscriptionFilter } from '../@types/subscription.ts'
-import { ContextMetadataKey, EventDeduplicationMetadataKey, EventDelegatorMetadataKey, EventExpirationTimeMetadataKey } from '../constants/base.ts'
+import { ContextMetadataKey, EventDeduplicationMetadataKey, EventDelegatorMetadataKey, EventExpirationTimeMetadataKey, EventTags } from '../constants/base.ts'
 import { masterEventsModel, readReplicaEventsModel } from '../database/models/Events.ts'
 import { IEvent } from '../database/types/index.ts'
 import { createLogger } from '../factories/logger-factory.ts'
@@ -191,8 +191,10 @@ export class EventRepository implements IEventRepository {
         })(event)
 
         const extraFilter: any = {}
-        if (Number(row.event_kind) === 41) {
-            extraFilter['event_id'] = row.event_id
+        if (Number(row.event_kind) === 41 && Array.isArray(row.event_tags) && row.event_tags.length > 0) {
+            const tags = [...new Set(row.event_tags.reduce((p: string[][], v: string[]) => [...p, ...v], []))]
+            extraFilter['event_tags.0.0'] = EventTags.Event;
+            extraFilter['event_tags'] = { $elemMatch: { $elemMatch: { $in: tags.filter(tag => tag !== EventTags.Event) } } }
         }
 
         const query = masterEventsModel
