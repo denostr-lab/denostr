@@ -73,6 +73,12 @@ Todo
 
 ### Quick Start (Standalone)
 
+Clone repository and enter directory:
+
+```sh
+git clone git@github.com:Guakamoli/denostr.git && cd denostr
+```
+
 Create `.env` file inside denostr project folder
 
 Set the following environment variables:
@@ -80,12 +86,6 @@ Set the following environment variables:
 ```ini
 WORKER_TYPE=worker
 MONGO_URI=mongodb://user:pass@host:port/db?replicaSet=rs0&authSource=admin
-```
-
-Clone repository and enter directory:
-
-```sh
-git clone git@github.com:Guakamoli/denostr.git && cd denostr
 ```
 
 Create `.nostr` folder inside **denostr project folder** and copy over the settings file:
