@@ -259,7 +259,8 @@ export const isReplaceableEvent = (event: Event): boolean => {
         event.kind === EventKinds.CONTACT_LIST ||
         event.kind === EventKinds.CHANNEL_METADATA ||
         (event.kind >= EventKinds.REPLACEABLE_FIRST &&
-            event.kind <= EventKinds.REPLACEABLE_LAST)
+            event.kind <= EventKinds.REPLACEABLE_LAST) ||
+        event.kind === EventKinds.ENCRYPTED_CHANNEL_METADATA
 }
 
 export const isEphemeralEvent = (event: Event): boolean => {
@@ -305,4 +306,9 @@ export const getEventProofOfWork = (eventId: EventId): number => {
 
 export const getPubkeyProofOfWork = (pubkey: Pubkey): number => {
     return getLeadingZeroBits(Buffer.from(pubkey, 'hex'))
+}
+
+export const isChannelMetadata = (kind: number) => {
+    return kind === EventKinds.CHANNEL_METADATA ||
+        kind === EventKinds.ENCRYPTED_CHANNEL_METADATA
 }

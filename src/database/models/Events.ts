@@ -2,6 +2,7 @@ import mongoose from 'npm:mongoose'
 
 import { Tag } from '../../@types/base.ts'
 import { getMasterDbClient, getReadReplicaDbClient } from '../client.ts'
+import { Buffer } from 'Buffer'
 
 export interface EventInput {
     event_id: Buffer
@@ -24,32 +25,37 @@ export interface EventDocument extends EventInput, mongoose.Document {
 
 const EventSchema = new mongoose.Schema({
     event_id: {
-        type: mongoose.Schema.Types.Buffer,
+        type: Buffer,
         require: true,
     },
     event_pubkey: {
-        type: mongoose.Schema.Types.Buffer,
+        type: Buffer,
+        require: true,
     },
     event_kind: {
         type: Number,
+        require: true,
     },
     event_created_at: {
         type: Number,
-        default: Date.now(),
+        require: true,
     },
     event_content: {
         type: String,
+        require: true,
     },
     event_tags: {
         type: [[String]],
+        require: true,
     },
     event_signature: {
-        type: mongoose.Schema.Types.Buffer,
+        type: Buffer,
+        require: true,
     },
     event_delegator: {
-        type: mongoose.Schema.Types.Buffer,
+        type: Buffer,
     },
-    event_deduplication: [String],
+    event_deduplication: [mongoose.Schema.Types.Mixed],
     first_seen: { type: Date },
     deleted_at: { type: Date },
 })
