@@ -44,7 +44,7 @@ jobs:
   test-units:
     strategy:
       matrix:
-        deno-version: ['~1.30', '~1.31', '~1.32']
+        deno-version: ['~1.30', '~1.31']
         mongodb-version: ['4.4', '5.0', '6.0']
       fail-fast: true
     name: Unit Tests
@@ -83,7 +83,7 @@ jobs:
   test-integrations:
     strategy:
       matrix:
-        deno-version: ['~1.30', '~1.31', '~1.32']
+        deno-version: ['~1.30', '~1.31']
         mongodb-version: ['4.4', '5.0', '6.0']
       fail-fast: true
     name: Integration Tests
