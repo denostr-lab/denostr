@@ -58,7 +58,7 @@ metadata:
 spec:
   containers:
   - name: denostr
-    image: ghcr.io/guakamoli/denostr:v0.0.1-worker
+    image: ghcr.io/username/imagename:latest
     imagePullPolicy: Always
   imagePullSecrets:
   - name: ghcr # use the credential
