@@ -35,7 +35,7 @@ services:
     ports:
       - '27017:27017'
     volumes:
-    - ${PWD}/.nostr/data/db0:/data/db
+    - db0:/data/db
     entrypoint: ["mongod", "--bind_ip_all", "--replSet", "rs0"]
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongo --host 127.0.0.1 --port 27017 --quiet 1
@@ -52,7 +52,7 @@ services:
     ports:
       - '27018:27017'
     volumes:
-    - ${PWD}/.nostr/data/db1:/data/db
+    - db1:/data/db
     entrypoint: ["mongod", "--bind_ip_all", "--replSet", "rs0"]
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongo --host 127.0.0.1 --port 27017 --quiet 1
@@ -83,3 +83,7 @@ networks:
       driver: default
       config:
         - subnet: 10.10.10.0/24
+
+volumes:
+  db0:
+  db1:

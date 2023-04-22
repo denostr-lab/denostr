@@ -53,6 +53,23 @@ services:
     depends_on:
       denostr-db:
         condition: service_healthy
+  denostr-db-express:
+    image: mongo-express:latest
+    container_name: denostr-db-express
+    environment:
+      ME_CONFIG_OPTIONS_EDITORTHEME: ambiance
+      ME_CONFIG_MONGODB_SERVER: denostr-db
+      ME_CONFIG_MONGODB_PORT: 27017
+    restart: always
+    ports:
+      - '8081:8081'
+    networks:
+      default:
+    depends_on:
+      denostr-db:
+        condition: service_healthy
+      denostr-db-rs-init:
+        condition: service_completed_successfully
 
 networks:
   default:

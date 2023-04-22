@@ -73,6 +73,15 @@ EventSchema.index({ 'event_kind': 1 }, {
 EventSchema.index({ 'event_signature': 1 }, {
     background: true,
 })
+EventSchema.index({ 'event_tags.0.0': 1 }, {
+    background: true,
+})
+EventSchema.index({ 'event_tags.0.1': 1 }, {
+    background: true,
+})
+EventSchema.index({ 'remote_address': 1 }, {
+    background: true,
+})
 
 export const EventsModel = (dbClient: mongoose.Connection) =>
     dbClient.model<EventDocument>(
