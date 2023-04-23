@@ -11,6 +11,7 @@ import { IEvent } from '../database/types/index.ts'
 import { createLogger } from '../factories/logger-factory.ts'
 import { isGenericTagQuery } from '../utils/filter.ts'
 import { toBuffer } from '../utils/transform.ts'
+import { isChannelMetadata } from '../utils/event.ts'
 
 const toNumber = (input: number) => Number(input)
 
@@ -124,8 +125,8 @@ export class EventRepository implements IEventRepository {
         const row = applySpec({
             event_id: pipe(prop('id'), toBuffer),
             event_pubkey: pipe(prop('pubkey'), toBuffer),
-            event_created_at: prop('created_at'),
-            event_kind: prop('kind'),
+            event_created_at: pipe(prop('created_at'), toNumber),
+            event_kind: pipe(prop('kind'), toNumber),
             event_tags: pipe(prop('tags'), toJSON),
             event_content: prop('content'),
             event_signature: pipe(prop('sig'), toBuffer),
@@ -160,7 +161,7 @@ export class EventRepository implements IEventRepository {
     public async upsert(event: Event): Promise<number> {
         debug('upserting event: %o', event)
 
-        const row = applySpec<IEvent>({
+        const row: IEvent = applySpec({
             event_id: pipe(prop('id'), toBuffer),
             event_pubkey: pipe(prop('pubkey'), toBuffer),
             event_created_at: prop('created_at'),
@@ -191,10 +192,12 @@ export class EventRepository implements IEventRepository {
         })(event)
 
         const extraFilter: any = {}
-        if (Number(row.event_kind) === 41 && Array.isArray(row.event_tags) && row.event_tags.length > 0) {
-            const tags = [...new Set(row.event_tags.reduce((p: string[][], v: string[]) => [...p, ...v], []))]
-            extraFilter['event_tags.0.0'] = EventTags.Event;
-            extraFilter['event_tags'] = { $elemMatch: { $elemMatch: { $in: tags.filter(tag => tag !== EventTags.Event) } } }
+        if (isChannelMetadata(row.event_kind) && Array.isArray(row.event_tags) && row.event_tags.length > 0) {
+            if (Array.isArray(row.event_tags[0]) && row.event_tags[0].length >= 2) {
+                const [, parentId] = row.event_tags[0];
+                extraFilter['event_tags.0.0'] = EventTags.Event;
+                extraFilter['event_tags.0.1'] = parentId;
+            }
         }
 
         const query = masterEventsModel
@@ -207,6 +210,7 @@ export class EventRepository implements IEventRepository {
                         { event_kind: { $eq: 0 } },
                         { event_kind: { $eq: 3 } },
                         { event_kind: { $eq: 41 } },
+                        { event_kind: { $eq: 141 } },
                         { event_kind: { $gte: 10000, $lt: 20000 } },
                         { event_kind: { $gte: 30000, $lt: 40000 } },
                     ],

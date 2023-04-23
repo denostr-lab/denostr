@@ -11,7 +11,7 @@ export interface IEvent extends IRecord {
     event_tags: Tag[][]
     event_signature: Buffer
     event_delegator?: Buffer | null
-    event_deduplication?: string[] | null
+    event_deduplication?: (string | number)[] | null
     first_seen: Date
     deleted_at?: Date
     expires_at?: number
