@@ -80,7 +80,7 @@ Todo
 Clone repository and enter directory:
 
 ```sh
-git clone git@github.com:Guakamoli/denostr.git && cd denostr
+git clone https://github.com/Guakamoli/denostr.git --depth 1 && cd denostr
 ```
 
 Create `.env` file inside denostr project folder
