@@ -89,30 +89,38 @@ limits:
         - 9007199254740991
       maxLength: 98304
     rateLimits:
-    - description: 10 events/min for event kinds 0, 3, 40 and 41
+    - description: 30 events/min for event kinds 0, 3, 40 and 41
       kinds:
       - 0
       - 3
       - 40
       - 41
       period: 60000
-      rate: 10
-    - description: 16 events/min for event kinds 1, 2, 4 and 42
+      rate: 30
+    - description: 48 events/min for event kinds 1, 2, 4, 42, 104 and 142
       kinds:
       - 1
       - 2
       - 4
       - 42
       period: 60000
-      rate: 16
-    - description: 30 events/min for event kind ranges 5-7 and 43-49
+      rate: 48
+    - description: 360 events/min for encrypted channel event kinds 104 and 140-142
+      kinds:
+      - 104
+      - 140
+      - 141
+      - 142
+      period: 60000
+      rate: 360
+    - description: 60 events/min for event kind ranges 5-7 and 43-49
       kinds:
       - - 5
         - 7
       - - 43
         - 49
       period: 60000
-      rate: 30
+      rate: 60
     - description: 24 events/min for replaceable events and parameterized replaceable
         events
       kinds:
@@ -122,15 +130,15 @@ limits:
         - 39999
       period: 60000
       rate: 24
-    - description: 60 events/min for ephemeral events
+    - description: 120 events/min for ephemeral events
       kinds:
       - - 20000
         - 29999
       period: 60000
-      rate: 60
-    - description: 720 events/hour for all events
+      rate: 120
+    - description: 2880 events/hour for all events
       period: 3600000
-      rate: 720
+      rate: 2880
     whitelists:
       pubkeys: []
       ipAddresses:
@@ -143,9 +151,9 @@ limits:
       maxFilters: 10
   message:
     rateLimits:
-    - description: 240 raw messages/min
+    - description: 480 raw messages/min
       period: 60000
-      rate: 240
+      rate: 480
     ipWhitelist:
     - "::1"
     - "10.10.10.1"
