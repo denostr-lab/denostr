@@ -1,7 +1,7 @@
 # [Denostr](https://github.com/Guakamoli/denostr)
 
 <p align="center">
-  <img alt="nostream logo" height="256px" width="256px" src="https://user-images.githubusercontent.com/8678079/233816217-27504e7e-b429-4388-ac69-592122fa922b.png" />
+  <img alt="denostr logo" height="256px" width="256px" src="https://user-images.githubusercontent.com/8678079/233816217-27504e7e-b429-4388-ac69-592122fa922b.png" />
 </p>
 
 <p align="center">
