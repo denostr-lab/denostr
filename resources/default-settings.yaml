@@ -97,22 +97,22 @@ limits:
       - 41
       period: 60000
       rate: 30
-    - description: 48 events/min for event kinds 1, 2, 4, 42, 104 and 142
+    - description: 144 events/min for event kinds 1, 2, 4 and 42
       kinds:
       - 1
       - 2
       - 4
       - 42
       period: 60000
-      rate: 48
-    - description: 360 events/min for encrypted channel event kinds 104 and 140-142
+      rate: 144
+    - description: 480 events/min for encrypted channel event kinds 104 and 140-142
       kinds:
       - 104
       - 140
       - 141
       - 142
       period: 60000
-      rate: 360
+      rate: 480
     - description: 60 events/min for event kind ranges 5-7 and 43-49
       kinds:
       - - 5

@@ -23,3 +23,4 @@ docs
 .vscode
 .git-hooks
 commitlint.config.js
+.bump
