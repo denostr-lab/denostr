@@ -47,7 +47,7 @@ export class EventRepository implements IEventRepository {
 
         filters.forEach((currentFilter: SubscriptionFilter) => {
             const subFilter: any = {}
-            const subFilterOr: any = [];
+            const subFilterOr: any = []
             for (const [filterName, filterValue] of Object.entries(currentFilter)) {
                 const isGenericTag = isGenericTagQuery(filterName)
                 if (isGenericTag) {
@@ -91,7 +91,7 @@ export class EventRepository implements IEventRepository {
                     const filterValue = currentFilter[fieldName]
                     if (filterValue) {
                         tableFields.forEach((field: any) => {
-                            subFilterOr.push({ [field]: { $in: filterValue.map(toBuffer) }})
+                            subFilterOr.push({ [field]: { $in: filterValue.map(toBuffer) } })
                         })
                     }
                 },
@@ -194,9 +194,9 @@ export class EventRepository implements IEventRepository {
         const extraFilter: any = {}
         if (isChannelMetadata(row.event_kind) && Array.isArray(row.event_tags) && row.event_tags.length > 0) {
             if (Array.isArray(row.event_tags[0]) && row.event_tags[0].length >= 2) {
-                const [, parentId] = row.event_tags[0];
-                extraFilter['event_tags.0.0'] = EventTags.Event;
-                extraFilter['event_tags.0.1'] = parentId;
+                const [, parentId] = row.event_tags[0]
+                extraFilter['event_tags.0.0'] = EventTags.Event
+                extraFilter['event_tags.0.1'] = parentId
             }
         }
 

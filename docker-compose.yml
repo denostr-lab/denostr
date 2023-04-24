@@ -35,7 +35,7 @@ services:
     ports:
       - '27017:27017'
     volumes:
-    - db0:/data/db
+    - ${PWD}/.nostr/data:/data/db
     entrypoint: ["mongod", "--bind_ip_all", "--replSet", "rs0"]
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongo --host 127.0.0.1 --port 27017 --quiet 1
@@ -67,7 +67,7 @@ services:
       MONGO_URI: mongodb://denostr-db0:27017,denostr-db1:27017
     command: bash /data/mongo-rs-init.sh
     volumes:
-    - ${PWD}/mongo-rs-init.sh:/data/mongo-rs-init.sh
+    - ${PWD}/.docker/mongo-rs-init.sh:/data/mongo-rs-init.sh
     networks:
       default:
     depends_on:
@@ -85,5 +85,4 @@ networks:
         - subnet: 10.10.10.0/24
 
 volumes:
-  db0:
   db1:

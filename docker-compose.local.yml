@@ -46,7 +46,7 @@ services:
       MONGO_URI: mongodb://denostr-db:27017/
     command: bash /data/mongo-rs-init.sh
     volumes:
-    - ${PWD}/mongo-rs-init.local.sh:/data/mongo-rs-init.sh
+    - ${PWD}/.docker/mongo-rs-init.local.sh:/data/mongo-rs-init.sh
     networks:
       default:
     depends_on:

@@ -2,8 +2,8 @@ import { WebSocketServerAdapter } from '../adapters/web-socket-server-adapter.ts
 import { WebSocketServerAdapterEvent } from '../constants/adapter.ts'
 import { createLogger } from '../factories/logger-factory.ts'
 import { ServiceClass } from './index.ts'
-import { toNostrEvent } from '../utils/event.ts';
-import { IEvent } from '../database/types/IEvent.ts';
+import { toNostrEvent } from '../utils/event.ts'
+import { IEvent } from '../database/types/IEvent.ts'
 
 const debug = createLogger('core-service:web-socket-server-service')
 
