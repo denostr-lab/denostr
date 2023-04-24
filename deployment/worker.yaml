@@ -52,7 +52,7 @@ apiVersion: v1
 data:
   settings.yaml: |
     info:
-      relay_url: ws://your-domain.com
+      relay_url: wss://your-domain.com
       name: "nostr relay by denostr"
       description: Deno-based, cloud-native nostr implementation supported by ByteTrade and Revo, forked from nostream.
       pubkey: replace-with-your-pubkey-in-hex
@@ -74,13 +74,13 @@ data:
     paymentsProcessors:
       zebedee:
         baseURL: https://api.zebedee.io/
-        callbackBaseURL: https://denostr.your-domain.com/callbacks/zebedee
+        callbackBaseURL: https://nostream.your-domain.com/callbacks/zebedee
         ipWhitelist:
           - "3.225.112.64"
           - "::ffff:3.225.112.64"
       lnbits:
         baseURL: https://lnbits.your-domain.com/
-        callbackBaseURL: https://denostr.your-domain.com/callbacks/lnbits
+        callbackBaseURL: https://nostream.your-domain.com/callbacks/lnbits
     network:
       maxPayloadSize: 524288
       # Comment the next line if using CloudFlare proxy
@@ -88,7 +88,7 @@ data:
       # Uncomment the next line if using CloudFlare proxy
       # remoteIpHeader: cf-connecting-ip
     workers:
-      count: 1
+      count: 0
     mirroring:
       static: []
     limits:
@@ -150,22 +150,30 @@ data:
           - 41
           period: 60000
           rate: 30
-        - description: 120 events/min for event kinds 1, 2, 4 and 42
+        - description: 144 events/min for event kinds 1, 2, 4 and 42
           kinds:
           - 1
           - 2
           - 4
           - 42
           period: 60000
-          rate: 120
-        - description: 30 events/min for event kind ranges 5-7 and 43-49
+          rate: 144
+        - description: 480 events/min for encrypted channel event kinds 104 and 140-142
+          kinds:
+          - 104
+          - 140
+          - 141
+          - 142
+          period: 60000
+          rate: 480
+        - description: 60 events/min for event kind ranges 5-7 and 43-49
           kinds:
           - - 5
             - 7
           - - 43
             - 49
           period: 60000
-          rate: 30
+          rate: 60
         - description: 24 events/min for replaceable events and parameterized replaceable
             events
           kinds:
@@ -175,15 +183,15 @@ data:
             - 39999
           period: 60000
           rate: 24
-        - description: 180 events/min for ephemeral events
+        - description: 120 events/min for ephemeral events
           kinds:
           - - 20000
             - 29999
           period: 60000
-          rate: 180
-        - description: 1200 events/hour for all events
+          rate: 120
+        - description: 2880 events/hour for all events
           period: 3600000
-          rate: 1200
+          rate: 2880
         whitelists:
           pubkeys: []
           ipAddresses:
@@ -196,9 +204,9 @@ data:
           maxFilters: 10
       message:
         rateLimits:
-        - description: 240 raw messages/min
+        - description: 480 raw messages/min
           period: 60000
-          rate: 240
+          rate: 480
         ipWhitelist:
         - "::1"
         - "10.10.10.1"

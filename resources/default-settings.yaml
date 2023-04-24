@@ -52,9 +52,9 @@ limits:
   connection:
     rateLimits:
     - period: 1000
-      rate: 12
+      rate: 24
     - period: 60000
-      rate: 48
+      rate: 72
     ipWhitelist:
     - "::1"
     - "10.10.10.1"
