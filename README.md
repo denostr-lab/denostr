@@ -56,6 +56,7 @@ NIPs with a relay-specific implementation are listed here.
 - [x] NIP-26: Delegated Event Signing
 - [x] NIP-28: Public Chat
 - [x] NIP-33: Parameterized Replaceable Events
+- [x] NIP-38: [Encrypted Group Chat with Megolm group ratchet (Draft)](https://oi5l5umbjx.feishu.cn/docx/TW7Ndb6Imoj3n7x08MTcleqanad)
 - [x] NIP-40: Expiration Timestamp
 
 ## Architecture
@@ -64,7 +65,7 @@ Todo
 
 ## Requirements
 
-- Deno v1.30.x or later
+- Deno v1.30.x or v1.31.x
 - Typescript
 - MongoDB 4.4, 5.0, 6.0
 - Redis (Optional)
