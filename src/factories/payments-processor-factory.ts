@@ -57,7 +57,7 @@ const createZebedeePaymentsProcessor = (
     ], settings) as string | undefined
     if (
         typeof callbackBaseURL === 'undefined' ||
-        callbackBaseURL.indexOf('nostream.your-domain.com') >= 0
+        callbackBaseURL.indexOf('denostr.your-domain.com') >= 0
     ) {
         const error = new Error(
             'Setting paymentsProcessor.zebedee.callbackBaseURL is not configured.',
@@ -98,7 +98,7 @@ const createLNbitsPaymentProcessor = (
     ], settings) as string | undefined
     if (
         typeof callbackBaseURL === 'undefined' ||
-        callbackBaseURL.indexOf('nostream.your-domain.com') >= 0
+        callbackBaseURL.indexOf('denostr.your-domain.com') >= 0
     ) {
         const error = new Error(
             'Setting paymentsProcessor.lnbits.callbackBaseURL is not configured.',

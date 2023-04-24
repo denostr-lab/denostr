@@ -74,13 +74,13 @@ data:
     paymentsProcessors:
       zebedee:
         baseURL: https://api.zebedee.io/
-        callbackBaseURL: https://nostream.your-domain.com/callbacks/zebedee
+        callbackBaseURL: https://denostr.your-domain.com/callbacks/zebedee
         ipWhitelist:
           - "3.225.112.64"
           - "::ffff:3.225.112.64"
       lnbits:
         baseURL: https://lnbits.your-domain.com/
-        callbackBaseURL: https://nostream.your-domain.com/callbacks/lnbits
+        callbackBaseURL: https://denostr.your-domain.com/callbacks/lnbits
     network:
       maxPayloadSize: 524288
       # Comment the next line if using CloudFlare proxy

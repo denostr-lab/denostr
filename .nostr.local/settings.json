@@ -38,7 +38,7 @@
     "paymentProcessors": {
         "zebedee": {
             "baseURL": "https://api.zebedee.io/",
-            "callbackBaseURL": "https://nostream.localtest.me/callbacks/zebedee"
+            "callbackBaseURL": "https://denostr.localtest.me/callbacks/zebedee"
         }
     },
     "workers": {

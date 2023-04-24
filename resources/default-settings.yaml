@@ -21,13 +21,13 @@ payments:
 paymentsProcessors:
   zebedee:
     baseURL: https://api.zebedee.io/
-    callbackBaseURL: https://nostream.your-domain.com/callbacks/zebedee
+    callbackBaseURL: https://denostr.your-domain.com/callbacks/zebedee
     ipWhitelist:
       - "3.225.112.64"
       - "::ffff:3.225.112.64"
   lnbits:
     baseURL: https://lnbits.your-domain.com/
-    callbackBaseURL: https://nostream.your-domain.com/callbacks/lnbits
+    callbackBaseURL: https://denostr.your-domain.com/callbacks/lnbits
 network:
   maxPayloadSize: 524288
   # Comment the next line if using CloudFlare proxy
@@ -105,14 +105,14 @@ limits:
       - 42
       period: 60000
       rate: 144
-    - description: 480 events/min for encrypted channel event kinds 104 and 140-142
+    - description: 1200 events/min for encrypted channel event kinds 104 and 140-142
       kinds:
       - 104
       - 140
       - 141
       - 142
       period: 60000
-      rate: 480
+      rate: 1200
     - description: 60 events/min for event kind ranges 5-7 and 43-49
       kinds:
       - - 5
@@ -136,9 +136,9 @@ limits:
         - 29999
       period: 60000
       rate: 120
-    - description: 2880 events/hour for all events
+    - description: 4800 events/hour for all events
       period: 3600000
-      rate: 2880
+      rate: 4800
     whitelists:
       pubkeys: []
       ipAddresses:
@@ -147,13 +147,13 @@ limits:
       - "::ffff:10.10.10.1"
   client:
     subscription:
-      maxSubscriptions: 10
+      maxSubscriptions: 20
       maxFilters: 10
   message:
     rateLimits:
-    - description: 480 raw messages/min
+    - description: 720 raw messages/min
       period: 60000
-      rate: 480
+      rate: 720
     ipWhitelist:
     - "::1"
     - "10.10.10.1"
