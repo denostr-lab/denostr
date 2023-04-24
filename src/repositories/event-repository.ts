@@ -33,7 +33,7 @@ export class EventRepository implements IEventRepository {
         const $or: any[] = []
         const $sort = { event_created_at: 1 }
         const limit = {
-            $limit: 500,
+            $limit: 1000,
         }
         const pipelines: any[] = [
             {
@@ -78,8 +78,12 @@ export class EventRepository implements IEventRepository {
                             subFilter['event_created_at'] = { $lte: filterValue }
                         }
 
-                        if (filterName === 'limit' && typeof filterValue === 'number') {
-                            limit.$limit = filterValue
+                        if (filterName === 'limit' && typeof filterValue === 'number' && filterValue > 0) {
+                            if (filterValue >= 5000) {
+                                limit.$limit = 5000
+                            } else {
+                                limit.$limit = filterValue
+                            }
                             $sort.event_created_at = -1
                         }
                     }
