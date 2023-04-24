@@ -21,7 +21,7 @@ spec:
         - name: ghcr
       containers:
         - name: relay
-          image: ghcr.io/guakamoli/denostr:v0.0.10-static-mirroring
+          image: ghcr.io/guakamoli/denostr:v0.0.11-static-mirroring
           imagePullPolicy: Always
           resources:
             requests:
@@ -200,7 +200,7 @@ data:
           - "::ffff:10.10.10.1"
       client:
         subscription:
-          maxSubscriptions: 10
+          maxSubscriptions: 20
           maxFilters: 10
       message:
         rateLimits:
