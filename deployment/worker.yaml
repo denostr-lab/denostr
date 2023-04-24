@@ -21,7 +21,7 @@ spec:
         - name: ghcr
       containers:
         - name: relay
-          image: ghcr.io/guakamoli/denostr:v0.0.9-worker
+          image: ghcr.io/guakamoli/denostr:v0.0.10-worker
           imagePullPolicy: Always
           resources:
             requests:
