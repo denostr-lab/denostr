@@ -97,8 +97,7 @@ startTest(import.meta.url, () => {
             const ws = this.parameters.clients[name] as WebSocketWrapper
             const subscription = this.parameters
                 .subscriptions[name][this.parameters.subscriptions[name].length - 1]
-            const event = this.parameters.events[name][this.parameters.events[name].length - 1]
-            const receivedEvent = await waitForNextEvent(ws, subscription.name, event.content)
+            const receivedEvent = await waitForNextEvent(ws, subscription.name)
 
             expect(receivedEvent.kind).to.equal(20000)
             expect(receivedEvent.pubkey).to.equal(

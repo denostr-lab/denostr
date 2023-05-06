@@ -32,7 +32,6 @@ export enum EventKinds {
     PARAMETERIZED_REPLACEABLE_FIRST = 30000,
     PARAMETERIZED_REPLACEABLE_LAST = 39999,
     USER_APPLICATION_FIRST = 40000,
-    USER_APPLICATION_LAST = Number.MAX_SAFE_INTEGER,
 }
 
 export enum EventTags {
@@ -42,9 +41,11 @@ export enum EventTags {
     Delegation = 'delegation',
     Deduplication = 'd',
     Expiration = 'expiration',
+    Invoice = 'bolt11',
 }
 
 export enum PaymentsProcessors {
+    LNURL = 'lnurl',
     ZEBEDEE = 'zebedee',
     LNBITS = 'lnbits',
 }

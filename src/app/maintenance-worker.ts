@@ -1,4 +1,4 @@
-import { path } from 'ramda'
+import { mergeDeepLeft, path, pipe } from 'ramda'
 
 import { IRunnable } from '../@types/base.ts'
 import { InvoiceStatus } from '../@types/invoice.ts'
@@ -43,26 +43,31 @@ export class MaintenanceWorker implements IRunnable {
         for (const invoice of invoices) {
             debug('invoice %s: %o', invoice.id, invoice)
             try {
-                debug('getting invoice %s from payment processor', invoice.id)
-                const updatedInvoice = await this.paymentsService
-                    .getInvoiceFromPaymentsProcessor(invoice.id)
+                debug('getting invoice %s from payment processor: %o', invoice.id, invoice)
+                const updatedInvoice = await this.paymentsService.getInvoiceFromPaymentsProcessor(invoice)
                 await delay()
-                debug('updating invoice %s: %o', invoice.id, invoice)
-                await this.paymentsService.updateInvoice(updatedInvoice)
+                debug('updating invoice status %s: %o', updatedInvoice.id, updatedInvoice)
+                await this.paymentsService.updateInvoiceStatus(updatedInvoice)
 
                 if (
                     invoice.status !== updatedInvoice.status &&
                     updatedInvoice.status == InvoiceStatus.COMPLETED &&
-                    invoice.confirmedAt
+                    updatedInvoice.confirmedAt
                 ) {
                     debug(
                         'confirming invoice %s & notifying %s',
                         invoice.id,
                         invoice.pubkey,
                     )
+
+                    const update = pipe(
+                        mergeDeepLeft(updatedInvoice),
+                        mergeDeepLeft({ amountPaid: invoice.amountRequested }),
+                    )(invoice)
+
                     await Promise.all([
-                        this.paymentsService.confirmInvoice(invoice),
-                        this.paymentsService.sendInvoiceUpdateNotification(invoice),
+                        this.paymentsService.confirmInvoice(update),
+                        this.paymentsService.sendInvoiceUpdateNotification(update),
                     ])
 
                     await delay()

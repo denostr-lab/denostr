@@ -74,20 +74,20 @@ limits:
       maxPositiveDelta: 900
       maxNegativeDelta: 0
     content:
-    - description: 64 KB for event kind ranges 0-10 and 40-49
+    - description: 100 KB for event kind ranges 0-10 and 40-49
       kinds:
       - - 0
         - 10
       - - 40
         - 49
-      maxLength: 65536
-    - description: 96 KB for event kind ranges 11-39 and 50-max
+      maxLength: 102400
+    - description: 100 KB for event kind ranges 11-39 and 50-max
       kinds:
       - - 11
         - 39
       - - 50
         - 9007199254740991
-      maxLength: 98304
+      maxLength: 102400
     rateLimits:
     - description: 30 events/min for event kinds 0, 3, 40 and 41
       kinds:
@@ -149,6 +149,10 @@ limits:
     subscription:
       maxSubscriptions: 20
       maxFilters: 10
+      maxFilterValues: 2500
+      maxSubscriptionIdLength: 256
+      maxLimit: 5000
+      minPrefixLength: 4
   message:
     rateLimits:
     - description: 720 raw messages/min

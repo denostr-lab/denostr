@@ -1,5 +1,5 @@
 import { IController, Request, Response, RouterContext, Status } from '../../@types/controllers.ts'
-import { InvoiceStatus } from '../../@types/invoice.ts'
+import { Invoice, InvoiceStatus } from '../../@types/invoice.ts'
 import { IInvoiceRepository } from '../../@types/repositories.ts'
 import { IPaymentsService } from '../../@types/services.ts'
 import { createLogger } from '../../factories/logger-factory.ts'
@@ -64,8 +64,8 @@ export class LNbitsCallbackController implements IController {
         invoice.amountPaid = invoice.amountRequested
 
         try {
-            await this.paymentsService.confirmInvoice(invoice)
-            await this.paymentsService.sendInvoiceUpdateNotification(invoice)
+            await this.paymentsService.confirmInvoice(invoice as Invoice)
+            await this.paymentsService.sendInvoiceUpdateNotification(invoice as Invoice)
         } catch (error) {
             console.error(`Unable to confirm invoice ${invoice.id}`, error)
 

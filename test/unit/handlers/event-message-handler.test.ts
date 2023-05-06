@@ -91,7 +91,10 @@ describe('EventMessageHandler', () => {
                 webSocket as any,
                 strategyFactoryStub,
                 userRepository,
-                () => ({}) as any,
+                () =>
+                    ({
+                        info: { relay_url: 'relay_url' },
+                    }) as any,
                 () => ({ hit: async () => false }),
             )
         })
@@ -239,6 +242,9 @@ describe('EventMessageHandler', () => {
                 },
             }
             settings = {
+                info: {
+                    relay_url: 'relay_url',
+                },
                 limits: {
                     event: eventLimits,
                 },
@@ -729,6 +735,9 @@ describe('EventMessageHandler', () => {
                 rateLimits: [],
             }
             settings = {
+                info: {
+                    relay_url: 'relay_url',
+                },
                 limits: {
                     event: eventLimits,
                 },

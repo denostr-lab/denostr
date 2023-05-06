@@ -1,4 +1,4 @@
-import { CreateInvoiceRequest, CreateInvoiceResponse, IPaymentsProcessor } from '../@types/clients.ts'
+import { CreateInvoiceRequest, CreateInvoiceResponse, GetInvoiceResponse, IPaymentsProcessor } from '../@types/clients.ts'
 import { Invoice } from '../@types/invoice.ts'
 
 export class PaymentsProcessor implements IPaymentsProcessor {
@@ -6,8 +6,8 @@ export class PaymentsProcessor implements IPaymentsProcessor {
         private readonly processor: IPaymentsProcessor,
     ) {}
 
-    public async getInvoice(invoiceId: string): Promise<Invoice> {
-        return this.processor.getInvoice(invoiceId)
+    public async getInvoice(invoice: string | Invoice): Promise<GetInvoiceResponse> {
+        return this.processor.getInvoice(invoice)
     }
 
     public async createInvoice(

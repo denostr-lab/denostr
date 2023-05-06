@@ -72,11 +72,12 @@ export const startTest = async (pathUrl: string, registerEvent: Function) => {
                     World.parameters.clients[name] = connection
                     World.parameters.subscriptions[name] = []
                     World.parameters.events[name] = []
-                    const subject = new Subject()
-                    connection.once('close', subject.next.bind(subject))
-                    const project = (raw: MessageEvent) => JSON.parse(raw.data.toString('utf8'))
+
+                    const close = new Subject()
+                    connection.once('close', close.next.bind(close))
+                    const projection = (raw: MessageEvent) => JSON.parse(raw.data.toString('utf8'))
                     const replaySubject = new ReplaySubject(2, 1000)
-                    fromEvent(connection, 'message').pipe(map(project) as any, takeUntil(subject))
+                    fromEvent(connection, 'message').pipe(map(projection) as any, takeUntil(close))
                         .subscribe(replaySubject)
                     streams.set(
                         connection,
@@ -129,6 +130,7 @@ export const startTest = async (pathUrl: string, registerEvent: Function) => {
                 dbClient = getMasterDbClient()
                 dbClient = await dbClient.asPromise()
                 Config.RELAY_PORT = '18808'
+                Config.SECRET = Math.random().toString().repeat(6)
 
                 rrDbClient = rrDbClient = getReadReplicaDbClient()
                 await rrDbClient.asPromise()
@@ -137,6 +139,7 @@ export const startTest = async (pathUrl: string, registerEvent: Function) => {
                 const settings = SettingsStatic.createSettings()
 
                 SettingsStatic._settings = pipe(
+                    assocPath(['payments', 'enabled'], false),
                     assocPath(['limits', 'event', 'createdAt', 'maxPositiveDelta'], 0),
                     assocPath(['limits', 'message', 'rateLimits'], []),
                     assocPath(['limits', 'event', 'rateLimits'], []),

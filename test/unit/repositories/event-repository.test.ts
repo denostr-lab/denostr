@@ -13,10 +13,10 @@ chai.use(sinonChai)
 const { expect } = chai
 
 import { DatabaseClient1 as DatabaseClient } from '../../../src/@types/base.ts'
+import { EventTags } from '../../../src/constants/base.ts'
 // import { ContextMetadataKey, EventDeduplicationMetadataKey } from '../../../src/constants/base.ts'
 import { EventRepository } from '../../../src/repositories/event-repository.ts'
 import { getMasterDbClient } from '../../../src/database/client.ts'
-// import { masterEventsModel } from '../../../src/database/models/Events.ts'
 
 describe({
     name: 'EventRepository',
@@ -457,12 +457,12 @@ describe({
                     kind: 1,
                     tags: [
                         [
-                            'p',
+                            EventTags.Pubkey,
                             '8355095016fddbe31fcf1453b26f613553e9758cf2263e190eac8fd96a3d3de9',
                             'wss://nostr-pub.wellorder.net',
                         ],
                         [
-                            'e',
+                            EventTags.Event,
                             '7377fa81fc6c7ae7f7f4ef8938d4a603f7bf98183b35ab128235cc92d4bebf96',
                             'wss://nostr-relay.untethr.me',
                         ],
@@ -489,12 +489,12 @@ describe({
         //             kind: 1,
         //             tags: [
         //                 [
-        //                     'p',
+        //                     EventTags.Pubkey,
         //                     '8355095016fddbe31fcf1453b26f613553e9758cf2263e190eac8fd96a3d3de9',
         //                     'wss://nostr-pub.wellorder.net',
         //                 ],
         //                 [
-        //                     'e',
+        //                     EventTags.Event,
         //                     '7377fa81fc6c7ae7f7f4ef8938d4a603f7bf98183b35ab128235cc92d4bebf96',
         //                     'wss://nostr-relay.untethr.me',
         //                 ],

@@ -11,6 +11,7 @@ chai.use(chaiAsPromised)
 
 import { Event } from '../../../src/@types/event.ts'
 import { IncomingEventMessage, MessageType } from '../../../src/@types/messages.ts'
+import { EventTags } from '../../../src/constants/base.ts'
 import { IUserRepository } from '../../../src/@types/repositories.ts'
 import { WebSocketAdapterEvent } from '../../../src/constants/adapter.ts'
 import { DelegatedEventMessageHandler } from '../../../src/handlers/delegated-event-message-handler.ts'
@@ -40,7 +41,7 @@ describe('DelegatedEventMessageHandler', () => {
             pubkey: 'f'.repeat(64),
             sig: 'f'.repeat(128),
             tags: [
-                ['delegation', 'delegator', 'rune', 'signature'],
+                [EventTags.Delegation, 'delegator', 'rune', 'signature'],
             ],
         }
     })
@@ -209,7 +210,7 @@ describe('DelegatedEventMessageHandler', () => {
                 'kind': 1,
                 'tags': [
                     [
-                        'delegation',
+                        EventTags.Delegation,
                         '86f0689bd48dcd19c67a19d994f938ee34f251d8c39976290955ff585f2db42e',
                         'kind=1&created_at>1640995200',
                         'c33c88ba78ec3c760e49db591ac5f7b129e3887c8af7729795e85a0588007e5ac89b46549232d8f918eefd73e726cb450135314bfda419c030d0b6affe401ec1',
