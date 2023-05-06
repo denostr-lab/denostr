@@ -1,6 +1,7 @@
 import { IWebSocketAdapter } from '../@types/adapters.ts'
 import { Factory } from '../@types/base.ts'
 import { Event, ExpiringEvent } from '../@types/event.ts'
+import { getEventExpiration, getEventProofOfWork, getPubkeyProofOfWork, getPublicKey, getRelayPrivateKey, isEventIdValid, isEventKindOrRangeMatch, isEventSignatureValid, isExpiredEvent } from '../utils/event.ts'
 import { IEventStrategy, IMessageHandler } from '../@types/message-handlers.ts'
 import { IncomingEventMessage } from '../@types/messages.ts'
 import { IUserRepository } from '../@types/repositories.ts'
@@ -10,7 +11,6 @@ import { WebSocketAdapterEvent } from '../constants/adapter.ts'
 import { ContextMetadataKey } from '../constants/base.ts'
 import { EventExpirationTimeMetadataKey } from '../constants/base.ts'
 import { createLogger } from '../factories/logger-factory.ts'
-import { getEventExpiration, getEventProofOfWork, getPubkeyProofOfWork, isEventIdValid, isEventKindOrRangeMatch, isEventSignatureValid, isExpiredEvent } from '../utils/event.ts'
 import { createCommandResult } from '../utils/messages.ts'
 
 const debug = createLogger('event-message-handler')
@@ -103,7 +103,16 @@ export class EventMessageHandler implements IMessageHandler {
         }
     }
 
+    protected getRelayPublicKey(): string {
+        const relayPrivkey = getRelayPrivateKey(this.settings().info.relay_url)
+        return getPublicKey(relayPrivkey)
+    }
+
     protected canAcceptEvent(event: Event): string | undefined {
+        if (this.getRelayPublicKey() === event.pubkey) {
+            return
+        }
+
         const now = Math.floor(Date.now() / 1000)
 
         const limits = this.settings().limits?.event ?? {}
@@ -213,6 +222,10 @@ export class EventMessageHandler implements IMessageHandler {
     }
 
     protected async isRateLimited(event: Event): Promise<boolean> {
+        if (this.getRelayPublicKey() === event.pubkey) {
+            return false
+        }
+
         const { whitelists, rateLimits } = this.settings().limits?.event ?? {}
         if (!rateLimits || !rateLimits.length) {
             return false
@@ -277,6 +290,10 @@ export class EventMessageHandler implements IMessageHandler {
     protected async isUserAdmitted(event: Event): Promise<string | undefined> {
         const currentSettings = this.settings()
         if (!currentSettings.payments?.enabled) {
+            return
+        }
+
+        if (this.getRelayPublicKey() === event.pubkey) {
             return
         }
 

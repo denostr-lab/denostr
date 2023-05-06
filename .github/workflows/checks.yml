@@ -12,7 +12,10 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  MONGO_URI: "mongodb://127.0.0.1:27017/denostr?replicaSet=rs0"
+  TEST_MONGO_URI: "mongodb://127.0.0.1:27017/denostr?replicaSet=rs0"
+  TEST_DEBUG: "*"
+  TEST_WORKER_TYPE: "worker"
+  TEST_SECRET: "abcdefghijklmnopqrstuvwxyz1234567890"
 
 jobs:
   commit-lint:
@@ -78,8 +81,15 @@ jobs:
           mongodb-replica-set: rs0
       - name: Run unit tests
         run: |
-          echo 'MONGO_URI=${{ env.MONGO_URI }}' >> .env
-          DEBUG=* WORKER_TYPE=worker deno task test:unit
+          cat > .env <<EOF
+          MONGO_URI=${{ env.TEST_MONGO_URI }}
+          DEBUG=${{ env.TEST_DEBUG }}
+          WORKER_TYPE=${{ env.TEST_WORKER_TYPE }}
+          SECRET=${{ env.TEST_SECRET }}
+          EOF
+          mkdir .nostr
+          cp resources/default-settings.yaml .nostr/settings.yaml
+          deno task test:unit
   test-integrations:
     strategy:
       matrix:
@@ -117,8 +127,15 @@ jobs:
           mongodb-replica-set: rs0
       - name: Run integration tests
         run: |
-          echo 'MONGO_URI=${{ env.MONGO_URI }}' >> .env
-          DEBUG=* WORKER_TYPE=worker deno task test:integration
+          cat > .env <<EOF
+          MONGO_URI=${{ env.TEST_MONGO_URI }}
+          DEBUG=${{ env.TEST_DEBUG }}
+          WORKER_TYPE=${{ env.TEST_WORKER_TYPE }}
+          SECRET=${{ env.TEST_SECRET }}
+          EOF
+          mkdir .nostr
+          cp resources/default-settings.yaml .nostr/settings.yaml
+          deno task test:integration
   # post-tests:
   #   name: Post Tests
   #   needs: [test-units, test-integrations]

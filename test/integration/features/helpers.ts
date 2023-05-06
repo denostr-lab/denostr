@@ -8,7 +8,6 @@ import * as secp256k1 from 'secp256k1'
 import { Event } from '../../../src/@types/event.ts'
 import { CommandResult, MessageType, OutgoingMessage } from '../../../src/@types/messages.ts'
 import { SubscriptionFilter } from '../../../src/@types/subscription.ts'
-import Config from '../../../src/config/index.ts'
 import { serializeEvent } from '../../../src/utils/event.ts'
 import { streams } from './shared.ts'
 import type { IWebSocketWrapper } from './types.ts'
@@ -100,7 +99,7 @@ export async function createEvent(
 }
 
 export function createIdentity(name: string) {
-    const hmac = createHmac('sha256', Config.SECRET ?? Math.random().toString())
+    const hmac = createHmac('sha256', Math.random().toString())
     hmac.update(name)
     const privkey = hmac.digest().toString('hex')
     const pubkey = Buffer.from(secp256k1.getPublicKey(privkey, true)).toString(

@@ -225,6 +225,8 @@ export class WebSocketAdapter extends EventEmitter implements IWebSocketAdapter 
                         )
                     }
                     this.sendMessage(createNoticeMessage(`invalid: ${error.message}`))
+                } else {
+                    console.error('web-socket-adapter: unable to handle message:', error)
                 }
             } else {
                 console.error('web-socket-adapter: unable to handle message:', error)

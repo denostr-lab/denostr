@@ -16,6 +16,7 @@ export class NullPaymentsProcessor implements IPaymentsProcessor {
             confirmedAt: null,
             createdAt: date,
             updatedAt: date,
+            verifyURL: '',
         }
     }
 
@@ -34,6 +35,7 @@ export class NullPaymentsProcessor implements IPaymentsProcessor {
             rawResponse: '',
             confirmedAt: null,
             createdAt: new Date(),
+            verifyURL: '',
         }
     }
 }

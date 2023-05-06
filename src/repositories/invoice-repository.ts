@@ -1,4 +1,4 @@
-import { always, applySpec, ifElse, is, isNil, omit, pipe, prop, propSatisfies, toString } from 'ramda'
+import { always, applySpec, ifElse, is, omit, pipe, prop, propSatisfies, toString } from 'ramda'
 
 import { DatabaseClient } from '../@types/base.ts'
 import { DBInvoice, Invoice, InvoiceStatus } from '../@types/invoice.ts'
@@ -89,17 +89,10 @@ export class InvoiceRepository implements IInvoiceRepository {
             status: prop('status'),
             description: prop('description'),
             // confirmed_at: prop('confirmedAt'),
-            expires_at: ifElse(
-                propSatisfies(isNil, 'expiresAt'),
-                always(undefined),
-                prop('expiresAt'),
-            ),
+            expires_at: prop('expiresAt'),
             updated_at: always(new Date()),
-            created_at: ifElse(
-                propSatisfies(isNil, 'createdAt'),
-                always(undefined),
-                prop('createdAt'),
-            ),
+            created_at: prop('createdAt'),
+            verify_url: prop('verifyURL'),
         })(invoice)
 
         debug('row: %o', row)
@@ -117,6 +110,7 @@ export class InvoiceRepository implements IInvoiceRepository {
                     'description',
                     'expires_at',
                     'created_at',
+                    'verify_url',
                 ])(row),
             )
 

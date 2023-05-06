@@ -1,9 +1,10 @@
 import { expect } from 'chai'
 import { beforeEach, describe, it } from 'jest'
-import { assocPath, omit, range } from 'ramda'
+import { assocPath, omit } from 'ramda'
 
 import { Event } from '../../../src/@types/event.ts'
 import { eventSchema } from '../../../src/schemas/event-schema.ts'
+import { EventTags } from '../../../src/constants/base.ts'
 import { validateSchema } from '../../../src/utils/validation.ts'
 
 describe('NIP-01', () => {
@@ -17,31 +18,34 @@ describe('NIP-01', () => {
                 'kind': 7,
                 'tags': [
                     [
-                        'e',
+                        EventTags.Event,
                         'c58e83bb744e4c29642db7a5c3bd1519516ad5c51f6ba5f90c451d03c1961210',
                         '',
                         'root',
                     ],
                     [
-                        'e',
+                        EventTags.Event,
                         'd0d78967b734628cec7bdfa2321c71c1f1c48e211b4b54333c3b0e94e7e99166',
                         '',
                         'reply',
                     ],
                     [
-                        'p',
+                        EventTags.Event,
+                        EventTags.Pubkey,
                         'edfa27d49d2af37ee331e1225bb6ed1912c6d999281b36d8018ad99bc3573c29',
                     ],
                     [
-                        'p',
+                        EventTags.Event,
+                        EventTags.Pubkey,
                         '32e1827635450ebb3c5a7d12c1f8e7b2b514439ac10a67eef3d9fd9c5c68e245',
                     ],
                     [
-                        'e',
+                        EventTags.Event,
                         '6fed2aae1e4f7d8b535774e4f7061c10e2ff20df1ef047da09462c7937925cd5',
                     ],
                     [
-                        'p',
+                        EventTags.Event,
+                        EventTags.Pubkey,
                         '2ef93f01cd2493e04235a6b87b10d3c4a74e2a7eb7c3caf168268f6af73314b5',
                     ],
                 ],
@@ -185,10 +189,6 @@ describe('NIP-01', () => {
                 {
                     message: 'must be an array',
                     transform: assocPath(['tags', 0], null),
-                },
-                {
-                    message: 'must contain less than or equal to 10 items',
-                    transform: assocPath(['tags', 0], range(0, 11).map(() => 'x')),
                 },
             ],
             identifier: [

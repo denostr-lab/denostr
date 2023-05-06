@@ -26,6 +26,7 @@ export interface Invoice {
     expiresAt: Date | null
     updatedAt: Date
     createdAt: Date
+    verifyURL?: string
 }
 
 export interface DBInvoice {
@@ -41,4 +42,5 @@ export interface DBInvoice {
     expires_at: Date
     updated_at: Date
     created_at: Date
+    verify_url: string
 }

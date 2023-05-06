@@ -3,17 +3,23 @@ import net from 'node:net'
 import { Knex } from 'npm:knex@2.4.2'
 import mongoose from 'npm:mongoose'
 
+import { EventTags } from '../constants/base.ts'
+
 export type EventId = string
 export type Pubkey = string
-export type TagName = string
+export type TagName = EventTags | string
 export type Signature = string
 export type Tag = TagBase & string[]
 
+type ExtraTagValues = {
+    [index in Range<2, 100>]?: string
+}
+
 export type Secret = string
 
-export interface TagBase {
+export interface TagBase extends ExtraTagValues {
     0: TagName
-    [index: number]: string
+    1: string
 }
 
 type Enumerate<

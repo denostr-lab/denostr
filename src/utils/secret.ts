@@ -4,7 +4,11 @@ import { createHmac } from 'crypto'
 import Config from '../config/index.ts'
 
 export function deriveFromSecret(purpose: string | Buffer): Buffer {
-    return hmacSha256(Config.SECRET as string, purpose)
+    if (!Config.SECRET) {
+        throw new Error('SECRET environment variable not set')
+    }
+
+    return hmacSha256(Config.SECRET, purpose)
 }
 
 export function hmacSha256(

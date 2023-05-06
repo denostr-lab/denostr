@@ -691,7 +691,7 @@
       "js-yaml@4.1.0": "js-yaml@4.1.0",
       "knex@2.4.2": "knex@2.4.2",
       "mongodb": "mongodb@5.1.0",
-      "mongoose": "mongoose@7.0.2",
+      "mongoose": "mongoose@7.0.4",
       "rxjs@7.8.0": "rxjs@7.8.0"
     },
     "packages": {
@@ -883,6 +883,18 @@
       },
       "mongoose@7.0.2": {
         "integrity": "sha512-whX+5lAOLOs6VXRr9w+6m5qb8m/IXWLLb9+0/HRUh2TiIYtTt7UvajK92zW6wllCjBkrrnz/MDIOTCWMbs8K4g==",
+        "dependencies": {
+          "bson": "bson@5.1.0",
+          "kareem": "kareem@2.5.1",
+          "mongodb": "mongodb@5.1.0",
+          "mpath": "mpath@0.9.0",
+          "mquery": "mquery@5.0.0",
+          "ms": "ms@2.1.3",
+          "sift": "sift@16.0.1"
+        }
+      },
+      "mongoose@7.0.4": {
+        "integrity": "sha512-MEmQOOqQUvW1PJcji64NtA2EFGHrEvk9o4g//isVYSJW2+8Y8u49C2qFBKzn1t6/l9onQn012o/PcFqR6ixQpQ==",
         "dependencies": {
           "bson": "bson@5.1.0",
           "kareem": "kareem@2.5.1",

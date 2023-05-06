@@ -21,7 +21,8 @@ let instance: CacheClient | undefined = undefined
 export const getCacheClient = async (): Promise<CacheClient> => {
     if (!instance) {
         const config = getCacheConfig()
-        debug('config: %o', config)
+        const { password: _, ...loggableConfig } = config
+        debug('config: %o', loggableConfig)
         instance = await connect(config)
     }
 

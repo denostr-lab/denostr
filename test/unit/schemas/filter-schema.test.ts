@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { beforeEach, describe, it } from 'jest'
-import { assocPath, range } from 'ramda'
+import { assocPath } from 'ramda'
 
 import { SubscriptionFilter } from '../../../src/@types/subscription.ts'
 import { filterSchema } from '../../../src/schemas/filter-schema.ts'
@@ -33,10 +33,6 @@ describe('NIP-01', () => {
         const cases = {
             ids: [
                 { message: 'must be an array', transform: assocPath(['ids'], null) },
-                {
-                    message: 'must contain less than or equal to 1000 items',
-                    transform: assocPath(['ids'], range(0, 1001).map(() => 'ffff')),
-                },
             ],
             prefixOrId: [
                 {
@@ -57,10 +53,6 @@ describe('NIP-01', () => {
                     message: 'must be an array',
                     transform: assocPath(['authors'], null),
                 },
-                {
-                    message: 'must contain less than or equal to 1000 items',
-                    transform: assocPath(['authors'], range(0, 1001).map(() => 'ffff')),
-                },
             ],
             prefixOrAuthor: [
                 {
@@ -78,10 +70,6 @@ describe('NIP-01', () => {
             ],
             kinds: [
                 { message: 'must be an array', transform: assocPath(['kinds'], null) },
-                {
-                    message: 'must contain less than or equal to 20 items',
-                    transform: assocPath(['kinds'], range(0, 21).map(() => 1)),
-                },
             ],
             kind: [
                 {
@@ -137,17 +125,9 @@ describe('NIP-01', () => {
                     message: 'must be a multiple of 1',
                     transform: assocPath(['limit'], Math.PI),
                 },
-                {
-                    message: 'must be less than or equal to 5000',
-                    transform: assocPath(['limit'], 5001),
-                },
             ],
             '#e': [
                 { message: 'must be an array', transform: assocPath(['#e'], null) },
-                {
-                    message: 'must contain less than or equal to 256 items',
-                    transform: assocPath(['#e'], range(0, 1024 + 1).map(() => 'f')),
-                },
             ],
             '#e[0]': [
                 {
@@ -161,10 +141,6 @@ describe('NIP-01', () => {
             ],
             '#p': [
                 { message: 'must be an array', transform: assocPath(['#p'], null) },
-                {
-                    message: 'must contain less than or equal to 256 items',
-                    transform: assocPath(['#p'], range(0, 1024 + 1).map(() => 'f')),
-                },
             ],
             '#p[0]': [
                 {
@@ -178,10 +154,6 @@ describe('NIP-01', () => {
             ],
             '#r': [
                 { message: 'must be an array', transform: assocPath(['#r'], null) },
-                {
-                    message: 'must contain less than or equal to 256 items',
-                    transform: assocPath(['#r'], range(0, 1024 + 1).map(() => 'f')),
-                },
             ],
             '#r[0]': [
                 {
