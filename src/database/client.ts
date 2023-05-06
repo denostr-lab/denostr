@@ -13,8 +13,8 @@ const getMasterConfig = () => {
     return {
         connection: mongoUri,
         pool: {
-            min: Config.MONGO_MIN_POOL_SIZE ? Number(Config.MONGO_MIN_POOL_SIZE) : 0,
-            max: Config.MONGO_MAX_POOL_SIZE ? Number(Config.MONGO_MAX_POOL_SIZE) : 3,
+            min: Config.MONGO_MIN_POOL_SIZE,
+            max: Config.MONGO_MAX_POOL_SIZE,
         },
         tag: mongoose.mongo.ReadPreference.PRIMARY,
     }
@@ -53,8 +53,8 @@ const getReadReplicaConfig = () => {
     return {
         connection: mongoUri,
         pool: {
-            min: Config.MONGO_MIN_POOL_SIZE ? Number(Config.MONGO_MIN_POOL_SIZE) : 0,
-            max: Config.MONGO_MAX_POOL_SIZE ? Number(Config.MONGO_MAX_POOL_SIZE) : 3,
+            min: Config.MONGO_RR_MIN_POOL_SIZE,
+            max: Config.MONGO_RR_MAX_POOL_SIZE,
         },
         tag: mongoose.mongo.ReadPreference.SECONDARY,
     }

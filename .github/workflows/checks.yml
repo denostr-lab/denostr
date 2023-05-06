@@ -87,6 +87,8 @@ jobs:
           WORKER_TYPE=${{ env.TEST_WORKER_TYPE }}
           SECRET=${{ env.TEST_SECRET }}
           EOF
+          mkdir .nostr
+          cp resources/default-settings.yaml .nostr/settings.yaml
           deno task test:unit
   test-integrations:
     strategy:
@@ -131,6 +133,8 @@ jobs:
           WORKER_TYPE=${{ env.TEST_WORKER_TYPE }}
           SECRET=${{ env.TEST_SECRET }}
           EOF
+          mkdir .nostr
+          cp resources/default-settings.yaml .nostr/settings.yaml
           deno task test:integration
   # post-tests:
   #   name: Post Tests
