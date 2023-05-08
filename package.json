@@ -9,6 +9,7 @@
         9,
         11,
         12,
+        13,
         15,
         16,
         20,
@@ -18,9 +19,6 @@
         33,
         38,
         40
-    ],
-    "supportedNipExtensions": [
-        "11a"
     ],
     "repository": {
         "type": "git",

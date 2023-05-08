@@ -44,9 +44,9 @@ NIPs with a relay-specific implementation are listed here.
 - [x] NIP-01: Basic protocol flow description
 - [x] NIP-02: Contact list and petnames
 - [x] NIP-04: Encrypted Direct Message
+- [ ] NIP-05: Mapping Nostr keys to DNS-based internet identifiers
 - [x] NIP-09: Event deletion
 - [x] NIP-11: Relay information document
-- [x] NIP-11a: Relay Information Document Extensions
 - [x] NIP-12: Generic tag queries
 - [x] NIP-13: Proof of Work
 - [x] NIP-15: End of Stored Events Notice
@@ -58,6 +58,8 @@ NIPs with a relay-specific implementation are listed here.
 - [x] NIP-33: Parameterized Replaceable Events
 - [x] NIP-38: [Encrypted Group Chat with Megolm group ratchet (Draft)](https://oi5l5umbjx.feishu.cn/docx/TW7Ndb6Imoj3n7x08MTcleqanad)
 - [x] NIP-40: Expiration Timestamp
+- [ ] NIP-42: Authentication of clients to relays
+- [ ] NIP-45: Event Counts
 
 ## Architecture
 

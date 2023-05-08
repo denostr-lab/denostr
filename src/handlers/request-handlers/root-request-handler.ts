@@ -29,7 +29,6 @@ export const rootRequestHandler = async (
             pubkey,
             contact,
             supported_nips: packageJson.supportedNips,
-            supported_nip_extensions: packageJson.supportedNipExtensions,
             software: packageJson.repository.url,
             version: packageJson.version,
             limitation: {
