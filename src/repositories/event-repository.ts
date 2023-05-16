@@ -5,6 +5,7 @@ import { EventId } from '../@types/base.ts'
 import { Event } from '../@types/event.ts'
 import { IEventRepository } from '../@types/repositories.ts'
 import { SubscriptionFilter } from '../@types/subscription.ts'
+import { Settings } from '../@types/settings.ts'
 import { ContextMetadataKey, EventDeduplicationMetadataKey, EventDelegatorMetadataKey, EventExpirationTimeMetadataKey, EventTags } from '../constants/base.ts'
 import { masterEventsModel, readReplicaEventsModel } from '../database/models/Events.ts'
 import { IEvent } from '../database/types/index.ts'
@@ -23,17 +24,22 @@ const toJSON = (input: any) => {
 const debug = createLogger('event-repository')
 
 export class EventRepository implements IEventRepository {
+    constructor(private readonly settings: () => Settings) {}
+
     public findByFilters(filters: SubscriptionFilter[]): mongoose.Aggregate<IEvent[]> {
         debug('querying for %o', filters)
         if (!Array.isArray(filters) || !filters.length) {
             throw new Error('Filters cannot be empty')
         }
 
+        const subscriptionLimits = this.settings().limits?.client?.subscription
+        const maxLimit = subscriptionLimits?.maxLimit ?? 0
+
         const $match: any = {}
         const $or: any[] = []
         const $sort = { event_created_at: 1 }
         const limit = {
-            $limit: 1000,
+            $limit: maxLimit,
         }
         const pipelines: any[] = [
             {
@@ -79,8 +85,8 @@ export class EventRepository implements IEventRepository {
                         }
 
                         if (filterName === 'limit' && typeof filterValue === 'number' && filterValue > 0) {
-                            if (filterValue >= 5000) {
-                                limit.$limit = 5000
+                            if (filterValue >= maxLimit) {
+                                limit.$limit = maxLimit
                             } else {
                                 limit.$limit = filterValue
                             }

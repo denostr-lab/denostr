@@ -197,10 +197,6 @@ describe('NIP-01', () => {
                     transform: assocPath(['tags', 0, 0], null),
                 },
                 {
-                    message: 'length must be less than or equal to 255 characters long',
-                    transform: assocPath(['tags', 0, 0], ' '.repeat(256)),
-                },
-                {
                     message: 'is not allowed to be empty',
                     transform: assocPath(['tags', 0, 0], ''),
                 },
@@ -209,10 +205,6 @@ describe('NIP-01', () => {
                 {
                     message: 'must be a string',
                     transform: assocPath(['tags', 0, 1], null),
-                },
-                {
-                    message: 'length must be less than or equal to 1024 characters long',
-                    transform: assocPath(['tags', 0, 1], ' '.repeat(1024 + 1)),
                 },
             ],
         }

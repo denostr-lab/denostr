@@ -8,8 +8,8 @@ import { createWebApp } from './web-app-factory.ts'
 import { webSocketAdapterFactory } from './websocket-adapter-factory.ts'
 
 export const workerFactory = (): AppWorker => {
-    const eventRepository = new EventRepository()
-    const userRepository = new UserRepository()
+    const eventRepository = new EventRepository(createSettings)
+    const userRepository = new UserRepository(createSettings)
     const server = createWebApp()
     console.log(`
     ██████╗ ███████╗███╗   ██╗ ██████╗ ███████╗████████╗██████╗ 

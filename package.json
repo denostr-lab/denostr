@@ -22,7 +22,7 @@
     ],
     "repository": {
         "type": "git",
-        "url": "git+git@github.com:Guakamoli/denostr.git"
+        "url": "https://github.com/Guakamoli/denostr.git"
     },
     "keywords": [
         "deno",

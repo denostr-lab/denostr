@@ -5,11 +5,11 @@ services:
     environment:
       RELAY_PORT: 8008
       NOSTR_CONFIG_DIR: /app/.nostr
-      WORKER_TYPE: worker
+      SECRET: ${SECRET}
       MONGO_URI: "mongodb://denostr-db0:27017,denostr-db1:27017/denostr?authSource=admin&replicaSet=rs0"
       MONGO_READ_REPLICA_ENABLED: true
-      MONGO_MIN_POOL_SIZE: 16
-      MONGO_MAX_POOL_SIZE: 32
+      MONGO_MIN_POOL_SIZE: 4
+      MONGO_MAX_POOL_SIZE: 16
       DEBUG: "*"
     user: deno:deno
     volumes:
@@ -32,8 +32,6 @@ services:
     networks:
       default:
     restart: always
-    ports:
-      - '27017:27017'
     volumes:
     - ${PWD}/.nostr/data:/data/db
     entrypoint: ["mongod", "--bind_ip_all", "--replSet", "rs0"]
@@ -49,8 +47,6 @@ services:
     networks:
       default:
     restart: always
-    ports:
-      - '27018:27017'
     volumes:
     - db1:/data/db
     entrypoint: ["mongod", "--bind_ip_all", "--replSet", "rs0"]

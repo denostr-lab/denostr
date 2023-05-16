@@ -78,6 +78,19 @@ Todo
 
 ## Full Guide
 
+- [ ] Set up a paid Nostr relay
+
+### Accepting payments
+
+1. Zebedee
+
+- You must set `ZEBEDEE_API_KEY` with an API Key from one of your projects in your Zebedee Developer Dashboard. Contact @foxp2zeb on Telegram or npub1rvg76s0gz535txd9ypg2dfqv0x7a80ar6e096j3v343xdxyrt4ksmkxrck on Nostr requesting access to
+  the Zebedee Developer Dashboard. See the Zebedee full guide on how to set up a paid relay.
+
+2. Lnbits
+
+- You must set `LNBITS_API_KEY` with an API Key from one of "Invoice/read key" in your wallet.
+
 ### Quick Start (Standalone)
 
 Clone repository and enter directory:
@@ -94,6 +107,17 @@ Set the following environment variables:
 WORKER_TYPE=worker
 MONGO_URI=mongodb://user:pass@host:port/db?replicaSet=rs0&authSource=admin
 ```
+
+Generate a long random secret and set SECRET:
+
+You may want to use `openssl rand -hex 128` to generate a secret.
+
+```ini
+SECRET=aaabbbccc...dddeeefff
+# Secret shortened for brevity
+```
+
+In addition, if using API Key for payments, You must also use the API key of each payment service to set the.
 
 Create `.nostr` folder inside **denostr project folder** and copy over the settings file:
 

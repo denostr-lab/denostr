@@ -1,4 +1,4 @@
-import { getMasterDbClient, getReadReplicaDbClient } from '../database/client.ts'
+import { getMasterDbClient } from '../database/client.ts'
 import { EventRepository } from '../repositories/event-repository.ts'
 import { InvoiceRepository } from '../repositories/invoice-repository.ts'
 import { UserRepository } from '../repositories/user-repository.ts'
@@ -8,11 +8,10 @@ import { createSettings } from './settings-factory.ts'
 
 export const createPaymentsService = () => {
     const dbClient = getMasterDbClient()
-    const rrDbClient = getReadReplicaDbClient()
     const invoiceRepository = new InvoiceRepository(dbClient)
-    const userRepository = new UserRepository(dbClient)
+    const userRepository = new UserRepository(createSettings)
     const paymentsProcessor = createPaymentsProcessor()
-    const eventRepository = new EventRepository(dbClient, rrDbClient)
+    const eventRepository = new EventRepository(createSettings)
 
     return new PaymentsService(
         dbClient,

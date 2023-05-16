@@ -685,13 +685,13 @@
   },
   "npm": {
     "specifiers": {
-      "@isaacs/ttlcache": "@isaacs/ttlcache@1.2.2",
+      "@isaacs/ttlcache": "@isaacs/ttlcache@1.4.0",
       "axios@1.2.6": "axios@1.2.6",
       "bech32@2.0.0": "bech32@2.0.0",
       "js-yaml@4.1.0": "js-yaml@4.1.0",
       "knex@2.4.2": "knex@2.4.2",
       "mongodb": "mongodb@5.1.0",
-      "mongoose": "mongoose@7.0.4",
+      "mongoose": "mongoose@7.1.0",
       "rxjs@7.8.0": "rxjs@7.8.0"
     },
     "packages": {
@@ -701,6 +701,10 @@
       },
       "@isaacs/ttlcache@1.2.2": {
         "integrity": "sha512-UvS9r/yugpqc/uLRdmxfFkaPGfjvVQPjHn3cGFWiT5K1H8o0t3MsRUAB5xs//4dNEmSSi6WpMqVpMjKbsVv82g==",
+        "dependencies": {}
+      },
+      "@isaacs/ttlcache@1.4.0": {
+        "integrity": "sha512-2i5IL+VRvSOAhyqOI6lVrPzHiLhmC+gZEfG/4z8YA7/zRvQGs75SdF9qsZiNWPgKd1SK06NirpIU+Hd+XWDPfQ==",
         "dependencies": {}
       },
       "@types/node@18.15.5": {
@@ -740,6 +744,10 @@
       },
       "bson@5.1.0": {
         "integrity": "sha512-FEecNHkhYRBe7X9KDkdG12xNuz5VHGeH6mCE0B5sBmYtiR/Ux/9vUH/v4NUoBCDr6NuEhvahjoLiiRogptVW0A==",
+        "dependencies": {}
+      },
+      "bson@5.2.0": {
+        "integrity": "sha512-HevkSpDbpUfsrHWmWiAsNavANKYIErV2ePXllp1bwq5CDreAaFVj6RVlZpJnxK4WWDCJ/5jMUpaY6G526q3Hjg==",
         "dependencies": {}
       },
       "colorette@2.0.19": {
@@ -881,6 +889,15 @@
           "socks": "socks@2.7.1"
         }
       },
+      "mongodb@5.3.0": {
+        "integrity": "sha512-Wy/sbahguL8c3TXQWXmuBabiLD+iVmz+tOgQf+FwkCjhUIorqbAxRbbz00g4ZoN4sXIPwpAlTANMaGRjGGTikQ==",
+        "dependencies": {
+          "bson": "bson@5.2.0",
+          "mongodb-connection-string-url": "mongodb-connection-string-url@2.6.0",
+          "saslprep": "saslprep@1.0.3",
+          "socks": "socks@2.7.1"
+        }
+      },
       "mongoose@7.0.2": {
         "integrity": "sha512-whX+5lAOLOs6VXRr9w+6m5qb8m/IXWLLb9+0/HRUh2TiIYtTt7UvajK92zW6wllCjBkrrnz/MDIOTCWMbs8K4g==",
         "dependencies": {
@@ -899,6 +916,18 @@
           "bson": "bson@5.1.0",
           "kareem": "kareem@2.5.1",
           "mongodb": "mongodb@5.1.0",
+          "mpath": "mpath@0.9.0",
+          "mquery": "mquery@5.0.0",
+          "ms": "ms@2.1.3",
+          "sift": "sift@16.0.1"
+        }
+      },
+      "mongoose@7.1.0": {
+        "integrity": "sha512-shoo9z/7o96Ojx69wpJn65+EC+Mt3q1SWTducW+F2Y4ieCXo0lZwpCZedgC841MIvJ7V8o6gmzoN1NfcnOTOuw==",
+        "dependencies": {
+          "bson": "bson@5.2.0",
+          "kareem": "kareem@2.5.1",
+          "mongodb": "mongodb@5.3.0",
           "mpath": "mpath@0.9.0",
           "mquery": "mquery@5.0.0",
           "ms": "ms@2.1.3",

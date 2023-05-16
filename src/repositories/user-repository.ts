@@ -1,6 +1,7 @@
 import { Pubkey } from '../@types/base.ts'
 import { IUserRepository } from '../@types/repositories.ts'
 import { User } from '../@types/user.ts'
+import { Settings } from '../@types/settings.ts'
 import { masterUsersModel } from '../database/models/index.ts'
 import { createLogger } from '../factories/logger-factory.ts'
 import { fromDBUser, toBuffer } from '../utils/transform.ts'
@@ -8,6 +9,8 @@ import { fromDBUser, toBuffer } from '../utils/transform.ts'
 const debug = createLogger('user-repository')
 
 export class UserRepository implements IUserRepository {
+    constructor(private readonly settings: () => Settings) {}
+
     public async findByPubkey(pubkey: Pubkey): Promise<User | undefined> {
         debug('find by pubkey: %s', pubkey)
         const dbuser = await masterUsersModel
