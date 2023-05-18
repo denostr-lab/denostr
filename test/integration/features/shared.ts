@@ -145,7 +145,7 @@ export const startTest = async (pathUrl: string, registerEvent: Function) => {
                     console.error(err, 'Fatal error occurred when watching database')
                     Deno.exit(1)
                 })
-            
+
                 initWatchers(watcher, api.broadcastLocal.bind(api))
 
                 Sinon.stub(SettingsStatic, 'watchSettings')

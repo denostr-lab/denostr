@@ -3,7 +3,7 @@ import { PassThrough } from 'stream'
 import mongoose from 'mongoose'
 
 import { DatabaseClient, EventId, Pubkey } from './base.ts'
-import { Event, DBEvent } from './event.ts'
+import { DBEvent, Event } from './event.ts'
 import { Invoice } from './invoice.ts'
 import { SubscriptionFilter } from './subscription.ts'
 import { User } from './user.ts'

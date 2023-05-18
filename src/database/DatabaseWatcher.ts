@@ -1,5 +1,5 @@
 import EventEmitter from 'events'
-import type { ChangeStreamDeleteDocument, ChangeStreamInsertDocument, ChangeStreamUpdateDocument, Db, WithId, ObjectId, ChangeStream } from 'mongodb'
+import type { ChangeStream, ChangeStreamDeleteDocument, ChangeStreamInsertDocument, ChangeStreamUpdateDocument, Db, ObjectId, WithId } from 'mongodb'
 
 import { convertChangeStreamPayload, IRecord } from './convertChangeStreamPayload.ts'
 import watchCollections from './watchCollections.ts'
