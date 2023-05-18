@@ -1,10 +1,10 @@
-// import fs from 'node:fs/promises'
-// import { hostname } from 'node:os'
+// import fs from 'fs/promises'
+// import { hostname } from 'os'
 
 // import { expect } from 'chai'
 // import { afterEach, beforeEach, describe, it } from 'jest'
 // import Sinon from 'sinon'
-// import { hiddenService, Tor } from 'npm:tor-control-ts@1.0.0'
+// import { hiddenService, Tor } from 'tor-control-ts'
 
 // import Config from '../../../src/config/index.ts'
 // import { addOnion, closeTorClient, createTorConfig, getTorClient } from '../../../src/tor/client.ts'

@@ -1,16 +1,14 @@
-import mongoose from 'npm:mongoose'
-import { __, always, applySpec, forEachObjIndexed, identity, ifElse, is, isNil, path, paths, pipe, prop, propSatisfies } from 'ramda'
+import mongoose from 'mongoose'
+import { __, always, applySpec, identity, ifElse, is, isNil, path, paths, pipe, prop, propSatisfies } from 'ramda'
 
 import { EventId } from '../@types/base.ts'
-import { Event } from '../@types/event.ts'
+import { DBEvent, Event } from '../@types/event.ts'
 import { IEventRepository } from '../@types/repositories.ts'
 import { SubscriptionFilter } from '../@types/subscription.ts'
 import { Settings } from '../@types/settings.ts'
 import { ContextMetadataKey, EventDeduplicationMetadataKey, EventDelegatorMetadataKey, EventExpirationTimeMetadataKey, EventTags } from '../constants/base.ts'
 import { masterEventsModel, readReplicaEventsModel } from '../database/models/Events.ts'
-import { IEvent } from '../database/types/index.ts'
 import { createLogger } from '../factories/logger-factory.ts'
-import { isGenericTagQuery } from '../utils/filter.ts'
 import { toBuffer } from '../utils/transform.ts'
 import { isChannelMetadata } from '../utils/event.ts'
 
@@ -26,7 +24,7 @@ const debug = createLogger('event-repository')
 export class EventRepository implements IEventRepository {
     constructor(private readonly settings: () => Settings) {}
 
-    public findByFilters(filters: SubscriptionFilter[]): mongoose.Aggregate<IEvent[]> {
+    public findByFilters(filters: SubscriptionFilter[]): mongoose.Aggregate<DBEvent[]> {
         debug('querying for %o', filters)
         if (!Array.isArray(filters) || !filters.length) {
             throw new Error('Filters cannot be empty')
@@ -35,95 +33,8 @@ export class EventRepository implements IEventRepository {
         const subscriptionLimits = this.settings().limits?.client?.subscription
         const maxLimit = subscriptionLimits?.maxLimit ?? 0
 
-        const $match: any = {}
-        const $or: any[] = []
-        const $sort = { event_created_at: 1 }
-        const limit = {
-            $limit: maxLimit,
-        }
-        const pipelines: any[] = [
-            {
-                $match,
-            },
-            {
-                $sort,
-            },
-            limit,
-        ]
-
-        filters.forEach((currentFilter: SubscriptionFilter) => {
-            const subFilter: any = {}
-            const subFilterOr: any = []
-            for (const [filterName, filterValue] of Object.entries(currentFilter)) {
-                const isGenericTag = isGenericTagQuery(filterName)
-                if (isGenericTag) {
-                    if (Array.isArray(filterValue) && filterValue.length > 0) {
-                        subFilterOr.push({ event_tags: { $size: 0 } })
-                        subFilterOr.push({
-                            event_tags: {
-                                $elemMatch: {
-                                    $elemMatch: {
-                                        $in: [filterName[1], ...filterValue],
-                                    },
-                                },
-                            },
-                        })
-                    }
-                } else {
-                    const fieldNames = ['kinds', 'limit', 'until', 'since']
-                    if (fieldNames.includes(filterName)) {
-                        if (filterName === 'kinds' && Array.isArray(filterValue)) {
-                            subFilter['event_kind'] = { $in: filterValue }
-                        }
-
-                        if (filterName === 'since' && typeof filterValue === 'number') {
-                            subFilter['event_created_at'] = { $gte: filterValue }
-                        }
-
-                        if (filterName === 'until' && typeof filterValue === 'number') {
-                            subFilter['event_created_at'] = { $lte: filterValue }
-                        }
-
-                        if (filterName === 'limit' && typeof filterValue === 'number' && filterValue > 0) {
-                            if (filterValue >= maxLimit) {
-                                limit.$limit = maxLimit
-                            } else {
-                                limit.$limit = filterValue
-                            }
-                            $sort.event_created_at = -1
-                        }
-                    }
-                }
-            }
-
-            forEachObjIndexed(
-                (tableFields: string[], fieldName: any) => {
-                    const filterValue = currentFilter[fieldName]
-                    if (filterValue) {
-                        tableFields.forEach((field: any) => {
-                            subFilterOr.push({ [field]: { $in: filterValue.map(toBuffer) } })
-                        })
-                    }
-                },
-            )({
-                authors: ['event_pubkey', 'event_delegator'],
-                ids: ['event_id'],
-            })
-
-            if (subFilterOr.length > 0) {
-                subFilter['$or'] = subFilterOr
-            }
-
-            if (Object.keys(subFilter).length > 0) {
-                $or.push(subFilter)
-            }
-        })
-
-        if ($or.length > 0) {
-            $match.$or = $or
-        }
-
-        return readReplicaEventsModel.aggregate(pipelines)
+        // @ts-ignore: Model static method has been added
+        return readReplicaEventsModel.findBySubscriptionFilter(filters, maxLimit)
     }
 
     public async create(event: Event): Promise<number> {
@@ -171,7 +82,7 @@ export class EventRepository implements IEventRepository {
     public async upsert(event: Event): Promise<number> {
         debug('upserting event: %o', event)
 
-        const row: IEvent = applySpec({
+        const row: DBEvent = applySpec({
             event_id: pipe(prop('id'), toBuffer),
             event_pubkey: pipe(prop('pubkey'), toBuffer),
             event_created_at: prop('created_at'),
@@ -285,6 +196,7 @@ export class EventRepository implements IEventRepository {
         return ignoreUpdateConflicts(query)
     }
 }
+
 async function ignoreUpdateConflicts(query: any) {
     try {
         const result = await query

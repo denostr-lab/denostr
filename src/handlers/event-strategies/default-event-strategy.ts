@@ -21,9 +21,5 @@ export class DefaultEventStrategy implements IEventStrategy<Event, Promise<void>
             WebSocketAdapterEvent.Message,
             createCommandResult(event.id, true, (count) ? '' : 'duplicate:'),
         )
-
-        if (count) {
-            this.webSocket.emit(WebSocketAdapterEvent.Broadcast, event)
-        }
     }
 }

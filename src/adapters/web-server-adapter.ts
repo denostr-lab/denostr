@@ -1,5 +1,4 @@
-import { EventEmitter } from 'node:events'
-import { Duplex } from 'node:stream'
+import { EventEmitter } from 'events'
 
 import { Application } from 'oak'
 
@@ -15,11 +14,6 @@ export class WebServerAdapter extends EventEmitter implements IWebServerAdapter 
     ) {
         debug('created')
         super()
-        // this.webServer
-        //   .on('error', this.onError.bind(this))
-        //   .on('clientError', this.onClientError.bind(this))
-        //   .once('close', this.onClose.bind(this))
-        //   .once('listening', this.onListening.bind(this))
     }
 
     public listen(port: number): void {
@@ -27,25 +21,11 @@ export class WebServerAdapter extends EventEmitter implements IWebServerAdapter 
         this.controller = new AbortController()
         const { signal } = this.controller
         this.webServer.listen({ port, signal })
-    }
-
-    private onListening() {
-        debug('olistening for incoming connections')
-        debug('listening for incoming connections')
+        this.webServer.addEventListener('error', ({ error }) => this.onError(error))
     }
 
     private onError(error: Error) {
         console.error('web-server-adapter: error:', error)
-    }
-
-    private onClientError(error: Error, socket: Duplex) {
-        debug('onClientError', error, socket)
-
-        console.error('web-server-adapter: client socket error:', error)
-        if (error['code'] === 'ECONNRESET' || !socket.writable) {
-            return
-        }
-        socket.end('HTTP/1.1 400 Bad Request\r\nContent-Type: text/html\r\n')
     }
 
     public close(callback?: () => void): void {
@@ -56,9 +36,7 @@ export class WebServerAdapter extends EventEmitter implements IWebServerAdapter 
         debug('closed')
     }
 
-    protected onClose(e) {
-        debug('stopped listening to incoming connections', e)
-
+    protected onClose() {
         debug('stopped listening to incoming connections')
     }
 }

@@ -1,5 +1,4 @@
-// import { addAbortSignal } from 'node:stream'
-import { pipeline } from 'node:stream/promises'
+import { pipeline } from 'stream/promises'
 
 import { anyPass, equals, isNil, map, propSatisfies, uniqWith } from 'ramda'
 

@@ -22,9 +22,6 @@ export class ReplaceableEventStrategy implements IEventStrategy<Event, Promise<v
                 WebSocketAdapterEvent.Message,
                 createCommandResult(event.id, true, (count) ? '' : 'duplicate:'),
             )
-            if (count) {
-                this.webSocket.emit(WebSocketAdapterEvent.Broadcast, event)
-            }
         } catch (error: unknown) {
             if (error instanceof Error) {
                 if (

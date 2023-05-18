@@ -3,7 +3,7 @@ import { applySpec, converge, curry, mergeLeft, nth, omit, pipe, prop, reduceBy 
 import * as secp256k1 from 'secp256k1'
 
 import { EventId, Pubkey, Tag } from '../@types/base.ts'
-import { CanonicalEvent, Event, UnidentifiedEvent, UnsignedEvent } from '../@types/event.ts'
+import { CanonicalEvent, DBEvent, Event, UnidentifiedEvent, UnsignedEvent } from '../@types/event.ts'
 import { EventKindsRange } from '../@types/settings.ts'
 import { SubscriptionFilter } from '../@types/subscription.ts'
 import Config from '../config/index.ts'
@@ -14,7 +14,6 @@ import { getLeadingZeroBits } from './proof-of-work.ts'
 import { RuneLike } from './runes/rune-like.ts'
 import { deriveFromSecret } from './secret.ts'
 import { fromBuffer } from './transform.ts'
-import { IEvent } from '../database/types/IEvent.ts'
 
 export const serializeEvent = (event: UnidentifiedEvent): CanonicalEvent => [
     0,
@@ -25,7 +24,7 @@ export const serializeEvent = (event: UnidentifiedEvent): CanonicalEvent => [
     event.content,
 ]
 
-export const toNostrEvent: (event: IEvent) => Event = applySpec({
+export const toNostrEvent: (event: DBEvent) => Event = applySpec({
     id: pipe(prop('event_id') as () => Buffer, fromBuffer),
     kind: prop('event_kind') as () => number,
     pubkey: pipe(prop('event_pubkey') as () => Buffer, fromBuffer),

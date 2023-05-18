@@ -37,7 +37,7 @@ export async function isRateLimited(
         return false
     }
 
-    if (ipWhitelist.includes(remoteAddress)) {
+    if (ipWhitelist?.includes(remoteAddress)) {
         return false
     }
     const rateLimiter = await slidingWindowRateLimiterFactory()

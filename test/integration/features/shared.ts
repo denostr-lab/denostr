@@ -1,9 +1,9 @@
 // deno-lint-ignore-file
 import { Buffer } from 'Buffer'
-import fs from 'node:fs'
+import fs from 'fs'
 
 import { assocPath, pipe } from 'ramda'
-import { fromEvent, map, Observable, ReplaySubject, Subject, takeUntil } from 'npm:rxjs@7.8.0'
+import { fromEvent, map, Observable, ReplaySubject, Subject, takeUntil } from 'rxjs'
 import Sinon from 'sinon'
 import { afterAll, beforeAll, describe, it } from 'jest'
 import { DatabaseClient1 as DatabaseClient } from '../../../src/@types/base.ts'
@@ -16,7 +16,9 @@ import { SettingsStatic } from '../../../src/utils/settings.ts'
 import type { IWorld } from './types.ts'
 import { connect, createIdentity, createSubscription, sendEvent, WebSocketWrapper } from './helpers.ts'
 import { masterEventsModel } from '../../../src/database/models/Events.ts'
-import { resolve } from 'node:path'
+import { api } from '../../../src/core-services/index.ts'
+import { DatabaseWatcher } from '../../../src/database/DatabaseWatcher.ts'
+import { initWatchers } from '../../../src/database/watchers.ts'
 
 export const isDraft = Symbol('draft')
 
@@ -45,6 +47,7 @@ let worker: AppWorker
 
 let dbClient: DatabaseClient
 let rrDbClient: DatabaseClient
+let watcher: DatabaseWatcher
 
 export const streams = new WeakMap<WebSocketWrapper, Observable<unknown>>()
 
@@ -132,8 +135,18 @@ export const startTest = async (pathUrl: string, registerEvent: Function) => {
                 Config.RELAY_PORT = '18808'
                 Config.SECRET = Math.random().toString().repeat(6)
 
-                rrDbClient = rrDbClient = getReadReplicaDbClient()
+                rrDbClient = getReadReplicaDbClient()
                 await rrDbClient.asPromise()
+
+                watcher = new DatabaseWatcher({
+                    db: dbClient.db,
+                })
+                watcher.watch().catch((err: Error) => {
+                    console.error(err, 'Fatal error occurred when watching database')
+                    Deno.exit(1)
+                })
+            
+                initWatchers(watcher, api.broadcastLocal.bind(api))
 
                 Sinon.stub(SettingsStatic, 'watchSettings')
                 const settings = SettingsStatic.createSettings()
@@ -153,6 +166,7 @@ export const startTest = async (pathUrl: string, registerEvent: Function) => {
             afterAll(async function () {
                 worker.close(async () => {
                     try {
+                        await watcher.close()
                         await Promise.all([
                             dbClient.destroy(true),
                             rrDbClient.destroy(true),

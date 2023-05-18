@@ -1,5 +1,5 @@
 import { Bulk } from 'redis'
-import TTLCache from 'npm:@isaacs/ttlcache'
+import TTLCache from '@isaacs/ttlcache'
 import { ICacheAdapter } from '../@types/adapters.ts'
 import { createLogger } from '../factories/logger-factory.ts'
 

@@ -1,4 +1,4 @@
-import axios, { CreateAxiosDefaults } from 'npm:axios@1.2.6'
+import axios, { CreateAxiosDefaults } from 'axios'
 import { path } from 'ramda'
 
 import { IPaymentsProcessor } from '../@types/clients.ts'

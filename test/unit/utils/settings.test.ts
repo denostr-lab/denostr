@@ -1,5 +1,5 @@
-import fs from 'node:fs'
-import { join } from 'node:path'
+import fs from 'fs'
+import { join } from 'path'
 
 import chai, { expect } from 'chai'
 import { afterEach, beforeEach, describe, it } from 'jest'

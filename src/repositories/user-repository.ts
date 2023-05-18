@@ -2,7 +2,7 @@ import { Pubkey } from '../@types/base.ts'
 import { IUserRepository } from '../@types/repositories.ts'
 import { User } from '../@types/user.ts'
 import { Settings } from '../@types/settings.ts'
-import { masterUsersModel } from '../database/models/index.ts'
+import { masterUsersModel } from '../database/models/Users.ts'
 import { createLogger } from '../factories/logger-factory.ts'
 import { fromDBUser, toBuffer } from '../utils/transform.ts'
 

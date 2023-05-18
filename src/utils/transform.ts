@@ -1,4 +1,4 @@
-import { bech32 } from 'npm:bech32@2.0.0'
+import { bech32 } from 'bech32'
 import { Buffer } from 'Buffer'
 import { always, applySpec, ifElse, is, isNil, path, pipe, prop, propSatisfies } from 'ramda'
 

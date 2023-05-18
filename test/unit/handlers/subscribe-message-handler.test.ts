@@ -1,5 +1,5 @@
-import EventEmitter from 'node:events'
-import { PassThrough } from 'node:stream'
+import EventEmitter from 'events'
+import { PassThrough } from 'stream'
 
 import { Buffer } from 'Buffer'
 import chai from 'chai'

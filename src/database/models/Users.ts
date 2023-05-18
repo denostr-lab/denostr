@@ -1,4 +1,4 @@
-import mongoose from 'npm:mongoose'
+import mongoose from 'mongoose'
 
 import { getMasterDbClient, getReadReplicaDbClient } from '../client.ts'
 import { Buffer } from 'Buffer'
@@ -33,11 +33,14 @@ UserSchema.index({ 'balance': 1 }, {
     background: true,
 })
 
+export const UsersModelName = 'Users'
+export const UsersCollectionName = 'users'
+
 export const UsersModel = (dbClient: mongoose.Connection) =>
     dbClient.model<UserDocument>(
-        'Users',
+        UsersModelName,
         UserSchema,
-        'users',
+        UsersCollectionName,
     )
 
 export const masterUsersModel = UsersModel(getMasterDbClient())

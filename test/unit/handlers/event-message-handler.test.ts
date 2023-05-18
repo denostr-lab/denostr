@@ -1,4 +1,4 @@
-import EventEmitter from 'node:events'
+import EventEmitter from 'events'
 
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'

@@ -1,8 +1,8 @@
 import { Buffer } from 'Buffer'
 import { createHash, createHmac } from 'crypto'
-import { EventEmitter } from 'node:events'
+import { EventEmitter } from 'events'
 
-import { Observable } from 'npm:rxjs@7.8.0'
+import { Observable } from 'rxjs'
 import * as secp256k1 from 'secp256k1'
 
 import { Event } from '../../../src/@types/event.ts'
@@ -182,8 +182,7 @@ export async function waitForNextEvent(
     return new Promise((resolve, reject) => {
         const observable = streams.get(ws) as Observable<OutgoingMessage>
 
-        observable.subscribe(async (message: OutgoingMessage) => {
-            await new Promise((a) => setTimeout(a, 100))
+        observable.subscribe((message: OutgoingMessage) => {
             if (message[0] === MessageType.EVENT && message[1] === subscription) {
                 const event = message[2] as Event
                 if (typeof content !== 'string' || event.content === content) {

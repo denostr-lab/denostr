@@ -1,8 +1,13 @@
 // deno-lint-ignore-file no-explicit-any
-import type { ChangeStreamDeleteDocument, ChangeStreamInsertDocument, ChangeStreamUpdateDocument } from 'npm:mongodb'
+import type { ChangeStreamDeleteDocument, ChangeStreamInsertDocument, ChangeStreamUpdateDocument } from 'mongodb'
 
 import type { RealTimeData } from './DatabaseWatcher.ts'
-import type { IRecord } from './types/IRecord.ts'
+
+export interface IRecord {
+    _id: string
+    created_at: Date
+    updated_at: Date
+}
 
 export function convertChangeStreamPayload(
     event:

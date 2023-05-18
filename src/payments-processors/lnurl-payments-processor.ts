@@ -1,4 +1,4 @@
-import { AxiosInstance } from 'npm:axios@1.2.6'
+import { AxiosInstance } from 'axios'
 import { Factory } from '../@types/base.ts'
 
 import { CreateInvoiceRequest, GetInvoiceResponse, IPaymentsProcessor } from '../@types/clients.ts'

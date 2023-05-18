@@ -1,8 +1,8 @@
-import { readFile, writeFile } from 'node:fs/promises'
-import { homedir } from 'node:os'
-import { join } from 'node:path'
+import { readFile, writeFile } from 'fs/promises'
+import { homedir } from 'os'
+import { join } from 'path'
 
-import { Tor } from 'npm:tor-control-ts@1.0.0'
+import { Tor } from 'tor-control-ts'
 
 import { TorConfig } from '../@types/tor.ts'
 import Config from '../config/index.ts'

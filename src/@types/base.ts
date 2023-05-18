@@ -1,7 +1,7 @@
-import net from 'node:net'
+import net from 'net'
 
 import { Knex } from 'npm:knex@2.4.2'
-import mongoose from 'npm:mongoose'
+import mongoose from 'mongoose'
 
 import { EventTags } from '../constants/base.ts'
 

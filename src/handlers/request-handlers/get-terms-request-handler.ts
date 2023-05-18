@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs'
+import { readFileSync } from 'fs'
 
 import { NextFunction, Response, RouterContext, Status } from '../../@types/controllers.ts'
 import { createSettings as settings } from '../../factories/settings-factory.ts'

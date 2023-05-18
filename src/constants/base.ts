@@ -58,3 +58,8 @@ export const EventDelegatorMetadataKey = Symbol('Delegator')
 export const EventDeduplicationMetadataKey = Symbol('Deduplication')
 export const ContextMetadataKey = Symbol('Context')
 export const EventExpirationTimeMetadataKey = Symbol('Expiration')
+
+export enum Sort {
+    ASC = 1,
+    DESC = -1,
+}

@@ -1,4 +1,4 @@
-import mongoose from 'npm:mongoose'
+import mongoose from 'mongoose'
 
 import Config from '../config/index.ts'
 import { createLogger } from '../factories/logger-factory.ts'

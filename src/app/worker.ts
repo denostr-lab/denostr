@@ -1,4 +1,4 @@
-import { FSWatcher } from 'node:fs'
+import { FSWatcher } from 'fs'
 
 import { IWebSocketServerAdapter } from '../@types/adapters.ts'
 import { IRunnable } from '../@types/base.ts'

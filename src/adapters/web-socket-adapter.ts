@@ -1,4 +1,4 @@
-import { EventEmitter } from 'node:events'
+import { EventEmitter } from 'events'
 
 import { Buffer } from 'Buffer'
 import { Request } from 'oak'

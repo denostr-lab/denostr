@@ -1,18 +1,14 @@
-import type { IEvent, IInstanceStatus } from '../../database/types/index.ts'
+import { ObjectId } from 'mongodb'
+
+import type { DBEvent } from '../../@types/event.ts'
 
 export type ClientAction = 'inserted' | 'updated' | 'removed' | 'changed'
 
 export type EventSignatures = {
-    'watch.instanceStatus'(data: {
+    'events.broadcast'(data: {
         clientAction: ClientAction
-        data?: undefined | Partial<IInstanceStatus>
+        data?: undefined | Partial<DBEvent>
         diff?: undefined | Record<string, any>
-        id: string
-    }): void
-    'WebSocketServer.broadcast'(data: {
-        clientAction: ClientAction
-        data?: undefined | Partial<IEvent>
-        diff?: undefined | Record<string, any>
-        id: string
+        id: ObjectId
     }): void
 }

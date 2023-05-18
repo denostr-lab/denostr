@@ -33,9 +33,5 @@ export class ParameterizedReplaceableEventStrategy implements IEventStrategy<Eve
             WebSocketAdapterEvent.Message,
             createCommandResult(event.id, true, (count) ? '' : 'duplicate:'),
         )
-
-        if (count) {
-            this.webSocket.emit(WebSocketAdapterEvent.Broadcast, event)
-        }
     }
 }

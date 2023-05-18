@@ -1,4 +1,5 @@
 import { Buffer } from 'Buffer'
+import { ObjectId } from 'mongodb'
 
 import { ContextMetadataKey, EventDeduplicationMetadataKey, EventDelegatorMetadataKey, EventExpirationTimeMetadataKey, EventKinds } from '../constants/base.ts'
 import { ContextMetadata, EventId, Pubkey, Tag } from './base.ts'
@@ -36,7 +37,7 @@ export interface ParameterizedReplaceableEvent extends Event {
 }
 
 export interface DBEvent {
-    id: string
+    _id: ObjectId
     event_id: Buffer
     event_pubkey: Buffer
     event_kind: number
