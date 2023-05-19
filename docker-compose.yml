@@ -1,6 +1,6 @@
 services:
   denostr:
-    image: ghcr.io/guakamoli/denostr:v0.1.0-worker
+    image: ghcr.io/guakamoli/denostr:v0.1.1-worker
     container_name: denostr
     environment:
       RELAY_PORT: 8008

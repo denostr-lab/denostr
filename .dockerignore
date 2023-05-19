@@ -24,3 +24,5 @@ docs
 .git-hooks
 commitlint.config.js
 .bump
+.docker
+.nostr.local

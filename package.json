@@ -1,6 +1,6 @@
 {
     "name": "denostr",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "💪🏻 Deno-based, cloud-native Nostr relay forked from nostream. Sponsored by ByteTrade and Revo.",
     "supportedNips": [
         1,
