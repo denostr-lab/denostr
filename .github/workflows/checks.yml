@@ -74,7 +74,7 @@ jobs:
           key: ${{ runner.OS }}-deno-cache-dir-${{ hashFiles('deno.lock') }}
       - name: Run deno cache command
         if: steps.cache-deno-cache-dir.outputs.cache-hit != 'true'
-        run: deno cache src/index.ts
+        run: deno task cache
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.8.0
         with:
@@ -120,7 +120,7 @@ jobs:
           key: ${{ runner.OS }}-deno-cache-dir-${{ hashFiles('deno.lock') }}
       - name: Run deno cache command
         if: steps.cache-deno-cache-dir.outputs.cache-hit != 'true'
-        run: deno cache src/index.ts
+        run: deno task cache
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.8.0
         with:

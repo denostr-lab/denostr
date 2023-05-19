@@ -20,7 +20,7 @@ export class WebSocketServerService extends ServiceClass {
                 debug('events.broadcast %s data: %o', clientAction, data)
                 if (data && typeof data !== 'undefined') {
                     // ignore draft
-                    if (data.event_kind === 5 && data.event_signature) {
+                    if (data?.event_signature?.toString() === '' || data?.deleted_at) {
                         return
                     }
                     adapter.emit(WebSocketServerAdapterEvent.Broadcast, toNostrEvent(data as DBEvent))

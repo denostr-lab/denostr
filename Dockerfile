@@ -23,7 +23,7 @@ FROM base as cache
 COPY --chown=deno:deno . .
 
 # Cache dependencies
-RUN deno cache src/index.ts
+RUN deno task cache
 
 FROM base as runner
 

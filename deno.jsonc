@@ -11,7 +11,9 @@
         "test:integration:nip28": "deno test test/integration/features/nip-28/nip-28.feature.test.ts --no-check -A",
         "test:integration:nip33": "deno test test/integration/features/nip-33/nip-33.feature.test.ts --no-check -A",
         "git-hooks": "deno run --no-check=remote --allow-run=deno,git --allow-read --allow-write=.git-hooks https://deno.land/x/githooked/mod.ts install",
-        "bump": "deno run --allow-all .bump/bump.ts"
+        "bump": "deno run --allow-all .bump/bump.ts",
+        "cache": "deno cache src/index.ts --reload",
+        "force-cache": "deno cache src/index.ts --reload --lock-write"
     },
     "imports": {
         "dotenv": "https://deno.land/x/dotenv@v3.2.0/mod.ts",
@@ -32,7 +34,7 @@
         "joi": "https://cdn.skypack.dev/joi@17.7.0?dts",
         "rxjs": "https://cdn.skypack.dev/rxjs@7.8.0?dts",
         "chai-as-promised": "https://cdn.skypack.dev/chai-as-promised@7.1.1?dts",
-        "events": "node:events",
+        "events": "https://deno.land/std@0.177.0/node/events.ts",
         "stream": "node:stream",
         "stream/promises": "node:stream/promises",
         "dns": "node:dns",

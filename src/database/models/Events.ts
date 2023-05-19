@@ -42,7 +42,7 @@ const EventSchema = new mongoose.Schema({
     },
     event_deduplication: [mongoose.Schema.Types.Mixed],
     first_seen: { type: Date },
-    deleted_at: { type: Date },
+    deleted_at: { type: String },
     expires_at: { type: Number },
 })
 
@@ -70,11 +70,43 @@ EventSchema.index({ 'event_tags.0.1': 1 }, {
     background: true,
     sparse: true,
 })
+EventSchema.index({ 'event_tags.0.2': 1 }, {
+    background: true,
+    sparse: true,
+})
+EventSchema.index({ 'event_tags.0.3': 1 }, {
+    background: true,
+    sparse: true,
+})
 EventSchema.index({ 'event_tags.1.0': 1 }, {
     background: true,
     sparse: true,
 })
 EventSchema.index({ 'event_tags.1.1': 1 }, {
+    background: true,
+    sparse: true,
+})
+EventSchema.index({ 'event_tags.1.2': 1 }, {
+    background: true,
+    sparse: true,
+})
+EventSchema.index({ 'event_tags.1.3': 1 }, {
+    background: true,
+    sparse: true,
+})
+EventSchema.index({ 'event_tags.2.0': 1 }, {
+    background: true,
+    sparse: true,
+})
+EventSchema.index({ 'event_tags.2.1': 1 }, {
+    background: true,
+    sparse: true,
+})
+EventSchema.index({ 'event_tags.2.2': 1 }, {
+    background: true,
+    sparse: true,
+})
+EventSchema.index({ 'event_tags.2.3': 1 }, {
     background: true,
     sparse: true,
 })

@@ -43,7 +43,7 @@ export class EventRepository implements IEventRepository {
 
     private async insert(event: Event) {
         debug('inserting event: %o', event)
-        const row = applySpec({
+        const row: DBEvent = applySpec({
             event_id: pipe(prop('id'), toBuffer),
             event_pubkey: pipe(prop('pubkey'), toBuffer),
             event_created_at: pipe(prop('created_at'), toNumber),
@@ -66,6 +66,7 @@ export class EventRepository implements IEventRepository {
                 prop(EventExpirationTimeMetadataKey as any),
                 always(null),
             ),
+            deleted_at: always(null),
         })(event)
 
         try {
@@ -191,7 +192,7 @@ export class EventRepository implements IEventRepository {
                     event_id: { $in: eventIdsToDelete.map(toBuffer) },
                     deleted_at: null,
                 },
-                { deleted_at: new Date() },
+                { deleted_at: new Date().toISOString() },
             )
         return ignoreUpdateConflicts(query)
     }

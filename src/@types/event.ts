@@ -46,10 +46,10 @@ export interface DBEvent {
     event_tags: Tag[]
     event_signature: Buffer
     event_delegator?: Buffer | null
-    event_deduplication?: string | null
-    first_seen: Date
-    deleted_at?: Date
-    expires_at?: number
+    event_deduplication?: { 0: string; 1: number }[] | null
+    first_seen?: Date
+    deleted_at: string
+    expires_at: number
 }
 
 export interface CanonicalEvent {
