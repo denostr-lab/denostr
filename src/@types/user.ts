@@ -1,4 +1,5 @@
-import { Buffer } from 'Buffer'
+import mongoose from 'mongoose'
+import { ObjectId } from 'mongodb'
 
 import { Pubkey } from './base.ts'
 
@@ -11,8 +12,9 @@ export interface User {
     updatedAt: Date
 }
 
-export interface DBUser {
-    pubkey: Buffer
+export interface DBUser extends mongoose.Document {
+    _id: ObjectId
+    pubkey: string
     is_admitted: boolean
     balance: bigint
     created_at: Date

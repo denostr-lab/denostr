@@ -2,7 +2,7 @@ import { PassThrough } from 'stream'
 
 import mongoose from 'mongoose'
 
-import { DatabaseClient, EventId, Pubkey } from './base.ts'
+import { DatabaseClient, DatabaseTransaction, EventId, Pubkey } from './base.ts'
 import { DBEvent, Event } from './event.ts'
 import { Invoice } from './invoice.ts'
 import { SubscriptionFilter } from './subscription.ts'
@@ -17,19 +17,23 @@ export interface IQueryResult<T> extends Pick<Promise<T>, keyof Promise<T> & Exp
 export interface IEventRepository {
     create(event: Event): Promise<number>
     upsert(event: Event): Promise<number>
-    findByFilters(filters: SubscriptionFilter[]): mongoose.Aggregate<DBEvent[]>
+    findByFilters(filters: SubscriptionFilter[]): DBEvent[]
     insertStubs(pubkey: string, eventIdsToDelete: EventId[]): Promise<number>
     deleteByPubkeyAndIds(pubkey: Pubkey, ids: EventId[]): Promise<number>
 }
 
 export interface IInvoiceRepository {
     findById(id: string, client?: DatabaseClient): Promise<Invoice | undefined>
-    upsert(invoice: Partial<Invoice>, client?: DatabaseClient): Promise<number>
+    upsert(invoice: Partial<Invoice>, session?: DatabaseTransaction): Promise<number>
+    updateStatus(
+        invoice: Pick<Invoice, 'id' | 'status'>,
+        session?: DatabaseTransaction,
+    ): Promise<Invoice | undefined>
     confirmInvoice(
         invoiceId: string,
         amountReceived: bigint,
         confirmedAt: Date,
-        client?: DatabaseClient,
+        session?: DatabaseTransaction,
     ): Promise<void>
     findPendingInvoices(
         offset?: number,
@@ -43,6 +47,6 @@ export interface IUserRepository {
         pubkey: Pubkey,
         client?: mongoose.Connection,
     ): Promise<User | undefined>
-    upsert(user: Partial<User>, client?: mongoose.Connection): Promise<number>
+    upsert(user: Partial<User>, session?: DatabaseTransaction): Promise<number>
     getBalanceByPubkey(pubkey: Pubkey, client?: mongoose.Connection): Promise<bigint>
 }

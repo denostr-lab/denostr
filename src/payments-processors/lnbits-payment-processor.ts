@@ -65,6 +65,7 @@ export class LNbitsPaymentsProcesor implements IPaymentsProcessor {
             invoice.expiresAt = new Date(data.details.expiry * 1000)
             invoice.createdAt = new Date(data.details.time * 1000)
             invoice.updatedAt = new Date()
+            return invoice
         } catch (error) {
             console.error(`Unable to get invoice ${invoiceId}. Reason:`, error)
 

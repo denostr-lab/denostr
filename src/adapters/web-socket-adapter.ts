@@ -21,6 +21,8 @@ import { getRemoteAddress } from '../utils/http.ts'
 import { createNoticeMessage, createOutgoingEventMessage } from '../utils/messages.ts'
 import { attemptValidation } from '../utils/validation.ts'
 
+import { psubscribe, subscribe } from 'redis/pubsub.ts'
+
 const debug = createLogger('web-socket-adapter')
 
 const abortableMessageHandlers: WeakMap<WebSocket, IAbortable[]> = new WeakMap()

@@ -4,30 +4,34 @@
 
 The following environment variables can be set:
 
-| Name                   | Description                      | Default                              |
-| ---------------------- | -------------------------------- | ------------------------------------ |
-| SECRET                 | Long random secret.              | abcdefghijklmnopqrstuvwxyz1234567890 |
-| RELAY_PORT             | Relay's server port              | 8008                                 |
-| RELAY_PRIVATE_KEY      | Relay's private key in hex       | (auto-generated)                     |
-| MONGO_URI              | MongoDB URI                      |                                      |
-| MONGO_MIN_POOL_SIZE    | Min. connections per worker      | 0                                    |
-| MONGO_MAX_POOL_SIZE    | Max. connections per worker      | 3                                    |
-| MONGO_REPLICA_ENABLED  | Read Replica (RR) Toggle         | false                                |
-| MONGO_RR_MIN_POOL_SIZE | Min. connections per worker (RR) | 0                                    |
-| MONGO_RR_MAX_POOL_SIZE | Max. connections per worker (RR) | 3                                    |
-| TOR_HOST               | Tor Hostname                     |                                      |
-| TOR_CONTROL_PORT       | Tor control Port                 | 9051                                 |
-| TOR_PASSWORD           | Tor control password             | nostr_ts_relay                       |
-| HIDDEN_SERVICE_PORT    | Tor hidden service port          | 80                                   |
-| REDIS_HOST             | Redis Host                       |                                      |
-| REDIS_PORT             | Redis Port                       | 6379                                 |
-| REDIS_DB               | Redis DB                         | 0                                    |
-| REDIS_USER             | Redis User                       |                                      |
-| REDIS_PASS             | Redis Password                   |                                      |
-| REDIS_TLS              | Redis TLS                        | false                                |
-| NOSTR_CONFIG_DIR       | Configuration directory          | <project_root>/.nostr/               |
-| DEBUG                  | Debugging filter                 |                                      |
-| ZEBEDEE_API_KEY        | Zebedee Project API Key          |                                      |
+| Name                       | Description                         | Default                                 |
+| -------------------------- | ----------------------------------- | --------------------------------------- |
+| SECRET                     | Long random secret.                 | abcdefghijklmnopqrstuvwxyz1234567890    |
+| RELAY_PORT                 | Relay's server port                 | 8008                                    |
+| RELAY_PRIVATE_KEY          | Relay's private key in hex          | (auto-generated)                        |
+| MONGO_URI                  | MongoDB URI                         |                                         |
+| MONGO_MIN_POOL_SIZE        | Min. connections per worker         | 0                                       |
+| MONGO_MAX_POOL_SIZE        | Max. connections per worker         | 3                                       |
+| MONGO_REPLICA_ENABLED      | Read Replica (RR) Toggle            | false                                   |
+| MONGO_RR_MIN_POOL_SIZE     | Min. connections per worker (RR)    | 0                                       |
+| MONGO_RR_MAX_POOL_SIZE     | Max. connections per worker (RR)    | 3                                       |
+| TOR_HOST                   | Tor Hostname                        |                                         |
+| TOR_CONTROL_PORT           | Tor control Port                    | 9051                                    |
+| TOR_PASSWORD               | Tor control password                | nostr_ts_relay                          |
+| HIDDEN_SERVICE_PORT        | Tor hidden service port             | 80                                      |
+| REDIS_HOST                 | Redis Host                          |                                         |
+| REDIS_PORT                 | Redis Port                          | 6379                                    |
+| REDIS_DB                   | Redis DB                            | 0                                       |
+| REDIS_USER                 | Redis User                          |                                         |
+| REDIS_PASS                 | Redis Password                      |                                         |
+| REDIS_TLS                  | Redis TLS                           | false                                   |
+| NOSTR_CONFIG_DIR           | Configuration directory             | <project_root>/.nostr/                  |
+| DEBUG                      | Debugging filter                    |                                         |
+| ZEBEDEE_API_KEY            | Zebedee Project API Key             |                                         |
+| LNBITS_API_KEY             | Lnbits Invoice/read Key             |                                         |
+| OPENNODE_API_KEY           | API Key with Invoices Key           |                                         |
+| NODELESS_API_KEY           | Nodeless API key                    |                                         |
+| NODELESS_WEBHOOK_SECRET    | Nodeless webhook secret             |                                         |
 
 # Settings
 

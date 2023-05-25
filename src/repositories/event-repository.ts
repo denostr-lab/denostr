@@ -1,4 +1,3 @@
-import mongoose from 'mongoose'
 import { __, always, applySpec, identity, ifElse, is, isNil, path, paths, pipe, prop, propSatisfies } from 'ramda'
 
 import { EventId } from '../@types/base.ts'
@@ -24,7 +23,7 @@ const debug = createLogger('event-repository')
 export class EventRepository implements IEventRepository {
     constructor(private readonly settings: () => Settings) {}
 
-    public findByFilters(filters: SubscriptionFilter[]): mongoose.Aggregate<DBEvent[]> {
+    public findByFilters(filters: SubscriptionFilter[]): DBEvent[] {
         debug('querying for %o', filters)
         if (!Array.isArray(filters) || !filters.length) {
             throw new Error('Filters cannot be empty')

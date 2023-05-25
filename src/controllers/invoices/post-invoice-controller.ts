@@ -35,7 +35,7 @@ export class PostInvoiceController implements IController {
         }
         const params = helpers.getQuery(ctx)
         debug('params: %o', params)
-        debug('body: %o', request.body)
+        debug('body: %o', ctx.state.body)
 
         const currentSettings = this.settings()
 
@@ -45,39 +45,54 @@ export class PostInvoiceController implements IController {
 
         const limited = await this.isRateLimited(request, currentSettings)
         if (limited) {
-            ctx.throw(Status.TooManyRequests, 'Too many requests')
+            ctx.response.status = Status.TooManyRequests
+            ctx.response.body = 'Too many requests'
         }
 
-        if (!request.body || typeof request.body !== 'object') {
-            ctx.throw(Status.BadRequest, 'Invalid request')
+        if (!ctx.state.body || typeof ctx.state.body !== 'object') {
+            ctx.response.status = Status.BadRequest
+            ctx.response.body = 'Invalid request'
+            return
         }
 
-        const tosAccepted = request.body?.tosAccepted === 'yes'
+        const requestBody = ctx.state.body
+
+        const tosAccepted = requestBody?.tosAccepted === 'yes'
 
         if (!tosAccepted) {
-            ctx.throw(Status.BadRequest, 'ToS agreement: not accepted')
+            ctx.response.status = Status.BadRequest
+            ctx.response.body = 'ToS agreement: not accepted'
+            return
         }
 
-        const isAdmissionInvoice = request.body?.feeSchedule === 'admission'
+        const isAdmissionInvoice = requestBody?.feeSchedule === 'admission'
         if (!isAdmissionInvoice) {
-            ctx.throw(Status.BadRequest, 'Invalid fee')
+            ctx.response.status = Status.BadRequest
+            ctx.response.body = 'Invalid fee'
+            return
         }
 
-        const pubkeyRaw = path(['body', 'pubkey'], request)
+        const pubkeyRaw = path(['pubkey'], requestBody)
 
         let pubkey: string
         if (typeof pubkeyRaw !== 'string') {
-            ctx.throw(Status.BadRequest, 'Invalid pubkey: missing')
+            ctx.response.status = Status.BadRequest
+            ctx.response.body = 'Invalid pubkey: missing'
+            return
         } else if (/^[0-9a-f]{64}$/.test(pubkeyRaw)) {
             pubkey = pubkeyRaw
         } else if (/^npub1/.test(pubkeyRaw)) {
             try {
                 pubkey = fromBech32(pubkeyRaw)
             } catch {
-                ctx.throw(Status.BadRequest, 'Invalid pubkey: invalid npub')
+                ctx.response.status = Status.BadRequest
+                ctx.response.body = 'Invalid pubkey: invalid npub'
+                return
             }
         } else {
-            ctx.throw(Status.BadRequest, 'Invalid pubkey: unknown format')
+            ctx.response.status = Status.BadRequest
+            ctx.response.body = 'Invalid pubkey: unknown format'
+            return
         }
 
         const isApplicableFee = (feeSchedule: FeeSchedule) =>
@@ -87,7 +102,8 @@ export class PostInvoiceController implements IController {
             .filter(isApplicableFee)
 
         if (!Array.isArray(admissionFee) || !admissionFee.length) {
-            ctx.throw(Status.BadRequest, 'No admission fee required')
+            ctx.response.status = Status.BadRequest
+            ctx.response.body = 'No admission fee required'
             return
         }
 
@@ -96,7 +112,8 @@ export class PostInvoiceController implements IController {
         if (
             user && user.isAdmitted && (!minBalance || user.balance >= minBalance)
         ) {
-            ctx.throw(Status.BadRequest, 'User is already admitted.')
+            ctx.response.status = Status.BadRequest
+            ctx.response.body = 'User is already admitted.'
             return
         }
 
@@ -115,7 +132,8 @@ export class PostInvoiceController implements IController {
             )
         } catch (error) {
             console.error('Unable to create invoice. Reason:', error)
-            ctx.throw(Status.BadRequest, 'Unable to create invoice')
+            ctx.response.status = Status.BadRequest
+            ctx.response.body = 'Unable to create invoice'
             return
         }
 
@@ -131,6 +149,7 @@ export class PostInvoiceController implements IController {
             expires_at: invoice.expiresAt?.toISOString() ?? '',
             invoice: invoice.bolt11,
             amount: amount / 1000n,
+            processor: currentSettings.payments.processor,
         }
 
         const body = Object

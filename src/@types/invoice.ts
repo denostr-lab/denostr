@@ -1,4 +1,6 @@
 import { Buffer } from 'Buffer'
+import mongoose from 'mongoose'
+import { ObjectId } from 'mongodb'
 
 import { Pubkey } from './base.ts'
 
@@ -11,6 +13,7 @@ export enum InvoiceUnit {
 export enum InvoiceStatus {
     PENDING = 'pending',
     COMPLETED = 'completed',
+    EXPIRED = 'expired',
 }
 
 export interface Invoice {
@@ -29,7 +32,12 @@ export interface Invoice {
     verifyURL?: string
 }
 
-export interface DBInvoice {
+export interface LnurlInvoice extends Invoice {
+    verifyURL: string
+}
+
+export interface DBInvoice extends mongoose.Document {
+    _id: ObjectId
     id: string
     pubkey: Buffer
     bolt11: string

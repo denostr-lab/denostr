@@ -70,7 +70,7 @@ Todo
 - Deno v1.30.x or v1.31.x
 - Typescript
 - MongoDB 4.4, 5.0, 6.0
-- Redis (Optional)
+- Redis (Standalone Optional, Cluster Required)
 
 ### kubernetes setups
 
@@ -78,18 +78,63 @@ Todo
 
 ## Full Guide
 
-- [ ] Set up a paid Nostr relay
+- [x] Set up a paid Nostr relay
 
 ### Accepting payments
 
-1. Zebedee
+1. Before you begin
+   - Complete one of the Quick Start guides in this document
+   - Create a `.env` file
+   - On `.nostr/settings.yaml` file make the following changes:
+     - Set `payments.enabled` to `true`
+     - Set `payments.feeSchedules.admission.enabled` to `true`
+     - Set `limits.event.pubkey.minBalance` to the minimum balance in msats required to accept events (i.e. `1000000` to require a balance of `1000` sats)
+   - Choose one of the following payment processors: `zebedee`, `nodeless`, `opennode`, `lnbits`, `lnurl`
 
-- You must set `ZEBEDEE_API_KEY` with an API Key from one of your projects in your Zebedee Developer Dashboard. Contact @foxp2zeb on Telegram or npub1rvg76s0gz535txd9ypg2dfqv0x7a80ar6e096j3v343xdxyrt4ksmkxrck on Nostr requesting access to
-  the Zebedee Developer Dashboard. See the Zebedee full guide on how to set up a paid relay.
+2. [Lnbits](https://lnbits.com/)
+    - Complete the step "Before you begin"
+    - Create a new wallet on you public LNbits instance
+      - [Demo](https://legend.lnbits.com/) server must not be used for production
+      - Your instance must be accessible from the internet and have a valid SSL/TLS certificate
+    - Get wallet "Invoice/read key" (in Api docs section of your wallet)
+    - set `LNBITS_API_KEY` environment variable with the "Invoice/read key" Key above on your `.env` file
 
-2. Lnbits
+      ```
+      LNBITS_API_KEY={YOUR_LNBITS_API_KEY_HERE}
+      ```
+    - On your `.nostr/settings.yaml` file make the following changes:
+      - Set `payments.processor` to `lnbits`
+      - set `lnbits.baseURL` to your LNbits instance URL (e.g. `https://{YOUR_LNBITS_DOMAIN_HERE}/`)
+      - Set `paymentsProcessors.lnbits.callbackBaseURL` to match your callbcak URL (e.g. `https://{YOUR_DOMAIN_HERE}/callbacks/lnbits`)
+    - Restart Denostr
 
-- You must set `LNBITS_API_KEY` with an API Key from one of "Invoice/read key" in your wallet.
+3. [ZEBEDEE](https://zebedee.io)
+   - Complete the step "Before you begin"
+   - [Sign up for a ZEBEDEE Developer Dashboard account](https://dashboard.zebedee.io/signup), create a new LIVE Project, and get that Project's API Key
+   - Set `ZEBEDEE_API_KEY` environment variable with the API Key above on your `.env` file
+
+    ```
+    ZEBEDEE_API_KEY={YOUR_ZEBEDEE_API_KEY_HERE}
+    ```
+
+   - Follow the required steps for all payments processors
+   - On `.nostr/settings.yaml` file make the following changes:
+     - `payments.processor` to `zebedee`
+     - `paymentsProcessors.zebedee.callbackBaseURL` to match your callback URL (e.g. `https://{YOUR_DOMAIN_HERE}/callbacks/zebedee`)
+   - Restart Denostr
+
+4. Ensure payments are required for your public key
+   - Visit https://{YOUR-DOMAIN}/
+   - You should be presented with a form requesting an admission fee to be paid
+   - Fill out the form and take the necessary steps to pay the invoice
+   - Wait until the screen indicates that payment was received
+   - Add your relay URL to your favorite Nostr client (wss://{YOUR-DOMAIN}) and wait for it to connect
+   - Send a couple notes to test
+   - Go to https://websocketking.com/ and connect to your relay (wss://{YOUR_DOMAIN})
+   - Convert your npub to hexadecimal using a [Key Converter](https://damus.io/key/)
+   - Send the following JSON message: `["REQ", "payment-test", {"authors":["your-pubkey-in-hexadecimal"]}]`
+   - You should get back the few notes you sent earlier
+
 
 ### Quick Start (Standalone)
 

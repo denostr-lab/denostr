@@ -1,6 +1,6 @@
 import net from 'net'
 
-import { Knex } from 'npm:knex@2.4.2'
+import mongodb from 'mongodb'
 import mongoose from 'mongoose'
 
 import { EventTags } from '../constants/base.ts'
@@ -35,15 +35,13 @@ export type Range<F extends number, T extends number> = Exclude<
 
 export type Factory<TOutput = any, TInput = void> = (input: TInput) => TOutput
 
-export type DatabaseClient = Knex
-
-export type DatabaseTransaction<T extends Record<string, unknown> = any> = Knex.Transaction<T, T[]>
+export type DatabaseClient = mongoose.Connection
+export type ClientSession = mongodb.ClientSession
+export type DatabaseTransaction = ClientSession
 
 export interface ContextMetadata {
     remoteAddress: net.SocketAddress
 }
-
-export type DatabaseClient1 = mongoose.Connection
 
 export interface IRunnable {
     run(): void

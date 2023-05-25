@@ -13,12 +13,14 @@
         "git-hooks": "deno run --no-check=remote --allow-run=deno,git --allow-read --allow-write=.git-hooks https://deno.land/x/githooked/mod.ts install",
         "bump": "deno run --allow-all .bump/bump.ts",
         "cache": "deno cache src/index.ts --reload",
-        "force-cache": "deno cache src/index.ts --reload --lock-write"
+        "cache:force": "deno cache src/index.ts --reload --lock-write"
     },
     "imports": {
+        "@/": "./src/",
         "dotenv": "https://deno.land/x/dotenv@v3.2.0/mod.ts",
         "ramda": "https://deno.land/x/ramda@v0.27.2/mod.ts",
-        "redis": "https://deno.land/x/redis@v0.29.2/mod.ts",
+        "redis": "https://deno.land/x/redis@v0.29.4/mod.ts",
+        "redis/": "https://deno.land/x/redis@v0.29.4/",
         "debug": "https://deno.land/x/debuglog@v1.0.0/debug.ts",
         "websocket": "./vendor/deno.land/x/websocket@v0.1.4/mod.ts",
         "jest": "https://deno.land/std@0.180.0/testing/bdd.ts",
@@ -35,8 +37,8 @@
         "rxjs": "https://cdn.skypack.dev/rxjs@7.8.0?dts",
         "chai-as-promised": "https://cdn.skypack.dev/chai-as-promised@7.1.1?dts",
         "events": "https://deno.land/std@0.177.0/node/events.ts",
-        "stream": "node:stream",
-        "stream/promises": "node:stream/promises",
+        "stream": "https://deno.land/std@0.177.0/node/stream.ts",
+        "stream/promises": "https://deno.land/std@0.177.0/node/stream/promises.mjs",
         "dns": "node:dns",
         "net": "node:net",
         "tls": "node:tls",

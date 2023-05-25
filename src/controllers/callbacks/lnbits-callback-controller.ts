@@ -1,8 +1,11 @@
-import { IController, Request, Response, RouterContext, Status } from '../../@types/controllers.ts'
-import { Invoice, InvoiceStatus } from '../../@types/invoice.ts'
-import { IInvoiceRepository } from '../../@types/repositories.ts'
-import { IPaymentsService } from '../../@types/services.ts'
-import { createLogger } from '../../factories/logger-factory.ts'
+import { helpers, IController, Request, Response, RouterContext, Status } from '@/@types/controllers.ts'
+import { Invoice, InvoiceStatus } from '@/@types/invoice.ts'
+import { IInvoiceRepository } from '@/@types/repositories.ts'
+import { IPaymentsService } from '@/@types/services.ts'
+import { createLogger } from '@/factories/logger-factory.ts'
+import { createSettings } from '@/factories/settings-factory.ts'
+import { deriveFromSecret, hmacSha256 } from '@/utils/secret.ts'
+import { getRemoteAddress } from '@/utils/http.ts'
 
 const debug = createLogger('lnbits-callback-controller')
 
@@ -19,14 +22,46 @@ export class LNbitsCallbackController implements IController {
         ctx: RouterContext,
     ) {
         debug('request headers: %o', request.headers)
-        debug('request body: %o', request.body)
+        debug('request body: %o', ctx.state.body)
 
-        const body = request.body
+        const settings = createSettings()
+        const remoteAddress = getRemoteAddress(request, settings)
+        const paymentProcessor = settings.payments?.processor ?? 'null'
+
+        if (paymentProcessor !== 'lnbits') {
+            debug('denied request from %s to /callbacks/lnbits which is not the current payment processor', remoteAddress)
+            response.status = Status.Forbidden
+            response.body = 'Forbidden'
+            return
+        }
+
+        let validationPassed = false
+
+        const requestQuery = helpers.getQuery(ctx)
+        if (typeof requestQuery.hmac === 'string' && requestQuery.hmac.match(/^[0-9]{1,20}:[0-9a-f]{64}$/)) {
+            const split = requestQuery.hmac.split(':')
+            if (hmacSha256(deriveFromSecret('lnbits-callback-hmac-key'), split[0]).toString('hex') === split[1]) {
+                if (parseInt(split[0]) > Date.now()) {
+                    validationPassed = true
+                }
+            }
+        }
+
+        if (!validationPassed) {
+            debug('unauthorized request from %s to /callbacks/lnbits', remoteAddress)
+            response.status = Status.Forbidden
+            response.body = 'Forbidden'
+            return
+        }
+
+        const body = ctx.state.body
         if (
             !body || typeof body !== 'object' ||
             typeof body.payment_hash !== 'string' || body.payment_hash.length !== 64
         ) {
-            ctx.throw(Status.BadRequest, 'Malformed body')
+            ctx.response.status = Status.BadRequest
+            ctx.response.body = 'Malformed body'
+            return
         }
 
         const invoice = await this.paymentsService.getInvoiceFromPaymentsProcessor(
@@ -37,7 +72,9 @@ export class LNbitsCallbackController implements IController {
         )
 
         if (!storedInvoice) {
-            ctx.throw(Status.NotFound, 'No such invoice')
+            ctx.response.status = Status.NotFound
+            ctx.response.body = 'No such invoice'
+            return
         }
 
         try {
@@ -53,12 +90,14 @@ export class LNbitsCallbackController implements IController {
         ) {
             response.status = Status.OK
             response.headers.set('content-type', 'text/plain; charset=utf8')
-            response.body = ''
+            response.body = 'OK'
             return
         }
 
         if (storedInvoice.status === InvoiceStatus.COMPLETED) {
-            ctx.throw(Status.Conflict, 'Invoice is already marked paid')
+            ctx.response.status = Status.Conflict
+            ctx.response.body = 'Invoice is already marked paid'
+            return
         }
 
         invoice.amountPaid = invoice.amountRequested

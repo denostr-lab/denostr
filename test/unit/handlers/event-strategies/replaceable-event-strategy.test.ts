@@ -9,7 +9,7 @@ chai.use(chaiAsPromised)
 chai.use(SinonChi)
 
 import { IWebSocketAdapter } from '../../../../src/@types/adapters.ts'
-import { DatabaseClient1 as DatabaseClient } from '../../../../src/@types/base.ts'
+import { DatabaseClient } from '../../../../src/@types/base.ts'
 import { Event } from '../../../../src/@types/event.ts'
 import { IEventStrategy } from '../../../../src/@types/message-handlers.ts'
 import { MessageType } from '../../../../src/@types/messages.ts'

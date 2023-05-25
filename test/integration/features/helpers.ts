@@ -1,5 +1,5 @@
 import { Buffer } from 'Buffer'
-import { createHash, createHmac } from 'crypto'
+import { createHash, createHmac, randomBytes } from 'crypto'
 import { EventEmitter } from 'events'
 
 import { Observable } from 'rxjs'
@@ -99,7 +99,7 @@ export async function createEvent(
 }
 
 export function createIdentity(name: string) {
-    const hmac = createHmac('sha256', Math.random().toString())
+    const hmac = createHmac('sha256', randomBytes(10))
     hmac.update(name)
     const privkey = hmac.digest().toString('hex')
     const pubkey = Buffer.from(secp256k1.getPublicKey(privkey, true)).toString(

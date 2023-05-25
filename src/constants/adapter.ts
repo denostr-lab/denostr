@@ -11,3 +11,7 @@ export enum WebSocketServerAdapterEvent {
     Broadcast = 'broadcast',
     Connection = 'connection',
 }
+
+export enum PubSubBroadcastEvent {
+    Ephemeral = 'events.broadcast.ephemeral',
+}
