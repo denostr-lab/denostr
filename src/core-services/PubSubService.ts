@@ -24,6 +24,7 @@ export class PubSubService extends ServiceClass {
             if (channel === PubSubBroadcastEvent.Ephemeral) {
                 try {
                     const event = toDBEvent(JSON.parse(message))
+                    debug('parse event to %o', event)
                     // fake event id
                     event._id = new ObjectId()
                     this.emit('events.broadcast', {

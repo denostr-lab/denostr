@@ -39,7 +39,6 @@ export class Transaction implements ITransaction {
         if (!this.session) {
             throw new Error('Unable to get transaction: transaction not started.')
         }
-        this.session.commitTransaction()
 
         try {
             await this.session.commitTransaction()
