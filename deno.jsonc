@@ -29,6 +29,7 @@
         "secp256k1": "https://deno.land/x/secp256k1@1.7.1/mod.ts",
         "crypto": "https://deno.land/std@0.177.0/node/crypto.ts",
         "oak-csp": "https://deno.land/x/oak_csp@1.0.3/mod.ts",
+        "json2yaml": "https://deno.land/x/json2yaml@v1.0.1/mod.ts",
         "chai": "https://cdn.skypack.dev/chai@4.3.4?dts",
         "sinon-chai": "https://cdn.skypack.dev/sinon-chai@3.7.0?dts",
         "sinon": "https://cdn.skypack.dev/sinon@15.0.1?dts",

@@ -30,6 +30,7 @@ export class GetInvoiceController implements IController {
             response.status = Status.OK
             response.headers.set('content-type', 'text/html')
             response.body = pageCache
+            pageCache = ''
         } else {
             response.status = Status.NotFound
         }

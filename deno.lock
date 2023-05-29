@@ -257,6 +257,7 @@
     "https://deno.land/x/debuglog@v1.0.0/utils.ts": "bce2e8ce7956a04e79eb184f475fc8a2dc6a0eace0c8dbc69707498e6f33bd6b",
     "https://deno.land/x/dotenv@v3.2.0/mod.ts": "077b48773de9205266a0b44c3c3a3c3083449ed64bb0b6cc461b95720678d38e",
     "https://deno.land/x/dotenv@v3.2.0/util.ts": "693730877b13f8ead2b79b2aa31e2a0652862f7dc0c5f6d2f313f4d39c7b7670",
+    "https://deno.land/x/json2yaml@v1.0.1/mod.ts": "eb93f79ca9791ecb75b22def2fbce701c757b43be6e2ff8f3dbbe426b28941f4",
     "https://deno.land/x/ms@v0.1.0/ms.ts": "13014fdf12808df48f6e557cc3be22d24db5b8e29b687d710f9012df3428d2c8",
     "https://deno.land/x/oak@v12.1.0/application.ts": "641c071bf14b476d603be18a984573e8a7c0da9c1bfc141ae44dad8012f2c5d6",
     "https://deno.land/x/oak@v12.1.0/body.ts": "c7392f1dae04a360838f43b9cdd2f83d29c1eff4e6071d5f0cf1f3999b1602bc",
