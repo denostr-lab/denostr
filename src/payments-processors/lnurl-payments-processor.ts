@@ -1,4 +1,3 @@
-import { AxiosInstance } from 'axios'
 import { Factory } from '@/@types/base.ts'
 
 import { CreateInvoiceRequest, GetInvoiceResponse, IPaymentsProcessor } from '@/@types/clients.ts'
@@ -6,12 +5,13 @@ import { InvoiceStatus, InvoiceUnit, LnurlInvoice } from '@/@types/invoice.ts'
 import { createLogger } from '@/factories/logger-factory.ts'
 import { randomUUID } from 'crypto'
 import { Settings } from '@/@types/settings.ts'
+import { HTTPClient } from '@/utils/http.ts'
 
 const debug = createLogger('lnurl-payments-processor')
 
 export class LnurlPaymentsProcesor implements IPaymentsProcessor {
     public constructor(
-        private httpClient: AxiosInstance,
+        private httpClient: HTTPClient,
         private settings: Factory<Settings>,
     ) {}
 

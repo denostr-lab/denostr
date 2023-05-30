@@ -141,7 +141,7 @@
 
           hide('pending')
           show('paid')
-        }, (error) => {
+        }).catch((error) => {
           console.error('error fetching status', error)
           fallbackTimeout = setTimeout(getInvoiceStatus, getBackoffTime())
         })

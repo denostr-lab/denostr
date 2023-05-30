@@ -1,5 +1,3 @@
-import { AxiosInstance } from 'axios'
-
 import { Factory } from '../@types/base.ts'
 import { Pubkey } from '../@types/base.ts'
 import { CreateInvoiceRequest, CreateInvoiceResponse, GetInvoiceResponse, IPaymentsProcessor } from '../@types/clients.ts'
@@ -7,6 +5,7 @@ import { Invoice, InvoiceStatus, InvoiceUnit } from '../@types/invoice.ts'
 import { Settings } from '../@types/settings.ts'
 import { createLogger } from '../factories/logger-factory.ts'
 import { deriveFromSecret, hmacSha256 } from '../utils/secret.ts'
+import { HTTPClient } from '@/utils/http.ts'
 
 const debug = createLogger('lnbits-payments-processor')
 
@@ -41,16 +40,14 @@ export class LNbitsCreateInvoiceResponse implements CreateInvoiceResponse {
 
 export class LNbitsPaymentsProcesor implements IPaymentsProcessor {
     public constructor(
-        private httpClient: AxiosInstance,
+        private httpClient: HTTPClient,
         private settings: Factory<Settings>,
     ) {}
 
     public async getInvoice(invoiceId: string): Promise<GetInvoiceResponse> {
         debug('get invoice: %s', invoiceId)
         try {
-            const response = await this.httpClient.get(`/api/v1/payments/${invoiceId}`, {
-                maxRedirects: 1,
-            })
+            const response = await this.httpClient.get(`/api/v1/payments/${invoiceId}`)
             const invoice = new LNbitsInvoice()
             const data = response.data
             invoice.id = data.details.payment_hash
@@ -106,15 +103,10 @@ export class LNbitsPaymentsProcesor implements IPaymentsProcessor {
 
         try {
             debug('request body: %o', body)
-            const response = await this.httpClient.post('/api/v1/payments', body, {
-                maxRedirects: 1,
-            })
-
+            const response = await this.httpClient.post('/api/v1/payments', body)
             debug('response: %o', response.data)
 
-            const invoiceResponse = await this.httpClient.get(`/api/v1/payments/${encodeURIComponent(response.data.payment_hash)}`, {
-                maxRedirects: 1,
-            })
+            const invoiceResponse = await this.httpClient.get(`/api/v1/payments/${encodeURIComponent(response.data.payment_hash)}`)
             debug('invoice data response: %o', invoiceResponse.data)
 
             const invoice = new LNbitsCreateInvoiceResponse()

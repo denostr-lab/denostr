@@ -1,4 +1,4 @@
-import axios, { CreateAxiosDefaults } from 'axios'
+import { CreateAxiosDefaults } from 'axios'
 import { path } from 'ramda'
 
 import { createSettings } from '@/factories/settings-factory.ts'
@@ -6,6 +6,7 @@ import { IPaymentsProcessor } from '@/@types/clients.ts'
 import { OpenNodePaymentsProcesor } from '@/payments-processors/opennode-payments-processor.ts'
 import { Settings } from '@/@types/settings.ts'
 import Config from '@/config/index.ts'
+import { HTTPClient } from '@/utils/http.ts'
 
 const getOpenNodeAxiosConfig = (settings: Settings): CreateAxiosDefaults<any> => {
     if (!Config.OPENNODE_API_KEY) {
@@ -34,7 +35,7 @@ export const createOpenNodePaymentsProcessor = (settings: Settings): IPaymentsPr
     }
 
     const config = getOpenNodeAxiosConfig(settings)
-    const client = axios.create(config)
+    const client = new HTTPClient(config)
 
     return new OpenNodePaymentsProcesor(client, createSettings)
 }

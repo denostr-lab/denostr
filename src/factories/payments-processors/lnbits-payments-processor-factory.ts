@@ -1,4 +1,4 @@
-import axios, { CreateAxiosDefaults } from 'axios'
+import { CreateAxiosDefaults } from 'axios'
 import { path } from 'ramda'
 
 import { createSettings } from '@/factories/settings-factory.ts'
@@ -6,6 +6,7 @@ import { IPaymentsProcessor } from '@/@types/clients.ts'
 import { LNbitsPaymentsProcesor } from '@/payments-processors/lnbits-payment-processor.ts'
 import { Settings } from '@/@types/settings.ts'
 import Config from '@/config/index.ts'
+import { HTTPClient } from '@/utils/http.ts'
 
 const getLNbitsAxiosConfig = (settings: Settings): CreateAxiosDefaults<any> => {
     if (!Config.LNBITS_API_KEY) {
@@ -33,7 +34,7 @@ export const createLNbitsPaymentProcessor = (settings: Settings): IPaymentsProce
 
     const config = getLNbitsAxiosConfig(settings)
 
-    const client = axios.create(config)
+    const client = new HTTPClient(config)
 
     return new LNbitsPaymentsProcesor(client, createSettings)
 }

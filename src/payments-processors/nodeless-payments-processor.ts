@@ -1,16 +1,15 @@
-import { AxiosInstance } from 'axios'
-
 import { Factory } from '@/@types/base.ts'
 import { CreateInvoiceRequest, CreateInvoiceResponse, GetInvoiceResponse, IPaymentsProcessor } from '@/@types/clients.ts'
 import { createLogger } from '@/factories/logger-factory.ts'
 import { fromNodelessInvoice } from '@/utils/transform.ts'
 import { Settings } from '@/@types/settings.ts'
+import { HTTPClient } from '@/utils/http.ts'
 
 const debug = createLogger('nodeless-payments-processor')
 
 export class NodelessPaymentsProcesor implements IPaymentsProcessor {
     public constructor(
-        private httpClient: AxiosInstance,
+        private httpClient: HTTPClient,
         private settings: Factory<Settings>,
     ) {}
 
@@ -20,9 +19,7 @@ export class NodelessPaymentsProcesor implements IPaymentsProcessor {
         const { storeId } = this.settings().paymentsProcessors.nodeless
 
         try {
-            const response = await this.httpClient.get(`/api/v1/store/${storeId}/invoice/${invoiceId}`, {
-                maxRedirects: 1,
-            })
+            const response = await this.httpClient.get(`/api/v1/store/${storeId}/invoice/${invoiceId}`)
 
             return fromNodelessInvoice(response.data.data)
         } catch (error) {
@@ -57,9 +54,7 @@ export class NodelessPaymentsProcesor implements IPaymentsProcessor {
 
         try {
             debug('request body: %O', body)
-            const response = await this.httpClient.post(`/api/v1/store/${storeId}/invoice`, body, {
-                maxRedirects: 1,
-            })
+            const response = await this.httpClient.post(`/api/v1/store/${storeId}/invoice`, body)
 
             debug('response headers: %O', response.headers)
             debug('response data: %O', response.data)

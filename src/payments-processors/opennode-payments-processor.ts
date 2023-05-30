@@ -1,16 +1,15 @@
-import { AxiosInstance } from 'axios'
-
 import { Factory } from '@/@types/base.ts'
 import { CreateInvoiceRequest, CreateInvoiceResponse, GetInvoiceResponse, IPaymentsProcessor } from '@/@types/clients.ts'
 import { createLogger } from '@/factories/logger-factory.ts'
 import { fromOpenNodeInvoice } from '@/utils/transform.ts'
 import { Settings } from '@/@types/settings.ts'
+import { HTTPClient } from '@/utils/http.ts'
 
 const debug = createLogger('opennode-payments-processor')
 
 export class OpenNodePaymentsProcesor implements IPaymentsProcessor {
     public constructor(
-        private httpClient: AxiosInstance,
+        private httpClient: HTTPClient,
         private settings: Factory<Settings>,
     ) {}
 
@@ -18,9 +17,7 @@ export class OpenNodePaymentsProcesor implements IPaymentsProcessor {
         debug('get invoice: %s', invoiceId)
 
         try {
-            const response = await this.httpClient.get(`/v2/charge/${invoiceId}`, {
-                maxRedirects: 1,
-            })
+            const response = await this.httpClient.get(`/v2/charge/${invoiceId}`)
 
             return fromOpenNodeInvoice(response.data.data)
         } catch (error) {
@@ -50,9 +47,7 @@ export class OpenNodePaymentsProcesor implements IPaymentsProcessor {
 
         try {
             debug('request body: %o', body)
-            const response = await this.httpClient.post('/v1/charges', body, {
-                maxRedirects: 1,
-            })
+            const response = await this.httpClient.post('/v1/charges', body)
 
             const result = fromOpenNodeInvoice(response.data.data)
 

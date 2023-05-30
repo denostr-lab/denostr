@@ -1,4 +1,4 @@
-import axios, { CreateAxiosDefaults } from 'axios'
+import { CreateAxiosDefaults } from 'axios'
 import { path } from 'ramda'
 
 import { createSettings } from '@/factories/settings-factory.ts'
@@ -6,6 +6,7 @@ import { IPaymentsProcessor } from '@/@types/clients.ts'
 import { Settings } from '@/@types/settings.ts'
 import { ZebedeePaymentsProcesor } from '@/payments-processors/zebedee-payments-processor.ts'
 import Config from '@/config/index.ts'
+import { HTTPClient } from '@/utils/http.ts'
 
 const getZebedeeAxiosConfig = (settings: Settings): CreateAxiosDefaults<any> => {
     if (!Config.ZEBEDEE_API_KEY) {
@@ -45,7 +46,7 @@ export const createZebedeePaymentsProcessor = (settings: Settings): IPaymentsPro
 
     const config = getZebedeeAxiosConfig(settings)
 
-    const client = axios.create(config)
+    const client = new HTTPClient(config)
 
     return new ZebedeePaymentsProcesor(client, createSettings)
 }
