@@ -7,7 +7,6 @@ import { EventId, Pubkey, Tag } from '../@types/base.ts'
 import { CanonicalEvent, DBEvent, Event, UnidentifiedEvent, UnsignedEvent } from '../@types/event.ts'
 import { EventKindsRange } from '../@types/settings.ts'
 import { SubscriptionFilter } from '../@types/subscription.ts'
-import { publish } from '../cache/client.ts'
 import Config from '../config/index.ts'
 // import { WebSocketServerAdapterEvent } from '../constants/adapter.ts'
 import { EventKinds, EventTags } from '../constants/base.ts'
@@ -16,7 +15,6 @@ import { getLeadingZeroBits } from './proof-of-work.ts'
 import { RuneLike } from './runes/rune-like.ts'
 import { deriveFromSecret } from './secret.ts'
 import { fromBuffer, toBuffer } from './transform.ts'
-import { PubSubBroadcastEvent } from '@/constants/adapter.ts'
 
 export const serializeEvent = (event: UnidentifiedEvent): CanonicalEvent => [
     0,
@@ -262,7 +260,6 @@ export const encryptKind4Event = (
 }
 
 export const broadcastEvent = async (event: Event): Promise<Event> => {
-    await publish(PubSubBroadcastEvent.Ephemeral, JSON.stringify(event))
     return event
 }
 

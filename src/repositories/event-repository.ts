@@ -23,7 +23,7 @@ const debug = createLogger('event-repository')
 export class EventRepository implements IEventRepository {
     constructor(private readonly settings: () => Settings) {}
 
-    public findByFilters(filters: SubscriptionFilter[]): DBEvent[] {
+    public findByFilters(filters: SubscriptionFilter[]): { cursor: Promise<DBEvent[]> } {
         debug('querying for %o', filters)
         if (!Array.isArray(filters) || !filters.length) {
             throw new Error('Filters cannot be empty')
@@ -33,7 +33,7 @@ export class EventRepository implements IEventRepository {
         const maxLimit = subscriptionLimits?.maxLimit ?? 0
 
         // @ts-ignore: Model static method has been added
-        return readReplicaEventsModel.findBySubscriptionFilter(filters, maxLimit)
+        return { cursor: readReplicaEventsModel.findBySubscriptionFilter(filters, maxLimit) }
     }
 
     public async create(event: Event): Promise<number> {

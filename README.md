@@ -1,31 +1,31 @@
-# [Denostr](https://github.com/Guakamoli/denostr)
+# [Denostr](https://github.com/denostr-protocol/denostr)
 
 <p align="center">
   <img alt="denostr logo" height="256px" width="256px" src="https://user-images.githubusercontent.com/8678079/233816217-27504e7e-b429-4388-ac69-592122fa922b.png" />
 </p>
 
 <p align="center">
-  <a href="https://github.com/Guakamoli/denostr/releases">
-    <img alt="GitHub release" src="https://img.shields.io/github/v/release/Guakamoli/denostr">
+  <a href="https://github.com/denostr-protocol/denostr/releases">
+    <img alt="GitHub release" src="https://img.shields.io/github/v/release/denostr-protocol/denostr">
   </a>
-  <a href="https://github.com/Guakamoli/denostr/issues">
-    <img alt="GitHub issues" src="https://img.shields.io/github/issues/Guakamoli/denostr?style=plastic" />
+  <a href="https://github.com/denostr-protocol/denostr/issues">
+    <img alt="GitHub issues" src="https://img.shields.io/github/issues/denostr-protocol/denostr?style=plastic" />
   </a>
-  <a href="https://github.com/Guakamoli/denostr/stargazers">
-    <img alt="GitHub stars" src="https://img.shields.io/github/stars/Guakamoli/denostr" />
+  <a href="https://github.com/denostr-protocol/denostr/stargazers">
+    <img alt="GitHub stars" src="https://img.shields.io/github/stars/denostr-protocol/denostr" />
   </a>
-  <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/Guakamoli/denostr">
-  <a href="https://github.com/Guakamoli/denostr/network">
-    <img alt="GitHub forks" src="https://img.shields.io/github/forks/Guakamoli/denostr" />
+  <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/denostr-protocol/denostr">
+  <a href="https://github.com/denostr-protocol/denostr/network">
+    <img alt="GitHub forks" src="https://img.shields.io/github/forks/denostr-protocol/denostr" />
   </a>
-  <a href="https://github.com/Guakamoli/denostr/blob/main/LICENSE">
-    <img alt="GitHub license" src="https://img.shields.io/github/license/Guakamoli/denostr" />
+  <a href="https://github.com/denostr-protocol/denostr/blob/main/LICENSE">
+    <img alt="GitHub license" src="https://img.shields.io/github/license/denostr-protocol/denostr" />
   </a>
-  <a href='https://coveralls.io/github/Guakamoli/denostr?branch=main'>
-    <img  alt='Coverage Status' src='https://coveralls.io/repos/github/Guakamoli/denostr/badge.svg?branch=main' />
+  <a href='https://coveralls.io/github/denostr-protocol/denostr?branch=main'>
+    <img  alt='Coverage Status' src='https://coveralls.io/repos/github/denostr-protocol/denostr/badge.svg?branch=main' />
   </a>
-  <a href='https://github.com/Guakamoli/denostr/actions'>
-    <img alt='Build status' src='https://github.com/Guakamoli/denostr/actions/workflows/checks.yml/badge.svg?branch=main&event=push' />
+  <a href='https://github.com/denostr-protocol/denostr/actions'>
+    <img alt='Build status' src='https://github.com/denostr-protocol/denostr/actions/workflows/checks.yml/badge.svg?branch=main&event=push' />
   </a>
 </p>
 
@@ -35,7 +35,7 @@ This is a [nostr](https://github.com/fiatjaf/nostr) relay, written in Typescript
 
 This implementation is production-ready. See below for supported features.
 
-The project main repository is available on [GitHub](https://github.com/Guakamoli/denostr).
+The project main repository is available on [GitHub](https://github.com/denostr-protocol/denostr).
 
 ## Features
 
@@ -78,6 +78,8 @@ Todo
 
 ## Full Guide
 
+> If the payment is enabled, it is recommended to start another instance with `WORKER_TYPE=maintenance` following the "Quick Start" guide.
+
 - [x] Set up a paid Nostr relay
 
 ### Accepting payments
@@ -89,9 +91,9 @@ Todo
      - Set `payments.enabled` to `true`
      - Set `payments.feeSchedules.admission.enabled` to `true`
      - Set `limits.event.pubkey.minBalance` to the minimum balance in msats required to accept events (i.e. `1000000` to require a balance of `1000` sats)
-   - Choose one of the following payment processors: `zebedee`, `nodeless`, `opennode`, `lnbits`, `lnurl`
+   - Choose one of the following payment processors: `lnbits`, `lnurl`, `zebedee`
 
-2. [Lnbits](https://lnbits.com/)
+2. [LNbits](https://lnbits.com/)
     - Complete the step "Before you begin"
     - Create a new wallet on you public LNbits instance
       - [Demo](https://legend.lnbits.com/) server must not be used for production
@@ -141,7 +143,7 @@ Todo
 Clone repository and enter directory:
 
 ```sh
-git clone https://github.com/Guakamoli/denostr.git --depth 1 && cd denostr
+git clone https://github.com/denostr-protocol/denostr.git --depth 1 && cd denostr
 ```
 
 Create `.env` file inside denostr project folder

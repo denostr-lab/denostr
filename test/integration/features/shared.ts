@@ -167,10 +167,10 @@ export const startTest = async (pathUrl: string, registerEvent: Function) => {
                 worker.close(async () => {
                     try {
                         await watcher.close()
-                        await Promise.all([
-                            dbClient.destroy(true),
-                            rrDbClient.destroy(true),
-                        ])
+                        // await Promise.all([
+                        //     dbClient.destroy(true),
+                        //     rrDbClient.destroy(true),
+                        // ])
                     } catch (e) {
                         console.info(e, 'close error')
                     }

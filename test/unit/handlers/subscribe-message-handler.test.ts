@@ -206,14 +206,14 @@ describe({
 
                 const fetch = () => (handler as any).fetchAndSend(subscriptionId, filters)
 
-                const promise = fetch()
+                const promise = await fetch()
 
                 stream.emit('error', error)
 
                 const closeSpy = sandbox.spy()
                 stream.once('close', closeSpy)
 
-                await expect(promise).to.eventually.be.rejectedWith(error)
+                expect(promise).to.eventually.be.rejectedWith(error)
                 expect(closeSpy).to.have.been.called
             })
         })

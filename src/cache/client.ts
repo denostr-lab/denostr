@@ -23,7 +23,9 @@ export const getCacheClient = async (): Promise<CacheClient> => {
         const config = getCacheConfig()
         const { password: _, ...loggableConfig } = config
         debug('config: %o', loggableConfig)
-        instance = await connect(config)
+        if (config.hostname) {
+            instance = await connect(config)
+        }
     }
 
     return instance

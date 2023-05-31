@@ -1,5 +1,4 @@
-import { Router } from '@/@types/controllers.ts'
-import { Context } from '@/@types/controllers.ts'
+import { Router, Context } from '@/@types/controllers.ts'
 import { readReplicaEventsModel } from '@/database/models/Events.ts'
 import { createSettings } from '@/factories/settings-factory.ts'
 import { SettingsStatic } from '@/utils/settings.ts'
@@ -12,7 +11,6 @@ router.get('/events', async (ctx: Context) => {
     const req = ctx.request
 
     const [{ count: uniquePubkeys }] = await readReplicaEventsModel.aggregate([
-        // { $match: { 'name': 'Jone' } },
         { $project: { 'event_pubkey': 1 } },
         { $group: { '_id': '$event_pubkey' } },
         { $group: { '_id': null, 'count': { '$sum': 1 } } },
@@ -28,12 +26,9 @@ router.get('/events', async (ctx: Context) => {
     }
 })
 
-router.get('/settings', async (ctx: Context) => {
-    const response = ctx.response
-    const req = ctx.request
-
-    response.type = 'json'
-    response.body = createSettings()
+router.get('/settings', (ctx: Context) => {
+    ctx.response.type = 'json'
+    ctx.response.body = createSettings()
 })
     .post('/settings', async (ctx: Context) => {
         const response = ctx.response

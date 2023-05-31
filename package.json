@@ -22,7 +22,7 @@
     ],
     "repository": {
         "type": "git",
-        "url": "https://github.com/Guakamoli/denostr.git"
+        "url": "https://github.com/denostr-protocol/denostr.git"
     },
     "keywords": [
         "deno",
@@ -31,10 +31,10 @@
         "nostr-relay",
         "typescript"
     ],
-    "author": "Guakamoli <denostr@guakamoli.com>",
+    "author": "denostr-protocol <hi@denostr.com>",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/Guakamoli/denostr/issues"
+        "url": "https://github.com/denostr-protocol/denostr/issues"
     },
-    "homepage": "https://github.com/Guakamoli/denostr"
+    "homepage": "https://github.com/denostr-protocol/denostr"
 }

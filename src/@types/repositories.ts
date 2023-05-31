@@ -1,4 +1,4 @@
-import { PassThrough } from 'stream'
+import { PassThrough, Stream } from 'stream'
 
 import mongoose from 'mongoose'
 
@@ -17,7 +17,7 @@ export interface IQueryResult<T> extends Pick<Promise<T>, keyof Promise<T> & Exp
 export interface IEventRepository {
     create(event: Event): Promise<number>
     upsert(event: Event): Promise<number>
-    findByFilters(filters: SubscriptionFilter[]): DBEvent[]
+    findByFilters(filters: SubscriptionFilter[]): { cursor: Promise<DBEvent[]> | Stream}
     insertStubs(pubkey: string, eventIdsToDelete: EventId[]): Promise<number>
     deleteByPubkeyAndIds(pubkey: Pubkey, ids: EventId[]): Promise<number>
 }
