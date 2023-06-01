@@ -78,9 +78,7 @@ Todo
 
 ## Full Guide
 
-> If the payment is enabled, it is recommended to start another instance with `WORKER_TYPE=maintenance` following the "Quick Start" guide.
-
-- [x] Set up a paid Nostr relay
+> NOTE: If the payment is enabled, it is recommended to start another instance with `WORKER_TYPE=maintenance` following the "Quick Start" guide.
 
 ### Accepting payments
 
