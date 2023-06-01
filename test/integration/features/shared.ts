@@ -19,6 +19,7 @@ import { masterEventsModel } from '../../../src/database/models/Events.ts'
 import { api } from '../../../src/core-services/index.ts'
 import { DatabaseWatcher } from '../../../src/database/DatabaseWatcher.ts'
 import { initWatchers } from '../../../src/database/watchers.ts'
+import { getCacheClient } from '../../../src/cache/client.ts'
 
 export const isDraft = Symbol('draft')
 
@@ -170,6 +171,10 @@ export const startTest = async (pathUrl: string, registerEvent: Function) => {
             afterAll(async function () {
                 worker.close(async () => {
                     try {
+                        const cacheClient = await getCacheClient()
+                        if (cacheClient) {
+                            cacheClient.close()
+                        }
                         await watcher.close()
                         await dbClient.destroy()
                         if (Config.MONGO_READ_REPLICA_ENABLED) {
@@ -190,7 +195,9 @@ export const startTest = async (pathUrl: string, registerEvent: Function) => {
             let currentList: string[] = []
             for (let line of contentList) {
                 line = line.trim()
-                if (!line) continue
+                if (!line) {
+                    continue
+                }
                 if (line.startsWith('Scenario:')) {
                     currentList = []
                     scenarioList.push({ list: currentList, line })
