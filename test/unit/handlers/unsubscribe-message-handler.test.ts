@@ -1,14 +1,14 @@
 import chai, { expect } from 'chai'
 import { beforeEach, describe, it } from 'jest'
 import Sinon from 'sinon'
-import SinonChi from 'sinon-chai'
+import SinonChai from 'sinon-chai'
 
 import { IWebSocketAdapter } from '../../../src/@types/adapters.ts'
 import { IMessageHandler } from '../../../src/@types/message-handlers.ts'
 import { MessageType, UnsubscribeMessage } from '../../../src/@types/messages.ts'
 import { WebSocketAdapterEvent } from '../../../src/constants/adapter.ts'
 import { UnsubscribeMessageHandler } from '../../../src/handlers/unsubscribe-message-handler.ts'
-chai.use(SinonChi)
+chai.use(SinonChai)
 
 describe('UnsubscribeMessageHandler', () => {
     let handler: IMessageHandler

@@ -135,8 +135,12 @@ export const startTest = async (pathUrl: string, registerEvent: Function) => {
                 Config.RELAY_PORT = '18808'
                 Config.SECRET = Math.random().toString().repeat(6)
 
-                rrDbClient = getReadReplicaDbClient()
-                await rrDbClient.asPromise()
+                if (!Config.MONGO_READ_REPLICA_ENABLED) {
+                    rrDbClient = dbClient
+                } else {
+                    rrDbClient = getReadReplicaDbClient()
+                    await rrDbClient.asPromise()
+                }
 
                 watcher = new DatabaseWatcher({
                     db: dbClient.db,
@@ -167,10 +171,10 @@ export const startTest = async (pathUrl: string, registerEvent: Function) => {
                 worker.close(async () => {
                     try {
                         await watcher.close()
-                        // await Promise.all([
-                        //     dbClient.destroy(true),
-                        //     rrDbClient.destroy(true),
-                        // ])
+                        await dbClient.destroy()
+                        if (Config.MONGO_READ_REPLICA_ENABLED) {
+                            await rrDbClient.destroy()
+                        }
                     } catch (e) {
                         console.info(e, 'close error')
                     }

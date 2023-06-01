@@ -3,10 +3,10 @@ import chaiAsPromised from 'chai-as-promised'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, it } from 'jest'
 import Sinon from 'sinon'
 
-import SinonChi from 'sinon-chai'
+import SinonChai from 'sinon-chai'
 
 chai.use(chaiAsPromised)
-chai.use(SinonChi)
+chai.use(SinonChai)
 
 import { IWebSocketAdapter } from '../../../../src/@types/adapters.ts'
 import { DatabaseClient } from '../../../../src/@types/base.ts'

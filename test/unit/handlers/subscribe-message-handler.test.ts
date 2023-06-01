@@ -7,7 +7,7 @@ import chaiAsPromised from 'chai-as-promised'
 import { afterEach, beforeEach, describe, it } from 'jest'
 import { always } from 'ramda'
 import Sinon from 'sinon'
-import SinonChi from 'sinon-chai'
+import SinonChai from 'sinon-chai'
 
 import { IWebSocketAdapter } from '../../../src/@types/adapters.ts'
 import { Event } from '../../../src/@types/event.ts'
@@ -19,7 +19,7 @@ import { WebSocketAdapterEvent } from '../../../src/constants/adapter.ts'
 import { SubscribeMessageHandler } from '../../../src/handlers/subscribe-message-handler.ts'
 
 chai.use(chaiAsPromised)
-chai.use(SinonChi)
+chai.use(SinonChai)
 
 const { expect } = chai
 
@@ -206,14 +206,14 @@ describe({
 
                 const fetch = () => (handler as any).fetchAndSend(subscriptionId, filters)
 
-                const promise = await fetch()
+                const promise = fetch()
+
+                const closeSpy = sandbox.spy()
+                stream.once('error', closeSpy)
 
                 stream.emit('error', error)
 
-                const closeSpy = sandbox.spy()
-                stream.once('close', closeSpy)
-
-                expect(promise).to.eventually.be.rejectedWith(error)
+                await expect(promise).to.eventually.be.rejectedWith(error)
                 expect(closeSpy).to.have.been.called
             })
         })
