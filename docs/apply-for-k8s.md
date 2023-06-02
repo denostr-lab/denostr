@@ -30,6 +30,9 @@ As a required dependency for the application, **MongoDB** must be replaced with 
 
 ```sh
 kubectl apply -f deployment/worker.yaml
+
+# Paid enabled, please execute this command
+kubectl apply -f deployment/maintenance.yaml
 ```
 
 Wait a few minutes to ensure that the application is running.

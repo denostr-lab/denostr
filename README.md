@@ -108,7 +108,15 @@ Todo
       - Set `paymentsProcessors.lnbits.callbackBaseURL` to match your callbcak URL (e.g. `https://{YOUR_DOMAIN_HERE}/callbacks/lnbits`)
     - Restart Denostr
 
-3. [ZEBEDEE](https://zebedee.io)
+3. [Alby](https://getalby.com/) or any LNURL Provider with [LNURL-verify](https://github.com/lnurl/luds/issues/182) support
+    - Complete the step "Before you begin"
+    - [Create a new account](https://getalby.com/user/new) if you don't have an LNURL
+    - On your `.nostr/settings.yaml` file make the following changes:
+      - Set `payments.processor` to `lnurl`
+      - Set `lnurl.invoiceURL` to your LNURL (e.g. `https://getalby.com/lnurlp/your-username`)
+    - Restart Denostr
+
+4. [ZEBEDEE](https://zebedee.io)
    - Complete the step "Before you begin"
    - [Sign up for a ZEBEDEE Developer Dashboard account](https://dashboard.zebedee.io/signup), create a new LIVE Project, and get that Project's API Key
    - Set `ZEBEDEE_API_KEY` environment variable with the API Key above on your `.env` file
@@ -123,7 +131,7 @@ Todo
      - `paymentsProcessors.zebedee.callbackBaseURL` to match your callback URL (e.g. `https://{YOUR_DOMAIN_HERE}/callbacks/zebedee`)
    - Restart Denostr
 
-4. Ensure payments are required for your public key
+5. Ensure payments are required for your public key
    - Visit https://{YOUR-DOMAIN}/
    - You should be presented with a form requesting an admission fee to be paid
    - Fill out the form and take the necessary steps to pay the invoice

@@ -64,6 +64,7 @@ export class ZebedeeCallbackController implements IController {
         }
 
         invoice.amountPaid = invoice.amountRequested
+        invoice.status = updatedInvoice.status
         updatedInvoice.amountPaid = invoice.amountRequested
 
         try {
