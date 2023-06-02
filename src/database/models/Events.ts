@@ -1,12 +1,12 @@
 import mongoose, { FilterQuery } from 'mongoose'
 
-import { getMasterDbClient, getReadReplicaDbClient } from '../client.ts'
+import { getMasterDbClient, getReadReplicaDbClient } from '@/database/client.ts'
 import { Buffer } from 'Buffer'
-import { DBEvent } from '../../@types/event.ts'
-import { SubscriptionFilter } from '../../@types/subscription.ts'
-import { isGenericTagQuery } from '../../utils/filter.ts'
-import { Sort } from '../../constants/base.ts'
-import { toBuffer } from '../../utils/transform.ts'
+import { DBEvent } from '@/@types/event.ts'
+import { SubscriptionFilter } from '@/@types/subscription.ts'
+import { isGenericTagQuery } from '@/utils/filter.ts'
+import { Sort } from '@/constants/base.ts'
+import { toBuffer } from '@/utils/transform.ts'
 
 const EventSchema = new mongoose.Schema({
     event_id: {
@@ -41,7 +41,10 @@ const EventSchema = new mongoose.Schema({
         type: Buffer,
     },
     event_deduplication: [mongoose.Schema.Types.Mixed],
-    first_seen: { type: Date },
+    first_seen: {
+        type: Date,
+        default: new Date(),
+    },
     deleted_at: { type: String },
     expires_at: { type: Number },
 })

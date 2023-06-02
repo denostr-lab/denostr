@@ -1,9 +1,9 @@
-import { NextFunction, Request, Response, RouterContext } from '../../@types/controllers.ts'
-import { Settings } from '../../@types/settings.ts'
-import { createLogger } from '../../factories/logger-factory.ts'
-import { slidingWindowRateLimiterFactory } from '../../factories/rate-limiter-factory.ts'
-import { createSettings } from '../../factories/settings-factory.ts'
-import { getRemoteAddress } from '../../utils/http.ts'
+import { NextFunction, Request, Response, RouterContext } from '@/@types/controllers.ts'
+import { Settings } from '@/@types/settings.ts'
+import { createLogger } from '@/factories/logger-factory.ts'
+import { slidingWindowRateLimiterFactory } from '@/factories/rate-limiter-factory.ts'
+import { createSettings } from '@/factories/settings-factory.ts'
+import { getRemoteAddress } from '@/utils/http.ts'
 
 const debug = createLogger('rate-limiter-middleware')
 
@@ -15,7 +15,7 @@ export const rateLimiterMiddleware = async (
     const request: Request = ctx.request
     const response: Response = ctx.response
     const clientAddress = getRemoteAddress(request.originalRequest, currentSettings).split(',')[0]
-    debug('request received from %s: %O', clientAddress, request.headers)
+    debug('request received from %s: %o', clientAddress, request.headers)
 
     if (await isRateLimited(clientAddress, currentSettings)) {
         response.destroy()

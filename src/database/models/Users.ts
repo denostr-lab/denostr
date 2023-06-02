@@ -1,28 +1,33 @@
 import mongoose from 'mongoose'
 
-import { getMasterDbClient, getReadReplicaDbClient } from '../client.ts'
-import { Buffer } from 'Buffer'
-
-export interface UserInput {
-    pubkey: Buffer
-    is_admitted: boolean
-    balance: bigint
-}
-
-export interface UserDocument extends UserInput, mongoose.Document {
-    created_at: Date
-    updated_at: Date
-}
+import { getMasterDbClient, getReadReplicaDbClient } from '@/database/client.ts'
+import { DBUser } from '@/@types/user.ts'
 
 const UserSchema = new mongoose.Schema({
     pubkey: {
-        type: mongoose.Schema.Types.Buffer,
-        require: true,
+        type: String,
     },
     is_admitted: {
-        type: mongoose.Schema.Types.Buffer,
+        type: Boolean,
+        default: false,
     },
-    balance: { type: Number },
+    tos_accepted_at: {
+        type: Date,
+    },
+    balance: {
+        type: BigInt,
+        default: 0n,
+    },
+    updated_at: {
+        type: Date,
+        default: new Date(),
+    },
+    created_at: {
+        type: Date,
+        default: new Date(),
+    },
+}, {
+    _id: false,
 })
 
 UserSchema.index({ 'pubkey': 1 }, {
@@ -32,12 +37,18 @@ UserSchema.index({ 'pubkey': 1 }, {
 UserSchema.index({ 'balance': 1 }, {
     background: true,
 })
+UserSchema.index({ 'is_admitted': 1 }, {
+    background: true,
+})
+UserSchema.index({ 'created_at': 1 }, {
+    background: true,
+})
 
 export const UsersModelName = 'Users'
 export const UsersCollectionName = 'users'
 
 export const UsersModel = (dbClient: mongoose.Connection) =>
-    dbClient.model<UserDocument>(
+    dbClient.model<DBUser>(
         UsersModelName,
         UserSchema,
         UsersCollectionName,

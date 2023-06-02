@@ -1,10 +1,7 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-import { api } from '../core-services/index.ts'
-import { getMasterDbClient, getReadReplicaDbClient } from '../database/client.ts'
-import { DatabaseWatcher } from '../database/DatabaseWatcher.ts'
-import { initWatchers } from '../database/watchers.ts'
-
-// export let watcher: DatabaseWatcher
+import { api } from '@/core-services/index.ts'
+import { getMasterDbClient, getReadReplicaDbClient } from '@/database/client.ts'
+import { DatabaseWatcher } from '@/database/DatabaseWatcher.ts'
+import { initWatchers } from '@/database/watchers.ts'
 
 export const coreServicesFactory = async () => {
     const primaryConn = getMasterDbClient()

@@ -1,8 +1,8 @@
-import { connect, RedisConnectOptions } from 'redis'
+import { connect, RedisConnectOptions, RedisValue } from 'redis'
 
-import { CacheClient } from '../@types/cache.ts'
-import Config from '../config/index.ts'
-import { createLogger } from '../factories/logger-factory.ts'
+import { CacheClient } from '@/@types/cache.ts'
+import Config from '@/config/index.ts'
+import { createLogger } from '@/factories/logger-factory.ts'
 
 const debug = createLogger('cache-client')
 
@@ -23,8 +23,15 @@ export const getCacheClient = async (): Promise<CacheClient> => {
         const config = getCacheConfig()
         const { password: _, ...loggableConfig } = config
         debug('config: %o', loggableConfig)
-        instance = await connect(config)
+        if (config.hostname) {
+            instance = await connect(config)
+        }
     }
 
     return instance
+}
+
+export async function publish(channel: string, message: RedisValue) {
+    const client = await getCacheClient()
+    return client.publish(channel, message)
 }

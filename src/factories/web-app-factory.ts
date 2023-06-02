@@ -1,11 +1,9 @@
 import { Application, etag } from 'oak'
 import csp from 'oak-csp'
-import router from '../routes/index.ts'
-import { createLogger } from './logger-factory.ts'
-import { createSettings } from './settings-factory.ts'
+import router from "@/routes/index.ts"
+import { createSettings } from "@/factories/settings-factory.ts"
 
 const getDirectives = () => {
-    const debug = createLogger('web-app-factory')
     const settings = createSettings()
     const relayUrl = new URL(settings.info.relay_url)
     const webRelayUrl = new URL(relayUrl.toString())
@@ -32,7 +30,7 @@ const getDirectives = () => {
         'style-src': ['\'self\'', 'https://cdn.jsdelivr.net/npm/'],
         'font-src': ['\'self\'', 'https://cdn.jsdelivr.net/npm/'],
     }
-    debug('CSP directives: %o', directives)
+
     return directives
 }
 

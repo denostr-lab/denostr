@@ -6,7 +6,7 @@ import { assocPath, pipe } from 'ramda'
 import { fromEvent, map, Observable, ReplaySubject, Subject, takeUntil } from 'rxjs'
 import Sinon from 'sinon'
 import { afterAll, beforeAll, describe, it } from 'jest'
-import { DatabaseClient1 as DatabaseClient } from '../../../src/@types/base.ts'
+import { DatabaseClient } from '../../../src/@types/base.ts'
 import { Event } from '../../../src/@types/event.ts'
 import { AppWorker } from '../../../src/app/worker.ts'
 import Config from '../../../src/config/index.ts'
@@ -19,6 +19,7 @@ import { masterEventsModel } from '../../../src/database/models/Events.ts'
 import { api } from '../../../src/core-services/index.ts'
 import { DatabaseWatcher } from '../../../src/database/DatabaseWatcher.ts'
 import { initWatchers } from '../../../src/database/watchers.ts'
+import { getCacheClient } from '../../../src/cache/client.ts'
 
 export const isDraft = Symbol('draft')
 
@@ -135,8 +136,12 @@ export const startTest = async (pathUrl: string, registerEvent: Function) => {
                 Config.RELAY_PORT = '18808'
                 Config.SECRET = Math.random().toString().repeat(6)
 
-                rrDbClient = getReadReplicaDbClient()
-                await rrDbClient.asPromise()
+                if (!Config.MONGO_READ_REPLICA_ENABLED) {
+                    rrDbClient = dbClient
+                } else {
+                    rrDbClient = getReadReplicaDbClient()
+                    await rrDbClient.asPromise()
+                }
 
                 watcher = new DatabaseWatcher({
                     db: dbClient.db,
@@ -166,11 +171,15 @@ export const startTest = async (pathUrl: string, registerEvent: Function) => {
             afterAll(async function () {
                 worker.close(async () => {
                     try {
+                        const cacheClient = await getCacheClient()
+                        if (cacheClient) {
+                            cacheClient.close()
+                        }
                         await watcher.close()
-                        await Promise.all([
-                            dbClient.destroy(true),
-                            rrDbClient.destroy(true),
-                        ])
+                        await dbClient.destroy()
+                        if (Config.MONGO_READ_REPLICA_ENABLED) {
+                            await rrDbClient.destroy()
+                        }
                     } catch (e) {
                         console.info(e, 'close error')
                     }
@@ -186,7 +195,9 @@ export const startTest = async (pathUrl: string, registerEvent: Function) => {
             let currentList: string[] = []
             for (let line of contentList) {
                 line = line.trim()
-                if (!line) continue
+                if (!line) {
+                    continue
+                }
                 if (line.startsWith('Scenario:')) {
                     currentList = []
                     scenarioList.push({ list: currentList, line })

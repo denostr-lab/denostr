@@ -87,6 +87,6 @@ export const rootRequestHandler = async (
         response.status = Status.OK
         response.headers.set('content-type', 'text/plain; charset=utf8')
         response.body = 'Please use a Nostr client to connect.'
-        await next()
     }
+    await next()
 }

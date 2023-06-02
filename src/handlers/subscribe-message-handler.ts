@@ -82,7 +82,7 @@ export class SubscribeMessageHandler implements IMessageHandler, IAbortable {
         const isSubscribedToEvent = SubscribeMessageHandler
             .isClientSubscribedToEvent(filters)
 
-        const findEvents = this.eventRepository.findByFilters(filters).cursor()
+        const findEvents = this.eventRepository.findByFilters(filters).cursor
 
         // const abortableFindEvents = addAbortSignal(this.abortController.signal, findEvents)
 
@@ -98,7 +98,6 @@ export class SubscribeMessageHandler implements IMessageHandler, IAbortable {
         } catch (error) {
             if (error instanceof Error && error.name === 'AbortError') {
                 debug('subscription %s aborted: %o', subscriptionId, error)
-                findEvents.destroy()
             } else {
                 debug('error streaming events: %o', error)
             }

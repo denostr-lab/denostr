@@ -1,10 +1,13 @@
-import { always, applySpec, ifElse, is, omit, pipe, prop, propSatisfies, toString } from 'ramda'
+import { always, applySpec, head, ifElse, is, map, omit, pipe, prop, propSatisfies, toString } from 'ramda'
 
-import { DatabaseClient } from '../@types/base.ts'
-import { DBInvoice, Invoice, InvoiceStatus } from '../@types/invoice.ts'
-import { IInvoiceRepository } from '../@types/repositories.ts'
-import { createLogger } from '../factories/logger-factory.ts'
-import { fromDBInvoice, toBuffer } from '../utils/transform.ts'
+import { DatabaseClient } from '@/@types/base.ts'
+import { DBInvoice, Invoice, InvoiceStatus } from '@/@types/invoice.ts'
+import { IInvoiceRepository } from '@/@types/repositories.ts'
+import { createLogger } from '@/factories/logger-factory.ts'
+import { fromDBInvoice } from '@/utils/transform.ts'
+import { masterInvoicesModel } from '@/database/models/Invoices.ts'
+import { masterUsersModel } from '@/database/models/Users.ts'
+import { DatabaseTransaction } from '@/@types/base.ts'
 
 const debug = createLogger('invoice-repository')
 
@@ -15,7 +18,7 @@ export class InvoiceRepository implements IInvoiceRepository {
         invoiceId: string,
         amountPaid: bigint,
         confirmedAt: Date,
-        client: DatabaseClient = this.dbClient,
+        session: DatabaseTransaction,
     ): Promise<void> {
         debug(
             'confirming invoice %s at %s: %s',
@@ -25,14 +28,39 @@ export class InvoiceRepository implements IInvoiceRepository {
         )
 
         try {
-            await client.raw(
-                'select confirm_invoice(?, ?, ?)',
-                [
-                    invoiceId,
-                    amountPaid.toString(),
-                    confirmedAt.toISOString(),
-                ],
-            )
+            const invoice = await masterInvoicesModel.findOne({ id: invoiceId })
+            if (invoice) {
+                const options = { ...(session && { session }) }
+
+                await masterInvoicesModel.updateOne(
+                    { id: invoiceId },
+                    {
+                        $set: {
+                            confirmed_at: confirmedAt,
+                            amount_paid: amountPaid,
+                            updated_at: new Date(),
+                        },
+                    },
+                    options,
+                )
+
+                let balance = 0n
+                if (invoice.unit === 'sats') {
+                    balance = amountPaid * 1000n
+                } else if (invoice.unit === 'msats') {
+                    balance = amountPaid
+                } else if (invoice.unit === 'btc') {
+                    balance = amountPaid * 100000000n * 1000n
+                }
+
+                await masterUsersModel.updateOne(
+                    { pubkey: invoice.pubkey },
+                    {
+                        $inc: { balance },
+                    },
+                    options,
+                )
+            }
         } catch (error) {
             console.error('Unable to confirm invoice. Reason:', error.message)
 
@@ -42,11 +70,8 @@ export class InvoiceRepository implements IInvoiceRepository {
 
     public async findById(
         id: string,
-        client: DatabaseClient = this.dbClient,
     ): Promise<Invoice | undefined> {
-        const [dbInvoice] = await client<DBInvoice>('invoices')
-            .where('id', id)
-            .select()
+        const dbInvoice = await masterInvoicesModel.findOne({ id })
 
         if (!dbInvoice) {
             return
@@ -58,30 +83,63 @@ export class InvoiceRepository implements IInvoiceRepository {
     public async findPendingInvoices(
         offset = 0,
         limit = 10,
-        client: DatabaseClient = this.dbClient,
     ): Promise<Invoice[]> {
-        const dbInvoices = await client<DBInvoice>('invoices')
-            .where('status', InvoiceStatus.PENDING)
-            .offset(offset)
+        const dbInvoices = await masterInvoicesModel
+            .find({ status: InvoiceStatus.PENDING })
+            .skip(offset)
             .limit(limit)
-            .select()
 
         return dbInvoices.map(fromDBInvoice)
     }
 
+    public updateStatus(
+        invoice: Invoice,
+        session?: DatabaseTransaction,
+    ): Promise<Invoice | undefined> {
+        debug('updating invoice status: %o', invoice)
+
+        const options: any = { ...(session && { session }) }
+        const query = masterInvoicesModel.updateOne({
+            id: invoice.id,
+        }, {
+            status: invoice.status,
+            updated_at: new Date(),
+        }, options)
+
+        return ignoreUpdateConflicts(query)
+
+        // const query = client<DBInvoice>('invoices')
+        //     .update({
+        //         status: invoice.status,
+        //         updated_at: new Date(),
+        //     })
+        //     .where('id', invoice.id)
+        //     .limit(1)
+        //     .returning(['*'])
+
+        // return {
+        //     then: <T1, T2>(
+        //         onfulfilled: (value: Invoice | undefined) => T1 | PromiseLike<T1>,
+        //         onrejected: (reason: any) => T2 | PromiseLike<T2>,
+        //     ) => query.then(pipe(map(fromDBInvoice), head)).then(onfulfilled, onrejected),
+        //     catch: <T>(onrejected: (reason: any) => T | PromiseLike<T>) => query.catch(onrejected),
+        //     toString: (): string => query.toString(),
+        // } as Promise<Invoice | undefined>
+    }
+
     public upsert(
         invoice: Invoice,
-        client: DatabaseClient = this.dbClient,
     ): Promise<number> {
         debug('upserting invoice: %o', invoice)
 
-        const row = applySpec<DBInvoice>({
+        const row: DBInvoice = applySpec({
             id: ifElse(
                 propSatisfies(is(String), 'id'),
                 prop('id'),
                 always(crypto.randomUUID()),
             ),
-            pubkey: pipe(prop('pubkey'), toBuffer),
+            // pubkey: pipe(prop('pubkey'), toBuffer),
+            pubkey: prop('pubkey'),
             bolt11: prop('bolt11'),
             amount_requested: pipe(prop('amountRequested'), toString),
             // amount_paid: ifElse(propSatisfies(is(BigInt), 'amountPaid'), pipe(prop('amountPaid'), toString), always(null)),
@@ -97,33 +155,51 @@ export class InvoiceRepository implements IInvoiceRepository {
 
         debug('row: %o', row)
 
-        const query = client<DBInvoice>('invoices')
-            .insert(row)
-            .onConflict('id')
-            .merge(
-                omit([
-                    'id',
-                    'pubkey',
-                    'bolt11',
-                    'amount_requested',
-                    'unit',
-                    'description',
-                    'expires_at',
-                    'created_at',
-                    'verify_url',
-                ])(row),
-            )
+        const query = masterInvoicesModel.updateOne({ id: row.id }, { $set: row }, { upsert: true })
 
-        return {
-            then: <T1, T2>(
-                onfulfilled: (value: number) => T1 | PromiseLike<T1>,
-                onrejected: (reason: any) => T2 | PromiseLike<T2>,
-            ) => query.then(prop('rowCount') as () => number).then(
-                onfulfilled,
-                onrejected,
-            ),
-            catch: <T>(onrejected: (reason: any) => T | PromiseLike<T>) => query.catch(onrejected),
-            toString: (): string => query.toString(),
-        } as Promise<number>
+        return ignoreUpdateConflicts(query)
+
+        // const query = client<DBInvoice>('invoices')
+        //     .insert(row)
+        //     .onConflict('id')
+        //     .merge(
+        //         omit([
+        //             'id',
+        //             'pubkey',
+        //             'bolt11',
+        //             'amount_requested',
+        //             'unit',
+        //             'description',
+        //             'expires_at',
+        //             'created_at',
+        //             'verify_url',
+        //         ])(row),
+        //     )
+
+        // return {
+        //     then: <T1, T2>(
+        //         onfulfilled: (value: number) => T1 | PromiseLike<T1>,
+        //         onrejected: (reason: any) => T2 | PromiseLike<T2>,
+        //     ) => query.then(prop('rowCount') as () => number).then(
+        //         onfulfilled,
+        //         onrejected,
+        //     ),
+        //     catch: <T>(onrejected: (reason: any) => T | PromiseLike<T>) => query.catch(onrejected),
+        //     toString: (): string => query.toString(),
+        // } as Promise<number>
+    }
+}
+
+async function ignoreUpdateConflicts(query: any) {
+    try {
+        const result = await query
+        debug('ignoreUpdateConflicts result: %o', result)
+        return result.upsertedCount || result.modifiedCount || 0
+    } catch (err) {
+        debug('ignoreUpdateConflicts error: %o', err)
+        if (!String(err).indexOf('E11000 duplicate key error collection')) {
+            console.error(String(err))
+        }
+        return 0
     }
 }

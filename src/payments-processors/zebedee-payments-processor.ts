@@ -1,16 +1,15 @@
-import { AxiosInstance } from 'axios'
-
 import { Factory } from '../@types/base.ts'
 import { CreateInvoiceRequest, CreateInvoiceResponse, GetInvoiceResponse, IPaymentsProcessor } from '../@types/clients.ts'
 import { Settings } from '../@types/settings.ts'
 import { createLogger } from '../factories/logger-factory.ts'
 import { fromZebedeeInvoice } from '../utils/transform.ts'
+import { HTTPClient } from '@/utils/http.ts'
 
 const debug = createLogger('zebedee-payments-processor')
 
 export class ZebedeePaymentsProcesor implements IPaymentsProcessor {
     public constructor(
-        private httpClient: AxiosInstance,
+        private httpClient: HTTPClient,
         private settings: Factory<Settings>,
     ) {}
 
@@ -18,9 +17,7 @@ export class ZebedeePaymentsProcesor implements IPaymentsProcessor {
         debug('get invoice: %s', invoiceId)
 
         try {
-            const response = await this.httpClient.get(`/v0/charges/${invoiceId}`, {
-                maxRedirects: 1,
-            })
+            const response = await this.httpClient.get(`/v0/charges/${invoiceId}`)
 
             return fromZebedeeInvoice(response.data.data)
         } catch (error) {
@@ -49,9 +46,7 @@ export class ZebedeePaymentsProcesor implements IPaymentsProcessor {
 
         try {
             debug('request body: %o', body)
-            const response = await this.httpClient.post('/v0/charges', body, {
-                maxRedirects: 1,
-            })
+            const response = await this.httpClient.post('/v0/charges', body)
 
             const result = fromZebedeeInvoice(response.data.data)
 

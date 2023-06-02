@@ -3,13 +3,13 @@ import chaiAsPromised from 'chai-as-promised'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, it } from 'jest'
 import Sinon from 'sinon'
 
-import SinonChi from 'sinon-chai'
+import SinonChai from 'sinon-chai'
 
 chai.use(chaiAsPromised)
-chai.use(SinonChi)
+chai.use(SinonChai)
 
 import { IWebSocketAdapter } from '../../../../src/@types/adapters.ts'
-import { DatabaseClient1 as DatabaseClient } from '../../../../src/@types/base.ts'
+import { DatabaseClient } from '../../../../src/@types/base.ts'
 import { Event } from '../../../../src/@types/event.ts'
 import { IEventStrategy } from '../../../../src/@types/message-handlers.ts'
 import { MessageType } from '../../../../src/@types/messages.ts'

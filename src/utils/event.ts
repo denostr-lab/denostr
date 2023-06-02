@@ -1,6 +1,7 @@
 import { Buffer } from 'Buffer'
 import { applySpec, converge, curry, mergeLeft, nth, omit, pipe, prop, reduceBy } from 'ramda'
 import * as secp256k1 from 'secp256k1'
+import crypto from 'crypto'
 
 import { EventId, Pubkey, Tag } from '../@types/base.ts'
 import { CanonicalEvent, DBEvent, Event, UnidentifiedEvent, UnsignedEvent } from '../@types/event.ts'
@@ -13,7 +14,7 @@ import { isGenericTagQuery } from './filter.ts'
 import { getLeadingZeroBits } from './proof-of-work.ts'
 import { RuneLike } from './runes/rune-like.ts'
 import { deriveFromSecret } from './secret.ts'
-import { fromBuffer } from './transform.ts'
+import { fromBuffer, toBuffer } from './transform.ts'
 
 export const serializeEvent = (event: UnidentifiedEvent): CanonicalEvent => [
     0,
@@ -32,6 +33,16 @@ export const toNostrEvent: (event: DBEvent) => Event = applySpec({
     content: prop('event_content') as () => string,
     tags: prop('event_tags') as () => Tag[],
     sig: pipe(prop('event_signature') as () => Buffer, fromBuffer),
+})
+
+export const toDBEvent: (event: Event) => DBEvent = applySpec({
+    event_id: pipe(prop('id'), toBuffer),
+    event_kind: pipe(prop('kind'), Number),
+    event_pubkey: pipe(prop('pubkey'), toBuffer),
+    event_created_at: pipe(prop('created_at'), Number),
+    event_content: pipe(prop('content'), String),
+    event_tags: prop('tags'),
+    event_signature: pipe(prop('sig'), toBuffer),
 })
 
 export const isEventKindOrRangeMatch = ({ kind }: Event) => (item: EventKinds | EventKindsRange) => typeof item === 'number' ? item === kind : kind >= item[0] && kind <= item[1]
@@ -229,7 +240,7 @@ export const encryptKind4Event = (
         .getSharedSecret(senderPrivkey, `02${receiverPubkey}`, true)
         .subarray(1)
 
-    const iv = crypto.getRandomValues(new Uint8Array(16))
+    const iv = crypto.randomBytes(16)
 
     // deepcode ignore InsecureCipherNoIntegrity: NIP-04 Encrypted Direct Message uses aes-256-cbc
     const cipher = crypto.createCipheriv(
@@ -248,28 +259,8 @@ export const encryptKind4Event = (
     }
 }
 
-export const broadcastEvent = async (/*event: Event*/): Promise<Event> => {
-    return new Promise((resolve /*reject*/) => {
-        return resolve()
-        // if (!cluster.isWorker || typeof process.send === 'undefined') {
-        //   return resolve(event)
-        // }
-
-        // process.send(
-        //   {
-        //     eventName: WebSocketServerAdapterEvent.Broadcast,
-        //     event,
-        //   },
-        //   undefined,
-        //   undefined,
-        //   (error: Error | null) => {
-        //     if (error) {
-        //       return reject(error)
-        //     }
-        //     resolve(event)
-        //   },
-        // )
-    })
+export const broadcastEvent = async (event: Event): Promise<Event> => {
+    return event
 }
 
 export const isReplaceableEvent = (event: Event): boolean => {

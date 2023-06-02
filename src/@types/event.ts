@@ -1,4 +1,5 @@
 import { Buffer } from 'Buffer'
+import mongoose from 'mongoose'
 import { ObjectId } from 'mongodb'
 
 import { ContextMetadataKey, EventDeduplicationMetadataKey, EventDelegatorMetadataKey, EventExpirationTimeMetadataKey, EventKinds } from '../constants/base.ts'
@@ -36,7 +37,7 @@ export interface ParameterizedReplaceableEvent extends Event {
     [EventDeduplicationMetadataKey]: string[]
 }
 
-export interface DBEvent {
+export interface DBEvent extends mongoose.Document {
     _id: ObjectId
     event_id: Buffer
     event_pubkey: Buffer

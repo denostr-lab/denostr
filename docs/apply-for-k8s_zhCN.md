@@ -30,6 +30,9 @@ kubectl apply -f deployment/base.yaml
 
 ```sh
 kubectl apply -f deployment/worker.yaml
+
+# 开启付费功能，请再执行这句命令
+kubectl apply -f deployment/maintenance.yaml
 ```
 
 等待几分钟，以确保应用程序正在运行。

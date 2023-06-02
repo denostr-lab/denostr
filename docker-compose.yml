@@ -1,7 +1,7 @@
 services:
-  denostr:
-    image: ghcr.io/guakamoli/denostr:v0.1.1-worker
-    container_name: denostr
+  denostr-server0:
+    image: ghcr.io/denostr-protocol/denostr:v0.1.1-worker
+    container_name: denostr-server0
     environment:
       RELAY_PORT: 8008
       NOSTR_CONFIG_DIR: /app/.nostr
@@ -16,6 +16,30 @@ services:
       - ${PWD}/.nostr/settings.yaml:/app/.nostr/settings.yaml
     ports:
       - 8008:8008
+    depends_on:
+      denostr-db0:
+        condition: service_healthy
+      denostr-db1:
+        condition: service_healthy
+      denostr-db-rs-init:
+        condition: service_completed_successfully
+    restart: on-failure
+    networks:
+      default:
+  denostr-maintenance:
+    image: ghcr.io/denostr-protocol/denostr:v0.1.1-maintenance
+    container_name: denostr-maintenance
+    environment:
+      RELAY_PORT: 8008
+      NOSTR_CONFIG_DIR: /app/.nostr
+      SECRET: ${SECRET}
+      MONGO_URI: "mongodb://denostr-db0:27017,denostr-db1:27017/denostr?authSource=admin&replicaSet=rs0"
+      MONGO_MIN_POOL_SIZE: 3
+      MONGO_MAX_POOL_SIZE: 5
+      DEBUG: "*"
+    user: deno:deno
+    volumes:
+      - ${PWD}/.nostr/settings.yaml:/app/.nostr/settings.yaml
     depends_on:
       denostr-db0:
         condition: service_healthy

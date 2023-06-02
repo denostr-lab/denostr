@@ -12,7 +12,7 @@ chai.use(sinonChai)
 
 const { expect } = chai
 
-import { DatabaseClient1 as DatabaseClient } from '../../../src/@types/base.ts'
+import { DatabaseClient } from '../../../src/@types/base.ts'
 import { EventTags } from '../../../src/constants/base.ts'
 // import { ContextMetadataKey, EventDeduplicationMetadataKey } from '../../../src/constants/base.ts'
 import { EventRepository } from '../../../src/repositories/event-repository.ts'
