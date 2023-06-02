@@ -18,6 +18,10 @@ export class PubSubService extends ServiceClass {
 
     async subscribe() {
         const client = await this.getCacheClient()
+        if (!client) {
+            return
+        }
+
         const sub = await client.subscribe(PubSubBroadcastEvent.Ephemeral)
         for await (const data of sub.receive()) {
             const { channel, message } = data

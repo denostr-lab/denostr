@@ -29,9 +29,7 @@ export const workerFactory = (): AppWorker => {
     )
 
     api.registerService(new WebSocketServerService(adapter))
-    if (Config.REDIS_HOST && Config.REDIS_PORT) {
-        api.registerService(new PubSubService(getCacheClient))
-    }
+    api.registerService(new PubSubService(getCacheClient))
     const broker = new LocalBroker()
     broker.onBroadcast((eventName, ...args) => {
         // TODO
