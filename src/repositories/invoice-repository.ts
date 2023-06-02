@@ -1,4 +1,4 @@
-import { always, applySpec, head, ifElse, is, map, omit, pipe, prop, propSatisfies, toString } from 'ramda'
+import { always, applySpec, ifElse, is, pipe, prop, propSatisfies, toString } from 'ramda'
 
 import { DatabaseClient } from '@/@types/base.ts'
 import { DBInvoice, Invoice, InvoiceStatus } from '@/@types/invoice.ts'

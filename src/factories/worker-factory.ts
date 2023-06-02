@@ -7,7 +7,6 @@ import { UserRepository } from '../repositories/user-repository.ts'
 import { createWebApp } from './web-app-factory.ts'
 import { webSocketAdapterFactory } from './websocket-adapter-factory.ts'
 import { getCacheClient } from '../cache/client.ts'
-import Config from '@/config/index.ts'
 
 export const workerFactory = (): AppWorker => {
     const eventRepository = new EventRepository(createSettings)

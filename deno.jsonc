@@ -18,7 +18,7 @@
         "test:integration:nip28": "deno test test/integration/features/nip-28/nip-28.feature.test.ts --no-check -A",
         "test:integration:nip33": "deno test test/integration/features/nip-33/nip-33.feature.test.ts --no-check -A",
         "git-hooks": "deno run --no-check=remote --allow-run=deno,git --allow-read --allow-write=.git-hooks https://deno.land/x/githooked/mod.ts install",
-        "bump": "deno run --allow-all .bump/bump.ts",
+        "bump": "deno run -A .bump/bump.ts",
         "cache": "deno cache src/index.ts --reload",
         "cache:force": "deno cache src/index.ts --reload --lock-write"
     },

@@ -1,6 +1,6 @@
 services:
   denostr-server0:
-    image: ghcr.io/denostr-protocol/denostr:v0.1.1-worker
+    image: ghcr.io/denostr-protocol/denostr:v0.2.0-worker
     container_name: denostr-server0
     environment:
       RELAY_PORT: 8008
