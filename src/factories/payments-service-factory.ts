@@ -8,7 +8,7 @@ import { createSettings } from './settings-factory.ts'
 
 export const createPaymentsService = () => {
     const dbClient = getMasterDbClient()
-    const invoiceRepository = new InvoiceRepository(dbClient)
+    const invoiceRepository = new InvoiceRepository()
     const userRepository = new UserRepository(createSettings)
     const paymentsProcessor = createPaymentsProcessor()
     const eventRepository = new EventRepository(createSettings)

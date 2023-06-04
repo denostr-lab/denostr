@@ -2,7 +2,7 @@ import { PassThrough, Stream } from 'stream'
 
 import mongoose from 'mongoose'
 
-import { DatabaseClient, DatabaseTransaction, EventId, Pubkey } from './base.ts'
+import { DatabaseTransaction, EventId, Pubkey } from './base.ts'
 import { DBEvent, Event } from './event.ts'
 import { Invoice } from './invoice.ts'
 import { SubscriptionFilter } from './subscription.ts'
@@ -23,8 +23,8 @@ export interface IEventRepository {
 }
 
 export interface IInvoiceRepository {
-    findById(id: string, client?: DatabaseClient): Promise<Invoice | undefined>
-    upsert(invoice: Partial<Invoice>, session?: DatabaseTransaction): Promise<number>
+    findById(id: string): Promise<Invoice | undefined>
+    upsert(invoice: Partial<Invoice>): Promise<number>
     updateStatus(
         invoice: Pick<Invoice, 'id' | 'status'>,
         session?: DatabaseTransaction,
@@ -38,7 +38,6 @@ export interface IInvoiceRepository {
     findPendingInvoices(
         offset?: number,
         limit?: number,
-        client?: DatabaseClient,
     ): Promise<Invoice[]>
 }
 

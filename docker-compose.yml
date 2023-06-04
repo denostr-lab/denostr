@@ -27,7 +27,7 @@ services:
     networks:
       default:
   denostr-maintenance:
-    image: ghcr.io/denostr-protocol/denostr:v0.1.1-maintenance
+    image: ghcr.io/denostr-protocol/denostr:v0.2.0-maintenance
     container_name: denostr-maintenance
     environment:
       RELAY_PORT: 8008

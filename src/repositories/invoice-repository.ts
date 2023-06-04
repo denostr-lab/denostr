@@ -1,6 +1,5 @@
 import { always, applySpec, ifElse, is, pipe, prop, propSatisfies, toString } from 'ramda'
 
-import { DatabaseClient } from '@/@types/base.ts'
 import { DBInvoice, Invoice, InvoiceStatus } from '@/@types/invoice.ts'
 import { IInvoiceRepository } from '@/@types/repositories.ts'
 import { createLogger } from '@/factories/logger-factory.ts'
@@ -12,8 +11,6 @@ import { DatabaseTransaction } from '@/@types/base.ts'
 const debug = createLogger('invoice-repository')
 
 export class InvoiceRepository implements IInvoiceRepository {
-    public constructor(private readonly dbClient: DatabaseClient) {}
-
     public async confirmInvoice(
         invoiceId: string,
         amountPaid: bigint,
