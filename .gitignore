@@ -24,6 +24,7 @@ node_modules/
 .eslintcache
 .dccache
 .DS_Store
+.history
 
 # generate output
 dist
