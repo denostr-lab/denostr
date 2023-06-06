@@ -9,7 +9,7 @@ import { SettingsStatic } from '@/utils/settings.ts'
 import { Settings } from '@/@types/settings.ts'
 import { DBEvent, Event } from '@/@types/event.ts'
 import { toNostrEvent } from '@/utils/event.ts'
-import {readReplicaInvoicesModel} from '@/database/models/Invoices.ts'
+import { readReplicaInvoicesModel } from '@/database/models/Invoices.ts'
 
 const router = new Router()
 
@@ -30,11 +30,11 @@ router.get('/events', async (ctx: Context) => {
         .filter((event) => event.created_at < unixTimeNow && event.content !== '')
 
     const uniqueEvents: Event[] = _.uniq(events, (event) => event.id)
-    const Events24Hours: Event[] = events.filter(e => e.created_at > (unixTimeNow - 60*60*24))
+    const Events24Hours: Event[] = events.filter((e) => e.created_at > (unixTimeNow - 60 * 60 * 24))
     const latestEvents: Event[] = _.sortBy(uniqueEvents, 'created_at').reverse().slice(0, 30) // 30 is longListAmount
     const kindsList: { [kind: string]: number } = _.countBy(events, 'kind')
     const uniquePubkeys: Event[] = _.uniq(events, (event) => event.pubkey)
-    const uniquePubkeys24Hours :Event[] = uniquePubkeys.filter(e => e.created_at > (unixTimeNow - 60*60*24))
+    const uniquePubkeys24Hours: Event[] = uniquePubkeys.filter((e) => e.created_at > (unixTimeNow - 60 * 60 * 24))
 
     const eventsUTC: number[] = events.map((event) => {
         const eventDate = new Date(event.created_at * 1000)
@@ -60,38 +60,38 @@ router.get('/events', async (ctx: Context) => {
     }
 })
 
-router.get('/order/amount',async (ctx:Context) => {
+router.get('/order/amount', async (ctx: Context) => {
     const response = ctx.response
     const pipline = [
         {
-			$match:{status:"completed"}
-		},
+            $match: { status: 'completed' },
+        },
         {
             $group: {
-                _id: "$unit",
+                _id: '$unit',
                 total: {
-                    $sum: "$amount_paid"
-                }
-            }
-        }
+                    $sum: '$amount_paid',
+                },
+            },
+        },
     ]
 
     type AmountRow = {
-        _id: string;
-        total: number;
+        _id: string
+        total: number
     }
     const amountArr: AmountRow[] = await readReplicaInvoicesModel.aggregate(pipline)
 
-    const amount:number = 0
-    for(let i = 0; i<amountArr.length; i++){
-        if(amountArr[i]._id == "msats") {
+    let amount: number = 0
+    for (let i = 0; i < amountArr.length; i++) {
+        if (amountArr[i]._id == 'msats') {
             amount += amountArr[i].total / 1000
         }
-        if(amountArr[i]._id == "sats") {
-            amount += amountArr[i].total 
+        if (amountArr[i]._id == 'sats') {
+            amount += amountArr[i].total
         }
     }
-    
+
     response.type = 'json'
     response.body = {
         status: 'ok',
