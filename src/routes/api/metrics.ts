@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-inferrable-types
 import _ from 'underscore'
 import dayjs from 'dayjs'
 
@@ -8,6 +9,7 @@ import { SettingsStatic } from '@/utils/settings.ts'
 import { Settings } from '@/@types/settings.ts'
 import { DBEvent, Event } from '@/@types/event.ts'
 import { toNostrEvent } from '@/utils/event.ts'
+import {readReplicaInvoicesModel} from '@/database/models/Invoices.ts'
 
 const router = new Router()
 
@@ -55,6 +57,45 @@ router.get('/events', async (ctx: Context) => {
         eventCount24Hours: Events24Hours.length,
         events: latestEvents,
         // where: whereArray,
+    }
+})
+
+router.get('/order/amount',async (ctx:Context) => {
+    const response = ctx.response
+    const pipline = [
+        {
+			$match:{status:"completed"}
+		},
+        {
+            $group: {
+                _id: "$unit",
+                total: {
+                    $sum: "$amount_paid"
+                }
+            }
+        }
+    ]
+
+    type AmountRow = {
+        _id: string;
+        total: number;
+    }
+    const amountArr: AmountRow[] = await readReplicaInvoicesModel.aggregate(pipline)
+
+    const amount:number = 0
+    for(let i = 0; i<amountArr.length; i++){
+        if(amountArr[i]._id == "msats") {
+            amount += amountArr[i].total / 1000
+        }
+        if(amountArr[i]._id == "sats") {
+            amount += amountArr[i].total 
+        }
+    }
+    
+    response.type = 'json'
+    response.body = {
+        status: 'ok',
+        total: amount,
     }
 })
 
