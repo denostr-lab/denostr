@@ -1,31 +1,31 @@
-# [Denostr](https://github.com/denostr-protocol/denostr)
+# [Denostr](https://github.com/denostr-lab/denostr)
 
 <p align="center">
   <img alt="denostr logo" height="256px" width="256px" src="https://user-images.githubusercontent.com/8678079/233816217-27504e7e-b429-4388-ac69-592122fa922b.png" />
 </p>
 
 <p align="center">
-  <a href="https://github.com/denostr-protocol/denostr/releases">
-    <img alt="GitHub release" src="https://img.shields.io/github/v/release/denostr-protocol/denostr">
+  <a href="https://github.com/denostr-lab/denostr/releases">
+    <img alt="GitHub release" src="https://img.shields.io/github/v/release/denostr-lab/denostr">
   </a>
-  <a href="https://github.com/denostr-protocol/denostr/issues">
-    <img alt="GitHub issues" src="https://img.shields.io/github/issues/denostr-protocol/denostr?style=plastic" />
+  <a href="https://github.com/denostr-lab/denostr/issues">
+    <img alt="GitHub issues" src="https://img.shields.io/github/issues/denostr-lab/denostr?style=plastic" />
   </a>
-  <a href="https://github.com/denostr-protocol/denostr/stargazers">
-    <img alt="GitHub stars" src="https://img.shields.io/github/stars/denostr-protocol/denostr" />
+  <a href="https://github.com/denostr-lab/denostr/stargazers">
+    <img alt="GitHub stars" src="https://img.shields.io/github/stars/denostr-lab/denostr" />
   </a>
-  <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/denostr-protocol/denostr">
-  <a href="https://github.com/denostr-protocol/denostr/network">
-    <img alt="GitHub forks" src="https://img.shields.io/github/forks/denostr-protocol/denostr" />
+  <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/denostr-lab/denostr">
+  <a href="https://github.com/denostr-lab/denostr/network">
+    <img alt="GitHub forks" src="https://img.shields.io/github/forks/denostr-lab/denostr" />
   </a>
-  <a href="https://github.com/denostr-protocol/denostr/blob/main/LICENSE">
-    <img alt="GitHub license" src="https://img.shields.io/github/license/denostr-protocol/denostr" />
+  <a href="https://github.com/denostr-lab/denostr/blob/main/LICENSE">
+    <img alt="GitHub license" src="https://img.shields.io/github/license/denostr-lab/denostr" />
   </a>
-  <a href='https://coveralls.io/github/denostr-protocol/denostr?branch=main'>
-    <img  alt='Coverage Status' src='https://coveralls.io/repos/github/denostr-protocol/denostr/badge.svg?branch=main' />
+  <a href='https://coveralls.io/github/denostr-lab/denostr?branch=main'>
+    <img  alt='Coverage Status' src='https://coveralls.io/repos/github/denostr-lab/denostr/badge.svg?branch=main' />
   </a>
-  <a href='https://github.com/denostr-protocol/denostr/actions'>
-    <img alt='Build status' src='https://github.com/denostr-protocol/denostr/actions/workflows/checks.yml/badge.svg?branch=main&event=push' />
+  <a href='https://github.com/denostr-lab/denostr/actions'>
+    <img alt='Build status' src='https://github.com/denostr-lab/denostr/actions/workflows/checks.yml/badge.svg?branch=main&event=push' />
   </a>
 </p>
 
@@ -35,7 +35,7 @@ This is a [nostr](https://github.com/fiatjaf/nostr) relay, written in Typescript
 
 This implementation is production-ready. See below for supported features.
 
-The project main repository is available on [GitHub](https://github.com/denostr-protocol/denostr).
+The project main repository is available on [GitHub](https://github.com/denostr-lab/denostr).
 
 ## Features
 
@@ -149,7 +149,7 @@ Todo
 Clone repository and enter directory:
 
 ```sh
-git clone https://github.com/denostr-protocol/denostr.git --depth 1 && cd denostr
+git clone https://github.com/denostr-lab/denostr.git --depth 1 && cd denostr
 ```
 
 Create `.env` file inside denostr project folder

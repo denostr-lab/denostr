@@ -9,7 +9,7 @@ if (version === packageJson.version) {
 for (const filename of ['./deployment/maintenance.yaml', './deployment/static-mirroring.yaml', './deployment/worker.yaml', './docker-compose.yml']) {
     const filepath = Deno.realPathSync(filename)
     let text = Deno.readTextFileSync(filename)
-    text = text.replace(packageJson.version, version)
+    text = text.replaceAll(packageJson.version, version)
     Deno.writeTextFileSync(filepath, text)
 }
 

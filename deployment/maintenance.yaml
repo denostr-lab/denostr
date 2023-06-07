@@ -21,7 +21,7 @@ spec:
         - name: ghcr
       containers:
         - name: relay
-          image: ghcr.io/denostr-protocol/denostr:v0.2.0-maintenance
+          image: ghcr.io/denostr-lab/denostr:v0.2.1-maintenance
           imagePullPolicy: Always
           resources:
             requests:

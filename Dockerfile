@@ -4,8 +4,8 @@ LABEL org.opencontainers.image.title=denostr
 LABEL org.opencontainers.image.description='Deno-based, cloud-native nostr implementation supported by ByteTrade and Revo, forked from nostream.'
 LABEL org.opencontainers.image.authors=Denostr
 LABEL org.opencontainers.image.licenses=MIT
-LABEL org.opencontainers.image.url=https://github.com/denostr-protocol/denostr
-LABEL org.opencontainers.image.source=https://github.com/denostr-protocol/denostr
+LABEL org.opencontainers.image.url=https://github.com/denostr-lab/denostr
+LABEL org.opencontainers.image.source=https://github.com/denostr-lab/denostr
 
 # Create the app directory
 WORKDIR /app

@@ -1,6 +1,6 @@
 services:
   denostr-server0:
-    image: ghcr.io/denostr-protocol/denostr:v0.2.0-worker
+    image: ghcr.io/denostr-lab/denostr:v0.2.1-worker
     container_name: denostr-server0
     environment:
       RELAY_PORT: 8008
@@ -15,7 +15,7 @@ services:
     volumes:
       - ${PWD}/.nostr/settings.yaml:/app/.nostr/settings.yaml
     ports:
-      - 8008:8008
+      - "127.0.0.1:8008:8008"
     depends_on:
       denostr-db0:
         condition: service_healthy
@@ -27,7 +27,7 @@ services:
     networks:
       default:
   denostr-maintenance:
-    image: ghcr.io/denostr-protocol/denostr:v0.2.0-maintenance
+    image: ghcr.io/denostr-lab/denostr:v0.2.1-maintenance
     container_name: denostr-maintenance
     environment:
       RELAY_PORT: 8008
@@ -57,7 +57,9 @@ services:
       default:
     restart: always
     volumes:
-    - ${PWD}/.nostr/data:/data/db
+      - ${PWD}/.nostr/data:/data/db
+    ports:
+      - "127.0.0.1:27017:27017"
     entrypoint: ["mongod", "--bind_ip_all", "--replSet", "rs0"]
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongo --host 127.0.0.1 --port 27017 --quiet 1

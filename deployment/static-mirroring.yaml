@@ -21,7 +21,7 @@ spec:
         - name: ghcr
       containers:
         - name: relay
-          image: ghcr.io/denostr-protocol/denostr:v0.2.0-static-mirroring
+          image: ghcr.io/denostr-lab/denostr:v0.2.1-static-mirroring
           imagePullPolicy: Always
           resources:
             requests:

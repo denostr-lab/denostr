@@ -1,6 +1,6 @@
 {
     "name": "denostr",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "description": "💪🏻 Deno-based, cloud-native Nostr relay forked from nostream. Sponsored by ByteTrade and Revo.",
     "supportedNips": [
         1,
@@ -22,7 +22,7 @@
     ],
     "repository": {
         "type": "git",
-        "url": "https://github.com/denostr-protocol/denostr.git"
+        "url": "https://github.com/denostr-lab/denostr.git"
     },
     "keywords": [
         "deno",
@@ -31,10 +31,10 @@
         "nostr-relay",
         "typescript"
     ],
-    "author": "denostr-protocol <hi@denostr.com>",
+    "author": "denostr-lab <hi@denostr.com>",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/denostr-protocol/denostr/issues"
+        "url": "https://github.com/denostr-lab/denostr/issues"
     },
-    "homepage": "https://github.com/denostr-protocol/denostr"
+    "homepage": "https://github.com/denostr-lab/denostr"
 }
