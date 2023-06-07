@@ -223,13 +223,14 @@ EventSchema.static('findBySubscriptionFilter', function (filters: SubscriptionFi
         if (typeof filter.limit !== 'undefined') {
             sort = Sort.DESC
         }
+
         return filter.limit ?? defaultLimit
     }))
     if (limit > maxLimit) {
         limit = maxLimit
     }
 
-    return this.find(query).limit(limit).sort({ created_at: sort })
+    return this.find(query).limit(limit).sort({ event_created_at: sort })
 })
 
 EventSchema.static('countBySubscriptionFilter', function (filters: SubscriptionFilter[]) {
