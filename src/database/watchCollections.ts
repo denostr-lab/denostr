@@ -1,5 +1,5 @@
-import { EventsCollectionName } from './models/Events.ts'
+import { collectionName as eventsCollection } from './models/Events.ts'
 
 export default [
-    EventsCollectionName,
+    eventsCollection,
 ]
