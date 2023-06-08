@@ -17,7 +17,7 @@ export class EventsController implements IController {
             }
         }
 
-        response.body = await readReplicaEventsModel.paginate({}, { sort, limit, page })
+        response.body = await readReplicaEventsModel.paginate({ event_kind: 1  }, { sort, limit, page })
             .then((result) => ({
                 ...result,
                 docs: result.docs.map(toNostrEvent),
