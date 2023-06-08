@@ -1,6 +1,5 @@
 import { Buffer } from 'Buffer'
 import mongoose from 'mongoose'
-import { ObjectId } from 'mongodb'
 
 import { Pubkey } from './base.ts'
 
@@ -37,8 +36,7 @@ export interface LnurlInvoice extends Invoice {
 }
 
 export interface DBInvoice extends mongoose.Document {
-    _id: ObjectId
-    id: string
+    _id: string
     pubkey: Buffer
     bolt11: string
     amount_requested: bigint
