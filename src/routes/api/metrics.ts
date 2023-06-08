@@ -10,6 +10,7 @@ import { Settings } from '@/@types/settings.ts'
 import { DBEvent, Event } from '@/@types/event.ts'
 import { toNostrEvent } from '@/utils/event.ts'
 import { readReplicaInvoicesModel } from '@/database/models/Invoices.ts'
+import { amountRow } from '@/@types/api.ts'
 
 const router = new Router()
 
@@ -20,7 +21,7 @@ router.get('/events', async (ctx: Context) => {
     const unixTimeNow = Math.floor(Date.now() / 1000)
     const query = {
         event_created_at: {
-            $lt: unixTimeNow,
+            $lte: unixTimeNow,
         },
     }
 
@@ -30,7 +31,7 @@ router.get('/events', async (ctx: Context) => {
         .filter((event) => event.created_at < unixTimeNow && event.content !== '')
 
     const uniqueEvents: Event[] = _.uniq(events, (event) => event.id)
-    const Events24Hours: Event[] = events.filter((e) => e.created_at > (unixTimeNow - 60 * 60 * 24))
+    const events24Hours: Event[] = events.filter((e) => e.created_at > (unixTimeNow - 60 * 60 * 24))
     const latestEvents: Event[] = _.sortBy(uniqueEvents, 'created_at').reverse().slice(0, 30) // 30 is longListAmount
     const kindsList: { [kind: string]: number } = _.countBy(events, 'kind')
     const uniquePubkeys: Event[] = _.uniq(events, (event) => event.pubkey)
@@ -54,7 +55,7 @@ router.get('/events', async (ctx: Context) => {
         kinds: kindsList,
         // relays: relayCount,
         eventCount: events.length,
-        eventCount24Hours: Events24Hours.length,
+        eventCount24Hours: events24Hours.length,
         events: latestEvents,
         // where: whereArray,
     }
@@ -76,11 +77,7 @@ router.get('/order/amount', async (ctx: Context) => {
         },
     ]
 
-    type AmountRow = {
-        _id: string
-        total: number
-    }
-    const amountArr: AmountRow[] = await readReplicaInvoicesModel.aggregate(pipline)
+    const amountArr: amountRow[] = await readReplicaInvoicesModel.aggregate(pipline)
 
     let amount: number = 0
     for (let i = 0; i < amountArr.length; i++) {
@@ -110,7 +107,7 @@ router.get('/events/monthly', async (ctx: Context) => {
 
     const query = {
         event_created_at: {
-            $lt: Math.floor(unixTime),
+            $lte: Math.floor(unixTime),
             $gt: Math.floor(unixTimeBeforeMonth),
         },
     }
@@ -157,7 +154,7 @@ router.get('/events/yearly', async (ctx: Context) => {
 
     const query = {
         event_created_at: {
-            $lt: Math.floor(unixTime),
+            $lte: Math.floor(unixTime),
             $gt: Math.floor(unixTimeMinux1yr),
         },
     }

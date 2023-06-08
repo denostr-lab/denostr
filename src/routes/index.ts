@@ -7,6 +7,7 @@ import { rootRequestHandler } from '@/handlers/request-handlers/root-request-han
 import callbacksRouter from '@/routes/callbacks/index.ts'
 import invoiceRouter from '@/routes/invoices/index.ts'
 import metricsRouter from '@/routes/api/metrics.ts'
+import { verifyApikeyMiddleware } from '@/handlers/request-handlers/verify-apikey-middleware.ts'
 
 const router = new Router()
 
@@ -44,6 +45,9 @@ router.use(
     callbacksRouter.routes(),
     callbacksRouter.allowedMethods(),
 )
-router.use('/api/metrics', metricsRouter.routes(), metricsRouter.allowedMethods())
+router.use('/api/metrics', 
+verifyApikeyMiddleware,
+ metricsRouter.routes(), 
+ metricsRouter.allowedMethods())
 
 export default router
