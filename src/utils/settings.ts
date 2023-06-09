@@ -30,8 +30,7 @@ export class SettingsStatic {
         const defaultSettingsFileContent = fs.readFileSync(path, {
             encoding: 'utf-8',
         })
-        const defaults = yaml.load(defaultSettingsFileContent) as Settings
-        return defaults
+        return yaml.load(defaultSettingsFileContent) as Settings
     }
 
     public static loadAndParseJsonFile(path: string) {
@@ -140,9 +139,10 @@ export class SettingsStatic {
             SettingsStatic.createSettings()
         }
 
-        return [
-            fs.watch(defaultsFilePath, 'utf8', reload),
-            fs.watch(settingsFilePath, 'utf8', reload),
-        ]
+        return [defaultsFilePath, settingsFilePath].map((path) => {
+            if (fs.existsSync(path)) {
+                return fs.watch(path, { encoding: 'utf8' }, reload)
+            }
+        }).filter(Boolean)
     }
 }
