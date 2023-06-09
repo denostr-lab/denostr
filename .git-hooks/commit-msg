@@ -10,7 +10,7 @@ HOOK_DISABLE_NOTICE=0 # Set to 1 to disable the notice when the hook exits with 
 
 commit_msg=`cat $1`
 
-msg_re="^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\(.+\))?: .{1,100}"
+msg_re="^(add|rename|build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\(.+\))?: .{1,100}"
 
 if [[ ! $commit_msg =~ $msg_re ]]
 then
