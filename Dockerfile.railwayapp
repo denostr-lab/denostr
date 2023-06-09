@@ -54,10 +54,10 @@ ENV NOSTR_CONFIG_DIR=/app/.nostr
 # Copy the app to the container
 COPY --chown=deno:deno --from=cache /app .
 
+RUN mkdir -p $NOSTR_CONFIG_DIR && chmod 777 $NOSTR_CONFIG_DIR
+
 # Run with lower permissions and improve security
 USER deno
-
-RUN mkdir -p $NOSTR_CONFIG_DIR
 
 EXPOSE 8008
 
