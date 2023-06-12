@@ -108,7 +108,7 @@ router.get('/events/monthly', async (ctx: Context) => {
     const query = {
         event_created_at: {
             $lte: Math.floor(unixTime),
-            $gt: Math.floor(unixTimeBeforeMonth),
+            $gte: Math.floor(unixTimeBeforeMonth),
         },
     }
 
@@ -155,7 +155,7 @@ router.get('/events/yearly', async (ctx: Context) => {
     const query = {
         event_created_at: {
             $lte: Math.floor(unixTime),
-            $gt: Math.floor(unixTimeMinux1yr),
+            $gte: Math.floor(unixTimeMinux1yr),
         },
     }
 

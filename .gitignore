@@ -25,13 +25,13 @@ node_modules/
 .eslintcache
 .dccache
 .DS_Store
-.history
 
 # generate output
 dist
 
 # IDE - VSCode
 .vscode/*
+!.vscode/settings.json
 
 # Env files
 .env
