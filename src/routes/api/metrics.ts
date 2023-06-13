@@ -104,6 +104,7 @@ router.get('/events/monthly', async (ctx: Context) => {
     const now = new Date()
     now.setMonth(-1)
     const unixTimeBeforeMonth = now.valueOf() / 1000
+    const theMonLastDay = dayjs(now).endOf('month').get('D')
 
     const query = {
         event_created_at: {
@@ -120,7 +121,7 @@ router.get('/events/monthly', async (ctx: Context) => {
     const currentTimestamp = Math.floor(unixTime)
 
     // events.push({ ...events[0], created_at:  Math.floor(Date.now() / 1000) - 60 * 60 * 24 * 3 })
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < theMonLastDay; i++) {
         const fromTimestamp = Math.floor(currentTimestamp - 60 * 60 * 24 * (i + 1))
         const toTimestamp = Math.floor(currentTimestamp - 60 * 60 * 24 * i)
 
