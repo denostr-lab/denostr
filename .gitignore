@@ -10,6 +10,7 @@ npm-debug.log*
 .nyc_output
 .test-reports
 .coverage
+.history
 
 # Dependency directories
 node_modules/
@@ -30,6 +31,7 @@ dist
 
 # IDE - VSCode
 .vscode/*
+!.vscode/settings.json
 
 # Env files
 .env

@@ -1,12 +1,12 @@
 import mongoose from 'mongoose'
+import paginate from 'mongoose-paginate'
+import aggregatePaginate from 'mongoose-aggregate-paginate'
 
 import { getMasterDbClient, getReadReplicaDbClient } from '@/database/client.ts'
 import { DBInvoice } from '@/@types/invoice.ts'
 
-const InvoiceSchema = new mongoose.Schema({
-    id: {
-        type: String,
-    },
+const invoiceSchema = new mongoose.Schema({
+    _id: String,
     pubkey: {
         type: String,
     },
@@ -48,57 +48,53 @@ const InvoiceSchema = new mongoose.Schema({
     verify_url: {
         type: String,
     },
-}, {
-    id: true,
-    _id: false,
 })
 
-InvoiceSchema.index({ 'id': 1 }, {
-    unique: true,
-})
+invoiceSchema.plugin(paginate)
+invoiceSchema.plugin(aggregatePaginate)
 
-InvoiceSchema.index({ 'pubkey': 1 }, {
+invoiceSchema.index({ 'pubkey': 1 }, {
     background: true,
 })
 
-InvoiceSchema.index({ 'bolt11': 1 }, {
+invoiceSchema.index({ 'bolt11': 1 }, {
     background: true,
 })
 
-InvoiceSchema.index({ 'amount_requested': 1 }, {
+invoiceSchema.index({ 'amount_requested': 1 }, {
     background: true,
 })
 
-InvoiceSchema.index({ 'amount_paid': 1 }, {
+invoiceSchema.index({ 'amount_paid': 1 }, {
     background: true,
     sparse: true,
 })
 
-InvoiceSchema.index({ 'unit': 1 }, {
+invoiceSchema.index({ 'unit': 1 }, {
     background: true,
 })
 
-InvoiceSchema.index({ 'status': 1 }, {
+invoiceSchema.index({ 'status': 1 }, {
     background: true,
 })
 
-InvoiceSchema.index({ 'created_at': 1 }, {
+invoiceSchema.index({ 'created_at': 1 }, {
     background: true,
 })
 
-InvoiceSchema.index({ 'confirmed_at': 1 }, {
+invoiceSchema.index({ 'confirmed_at': 1 }, {
     background: true,
     sparse: true,
 })
 
-export const InvoicesModelName = 'Invoices'
-export const InvoicesCollectionName = 'invoices'
+export const modelName = 'Invoices'
+export const collectionName = 'invoices'
 
 export const InvoicesModel = (dbClient: mongoose.Connection) =>
-    dbClient.model<DBInvoice>(
-        'Invoices',
-        InvoiceSchema,
-        'invoices',
+    dbClient.model<DBInvoice, mongoose.PaginateModel<DBInvoice>>(
+        modelName,
+        invoiceSchema,
+        collectionName,
     )
 
 export const masterInvoicesModel = InvoicesModel(getMasterDbClient())

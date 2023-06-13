@@ -25,12 +25,12 @@ export class InvoiceRepository implements IInvoiceRepository {
         )
 
         try {
-            const invoice = await masterInvoicesModel.findOne({ id: invoiceId })
+            const invoice = await masterInvoicesModel.findOne({ _id: invoiceId })
             if (invoice) {
                 const options = { ...(session && { session }) }
 
                 await masterInvoicesModel.updateOne(
-                    { id: invoiceId },
+                    { _id: invoiceId },
                     {
                         $set: {
                             confirmed_at: confirmedAt,
@@ -66,9 +66,9 @@ export class InvoiceRepository implements IInvoiceRepository {
     }
 
     public async findById(
-        id: string,
+        invoiceId: string,
     ): Promise<Invoice | undefined> {
-        const dbInvoice = await masterInvoicesModel.findOne({ id })
+        const dbInvoice = await masterInvoicesModel.findOne({ _id: invoiceId })
 
         if (!dbInvoice) {
             return
@@ -81,12 +81,9 @@ export class InvoiceRepository implements IInvoiceRepository {
         offset = 0,
         limit = 10,
     ): Promise<Invoice[]> {
-        const dbInvoices = await masterInvoicesModel
-            .find({ status: InvoiceStatus.PENDING })
-            .skip(offset)
-            .limit(limit)
+        const dbInvoices = await masterInvoicesModel.paginate({ status: InvoiceStatus.PENDING }, { offset, limit })
 
-        return dbInvoices.map(fromDBInvoice)
+        return dbInvoices.docs.map(fromDBInvoice)
     }
 
     public updateStatus(
@@ -97,31 +94,13 @@ export class InvoiceRepository implements IInvoiceRepository {
 
         const options: any = { ...(session && { session }) }
         const query = masterInvoicesModel.updateOne({
-            id: invoice.id,
+            _id: invoice.id,
         }, {
             status: invoice.status,
             updated_at: new Date(),
         }, options)
 
         return ignoreUpdateConflicts(query)
-
-        // const query = client<DBInvoice>('invoices')
-        //     .update({
-        //         status: invoice.status,
-        //         updated_at: new Date(),
-        //     })
-        //     .where('id', invoice.id)
-        //     .limit(1)
-        //     .returning(['*'])
-
-        // return {
-        //     then: <T1, T2>(
-        //         onfulfilled: (value: Invoice | undefined) => T1 | PromiseLike<T1>,
-        //         onrejected: (reason: any) => T2 | PromiseLike<T2>,
-        //     ) => query.then(pipe(map(fromDBInvoice), head)).then(onfulfilled, onrejected),
-        //     catch: <T>(onrejected: (reason: any) => T | PromiseLike<T>) => query.catch(onrejected),
-        //     toString: (): string => query.toString(),
-        // } as Promise<Invoice | undefined>
     }
 
     public upsert(
@@ -130,12 +109,11 @@ export class InvoiceRepository implements IInvoiceRepository {
         debug('upserting invoice: %o', invoice)
 
         const row: DBInvoice = applySpec({
-            id: ifElse(
+            _id: ifElse(
                 propSatisfies(is(String), 'id'),
                 prop('id'),
                 always(crypto.randomUUID()),
             ),
-            // pubkey: pipe(prop('pubkey'), toBuffer),
             pubkey: prop('pubkey'),
             bolt11: prop('bolt11'),
             amount_requested: pipe(prop('amountRequested'), toString),
@@ -152,38 +130,9 @@ export class InvoiceRepository implements IInvoiceRepository {
 
         debug('row: %o', row)
 
-        const query = masterInvoicesModel.updateOne({ id: row.id }, { $set: row }, { upsert: true })
+        const query = masterInvoicesModel.updateOne({ _id: row._id }, { $set: row }, { upsert: true })
 
         return ignoreUpdateConflicts(query)
-
-        // const query = client<DBInvoice>('invoices')
-        //     .insert(row)
-        //     .onConflict('id')
-        //     .merge(
-        //         omit([
-        //             'id',
-        //             'pubkey',
-        //             'bolt11',
-        //             'amount_requested',
-        //             'unit',
-        //             'description',
-        //             'expires_at',
-        //             'created_at',
-        //             'verify_url',
-        //         ])(row),
-        //     )
-
-        // return {
-        //     then: <T1, T2>(
-        //         onfulfilled: (value: number) => T1 | PromiseLike<T1>,
-        //         onrejected: (reason: any) => T2 | PromiseLike<T2>,
-        //     ) => query.then(prop('rowCount') as () => number).then(
-        //         onfulfilled,
-        //         onrejected,
-        //     ),
-        //     catch: <T>(onrejected: (reason: any) => T | PromiseLike<T>) => query.catch(onrejected),
-        //     toString: (): string => query.toString(),
-        // } as Promise<number>
     }
 }
 
