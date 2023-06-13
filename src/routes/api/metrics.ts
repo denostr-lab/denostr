@@ -10,7 +10,7 @@ import { Settings } from '@/@types/settings.ts'
 import { DBEvent, Event } from '@/@types/event.ts'
 import { toNostrEvent } from '@/utils/event.ts'
 import { readReplicaInvoicesModel } from '@/database/models/Invoices.ts'
-import { amountRow } from '@/@types/api.ts'
+import { AmountRow } from '@/@types/api.ts'
 
 const router = new Router()
 
@@ -77,7 +77,7 @@ router.get('/order/amount', async (ctx: Context) => {
         },
     ]
 
-    const amountArr: amountRow[] = await readReplicaInvoicesModel.aggregate(pipline)
+    const amountArr: AmountRow[] = await readReplicaInvoicesModel.aggregate(pipline)
 
     let amount: number = 0
     for (let i = 0; i < amountArr.length; i++) {
