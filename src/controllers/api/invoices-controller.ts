@@ -33,7 +33,7 @@ export class InvoicesController implements IController {
             }
         }
 
-        response.body = await masterInvoicesModel.paginate(filter, { sort, limit: 3, page })
+        response.body = await masterInvoicesModel.paginate(filter, { sort, limit, page })
             .then((result) => ({
                 ...result,
                 docs: result.docs.map((doc) => {
