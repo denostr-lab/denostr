@@ -3,9 +3,9 @@ import mongoose from 'mongoose'
 
 import type { EventSignatures } from '../core-services/index.ts'
 import { DatabaseWatcher } from './DatabaseWatcher.ts'
-import { EventsCollectionName } from './models/Events.ts'
 import type { DBEvent } from '../@types/event.ts'
 import { createLogger } from '../factories/logger-factory.ts'
+import { collectionName as eventsCollection } from './models/Events.ts'
 
 export type Watcher = <T extends mongoose.Document>(
     model: mongoose.Model<T>,
@@ -25,7 +25,7 @@ export function initWatchers(
     watcher: DatabaseWatcher,
     broadcast: BroadcastCallback,
 ): void {
-    watcher.on<DBEvent>(EventsCollectionName, (event) => {
+    watcher.on<DBEvent>(eventsCollection, (event) => {
         debug('events %o', event)
 
         const { clientAction, data, diff, id } = event

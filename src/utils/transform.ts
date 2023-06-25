@@ -17,7 +17,7 @@ export const fromBigInt = (input: bigint) => input.toString()
 const addTime = (ms: number) => (input: Date) => new Date(input.getTime() + ms)
 
 export const fromDBInvoice = applySpec({
-    id: prop('id') as () => string,
+    id: prop('_id') as () => string,
     pubkey: prop('pubkey'),
     bolt11: prop('bolt11'),
     amountRequested: pipe(prop('amount_requested') as () => string, toBigInt),

@@ -29,7 +29,7 @@ export class DatabaseWatcher extends EventEmitter {
 
     private metrics?: any
 
-    private changeStream: ChangeStream
+    private changeStream!: ChangeStream
 
     /**
      * Last doc timestamp received from a real time event

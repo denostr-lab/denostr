@@ -1,9 +1,11 @@
 import mongoose from 'mongoose'
+import paginate from 'mongoose-paginate'
+import aggregatePaginate from 'mongoose-aggregate-paginate'
 
 import { getMasterDbClient, getReadReplicaDbClient } from '@/database/client.ts'
 import { DBUser } from '@/@types/user.ts'
 
-const UserSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
     pubkey: {
         type: String,
     },
@@ -30,28 +32,31 @@ const UserSchema = new mongoose.Schema({
     _id: false,
 })
 
-UserSchema.index({ 'pubkey': 1 }, {
+userSchema.plugin(paginate)
+userSchema.plugin(aggregatePaginate)
+
+userSchema.index({ 'pubkey': 1 }, {
     background: true,
     unique: true,
 })
-UserSchema.index({ 'balance': 1 }, {
+userSchema.index({ 'balance': 1 }, {
     background: true,
 })
-UserSchema.index({ 'is_admitted': 1 }, {
+userSchema.index({ 'is_admitted': 1 }, {
     background: true,
 })
-UserSchema.index({ 'created_at': 1 }, {
+userSchema.index({ 'created_at': 1 }, {
     background: true,
 })
 
-export const UsersModelName = 'Users'
-export const UsersCollectionName = 'users'
+export const modelName = 'Users'
+export const collectionName = 'users'
 
 export const UsersModel = (dbClient: mongoose.Connection) =>
-    dbClient.model<DBUser>(
-        UsersModelName,
-        UserSchema,
-        UsersCollectionName,
+    dbClient.model<DBUser, mongoose.PaginateModel<DBUser>>(
+        modelName,
+        userSchema,
+        collectionName,
     )
 
 export const masterUsersModel = UsersModel(getMasterDbClient())

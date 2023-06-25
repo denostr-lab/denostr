@@ -1,4 +1,6 @@
 import mongoose, { FilterQuery } from 'mongoose'
+import paginate from 'mongoose-paginate'
+import aggregatePaginate from 'mongoose-aggregate-paginate'
 
 import { getMasterDbClient, getReadReplicaDbClient } from '@/database/client.ts'
 import { Buffer } from 'Buffer'
@@ -8,7 +10,7 @@ import { isGenericTagQuery } from '@/utils/filter.ts'
 import { Sort } from '@/constants/base.ts'
 import { toBuffer } from '@/utils/transform.ts'
 
-const EventSchema = new mongoose.Schema({
+const eventSchema = new mongoose.Schema({
     event_id: {
         type: Buffer,
         require: true,
@@ -49,81 +51,84 @@ const EventSchema = new mongoose.Schema({
     expires_at: { type: Number },
 })
 
-EventSchema.index({ 'event_id': 1 }, {
+eventSchema.index({ 'event_id': 1 }, {
     background: true,
     unique: true,
 })
-EventSchema.index({ 'event_pubkey': 1 }, {
+eventSchema.index({ 'event_pubkey': 1 }, {
     background: true,
 })
-EventSchema.index({ 'event_kind': 1 }, {
+eventSchema.index({ 'event_kind': 1 }, {
     background: true,
 })
-EventSchema.index({ 'event_signature': 1 }, {
+eventSchema.index({ 'event_signature': 1 }, {
     background: true,
 })
-EventSchema.index({ 'event_created_at': 1 }, {
+eventSchema.index({ 'event_created_at': 1 }, {
     background: true,
 })
-EventSchema.index({ 'event_tags.0.0': 1 }, {
-    background: true,
-    sparse: true,
-})
-EventSchema.index({ 'event_tags.0.1': 1 }, {
+eventSchema.index({ 'event_tags.0.0': 1 }, {
     background: true,
     sparse: true,
 })
-EventSchema.index({ 'event_tags.0.2': 1 }, {
+eventSchema.index({ 'event_tags.0.1': 1 }, {
     background: true,
     sparse: true,
 })
-EventSchema.index({ 'event_tags.0.3': 1 }, {
+eventSchema.index({ 'event_tags.0.2': 1 }, {
     background: true,
     sparse: true,
 })
-EventSchema.index({ 'event_tags.1.0': 1 }, {
+eventSchema.index({ 'event_tags.0.3': 1 }, {
     background: true,
     sparse: true,
 })
-EventSchema.index({ 'event_tags.1.1': 1 }, {
+eventSchema.index({ 'event_tags.1.0': 1 }, {
     background: true,
     sparse: true,
 })
-EventSchema.index({ 'event_tags.1.2': 1 }, {
+eventSchema.index({ 'event_tags.1.1': 1 }, {
     background: true,
     sparse: true,
 })
-EventSchema.index({ 'event_tags.1.3': 1 }, {
+eventSchema.index({ 'event_tags.1.2': 1 }, {
     background: true,
     sparse: true,
 })
-EventSchema.index({ 'event_tags.2.0': 1 }, {
+eventSchema.index({ 'event_tags.1.3': 1 }, {
     background: true,
     sparse: true,
 })
-EventSchema.index({ 'event_tags.2.1': 1 }, {
+eventSchema.index({ 'event_tags.2.0': 1 }, {
     background: true,
     sparse: true,
 })
-EventSchema.index({ 'event_tags.2.2': 1 }, {
+eventSchema.index({ 'event_tags.2.1': 1 }, {
     background: true,
     sparse: true,
 })
-EventSchema.index({ 'event_tags.2.3': 1 }, {
+eventSchema.index({ 'event_tags.2.2': 1 }, {
     background: true,
     sparse: true,
 })
-EventSchema.index({ 'remote_address': 1 }, {
-    background: true,
-})
-EventSchema.index({ 'expires_at': 1 }, {
+eventSchema.index({ 'event_tags.2.3': 1 }, {
     background: true,
     sparse: true,
 })
-EventSchema.index({ 'deleted_at': 1 }, {
+eventSchema.index({ 'remote_address': 1 }, {
+    background: true,
+})
+eventSchema.index({ 'expires_at': 1 }, {
     background: true,
     sparse: true,
 })
+eventSchema.index({ 'deleted_at': 1 }, {
+    background: true,
+    sparse: true,
+})
+
+eventSchema.plugin(paginate)
+eventSchema.plugin(aggregatePaginate)
 
 export const buildMongoFilter = (
     filters: SubscriptionFilter[],
@@ -215,7 +220,7 @@ export const buildMongoFilter = (
     }
 }
 
-EventSchema.static('findBySubscriptionFilter', function (filters: SubscriptionFilter[], maxLimit: number) {
+eventSchema.static('findBySubscriptionFilter', function (filters: SubscriptionFilter[], maxLimit: number) {
     const query = buildMongoFilter(filters)
     const defaultLimit = 500
     let sort = Sort.ASC
@@ -233,19 +238,19 @@ EventSchema.static('findBySubscriptionFilter', function (filters: SubscriptionFi
     return this.find(query).limit(limit).sort({ event_created_at: sort })
 })
 
-EventSchema.static('countBySubscriptionFilter', function (filters: SubscriptionFilter[]) {
+eventSchema.static('countBySubscriptionFilter', function (filters: SubscriptionFilter[]) {
     const query = buildMongoFilter(filters)
     return this.countDocuments(query)
 })
 
-export const EventsModelName = 'Events'
-export const EventsCollectionName = 'events'
+export const modelName = 'Events'
+export const collectionName = 'events'
 
 export const EventsModel = (dbClient: mongoose.Connection) =>
-    dbClient.model<DBEvent>(
-        EventsModelName,
-        EventSchema,
-        EventsCollectionName,
+    dbClient.model<DBEvent, mongoose.PaginateModel<DBEvent>>(
+        modelName,
+        eventSchema,
+        collectionName,
     )
 
 export const masterEventsModel = EventsModel(getMasterDbClient())

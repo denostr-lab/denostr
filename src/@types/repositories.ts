@@ -23,7 +23,7 @@ export interface IEventRepository {
 }
 
 export interface IInvoiceRepository {
-    findById(id: string): Promise<Invoice | undefined>
+    findById(invoiceId: string): Promise<Invoice | undefined>
     upsert(invoice: Partial<Invoice>): Promise<number>
     updateStatus(
         invoice: Pick<Invoice, 'id' | 'status'>,

@@ -9,6 +9,7 @@ The following environment variables can be set:
 | SECRET                     | Long random secret.                 | abcdefghijklmnopqrstuvwxyz1234567890    |
 | RELAY_PORT                 | Relay's server port                 | 8008                                    |
 | RELAY_PRIVATE_KEY          | Relay's private key in hex          | (auto-generated)                        |
+| API_KEY                    | With access to doshboard (dashborad)|                                         |
 | MONGO_URI                  | MongoDB URI                         |                                         |
 | MONGO_MIN_POOL_SIZE        | Min. connections per worker         | 0                                       |
 | MONGO_MAX_POOL_SIZE        | Max. connections per worker         | 3                                       |

@@ -3,9 +3,11 @@ import { Router } from 'oak'
 import { getHealthRequestHandler } from '@/handlers/request-handlers/get-health-request-handler.ts'
 import { getTermsRequestHandler } from '@/handlers/request-handlers/get-terms-request-handler.ts'
 import { rateLimiterMiddleware } from '@/handlers/request-handlers/rate-limiter-middleware.ts'
+import { verifyApikeyMiddleware } from '@/handlers/request-handlers/verify-apikey-middleware.ts'
 import { rootRequestHandler } from '@/handlers/request-handlers/root-request-handler.ts'
 import callbacksRouter from '@/routes/callbacks/index.ts'
 import invoiceRouter from '@/routes/invoices/index.ts'
+import apiRouter from '@/routes/api/index.ts'
 
 const router = new Router()
 
@@ -42,6 +44,13 @@ router.use(
     rateLimiterMiddleware,
     callbacksRouter.routes(),
     callbacksRouter.allowedMethods(),
+)
+
+router.use(
+    '/api',
+    verifyApikeyMiddleware,
+    apiRouter.routes(),
+    apiRouter.allowedMethods(),
 )
 
 export default router
