@@ -6,6 +6,7 @@ import { getMasterDbClient, getReadReplicaDbClient } from '@/database/client.ts'
 import { DBInvoice } from '@/@types/invoice.ts'
 
 export const invoiceSchema = new mongoose.Schema({
+
     _id: String,
     pubkey: {
         type: String,
