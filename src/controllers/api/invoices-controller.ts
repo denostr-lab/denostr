@@ -41,15 +41,17 @@ export class InvoicesController implements IController {
         response.body = await this.masterInvoicesModel.paginate(filter, { sort, limit, page })
             .then((result) => ({
                 ...result,
-                docs: result.docs.map((doc) => {
+                docs: result.docs.map((doc: DBInvoice) => {
                     return {
                         _id: doc?._id,
                         pubkey: doc?.pubkey,
                         unit: doc?.unit,
-                        status: doc?.status,
-                        created_at: doc?.created_at,
+                        status: doc?.status ?? 'pending',
+                        bolt11: doc?.bolt11 ?? '',
+                        created_at: doc?.created_at ?? null,
+                        expires_at: doc?.expires_at ?? null,
                         amount_requested: Number(doc?.amount_requested / 1000n),
-                        amount_paid: Number(doc?.amount_paid / 1000n),
+                        amount_paid: doc?.amount_paid ? Number(doc?.amount_paid / 1000n) : 0,
                     }
                 }),
             }))
