@@ -23,7 +23,7 @@ export class MetricsEventsMonthlyController implements IController {
             },
         }
 
-        const dbEvents: DBEvent[] = await readReplicaEventsModel.find(query)
+        const dbEvents: DBEvent[] = await this.readReplicaEventsModel.find(query)
         const events = dbEvents
             .map((event) => toNostrEvent(event))
             .filter((event) => event.created_at < unixTime && event.created_at > unixTimeBeforeMonth)
@@ -72,7 +72,7 @@ export class MetricsEventsYearlyController implements IController {
             },
         }
 
-        const dbEvents: DBEvent[] = await readReplicaEventsModel.find(query)
+        const dbEvents: DBEvent[] = await this.readReplicaEventsModel.find(query)
         const events = dbEvents
             .map((event) => toNostrEvent(event))
             .filter((event) => event.created_at < unixTime && event.created_at > unixTimeMinux1yr)

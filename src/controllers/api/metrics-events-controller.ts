@@ -7,7 +7,7 @@ import { toNostrEvent } from '@/utils/event.ts'
 
 export class MetricsEventsController implements IController {
     public constructor(
-        private readonly readReplicaEventsModel: mongoose.EventsModel<DBInvoice, {}, {}>,
+        private readonly readReplicaEventsModel: mongoose.EventsModel<DBEvent, {}, {}>,
     ) {}
     public async handleRequest(req: Request, response: Response, ctx: RouterContext) {
         const unixTimeNow = Math.floor(Date.now() / 1000)
@@ -17,7 +17,7 @@ export class MetricsEventsController implements IController {
             },
         }
 
-        const dbEvents: DBEvent[] = await readReplicaEventsModel.find(query)
+        const dbEvents: DBEvent[] = await this.readReplicaEventsModel.find(query)
         const events = dbEvents
             .map((event) => toNostrEvent(event))
             .filter((event) => event.created_at < unixTimeNow && event.content !== '')
