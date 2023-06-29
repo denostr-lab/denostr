@@ -5,7 +5,7 @@ import aggregatePaginate from 'mongoose-aggregate-paginate'
 import { getMasterDbClient, getReadReplicaDbClient } from '@/database/client.ts'
 import { DBInvoice } from '@/@types/invoice.ts'
 
-const invoiceSchema = new mongoose.Schema({
+export const invoiceSchema = new mongoose.Schema({
     _id: String,
     pubkey: {
         type: String,
