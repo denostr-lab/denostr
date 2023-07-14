@@ -5,6 +5,9 @@
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "denoland.vscode-deno",
     "[typescriptreact]": {
-      "editor.defaultFormatter": "denoland.vscode-deno"
+        "editor.defaultFormatter": "denoland.vscode-deno"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "denoland.vscode-deno"
     }
-  }
+}
