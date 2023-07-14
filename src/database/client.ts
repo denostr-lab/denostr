@@ -17,6 +17,7 @@ const getMasterConfig = () => {
             max: Config.MONGO_MAX_POOL_SIZE,
         },
         tag: mongoose.mongo.ReadPreference.PRIMARY,
+        dbName: Config.MONGO_DB_NAME,
     }
 }
 
@@ -31,9 +32,11 @@ export const getMasterDbClient = () => {
             readPreference: config.tag,
             maxPoolSize: config.pool.max,
             minPoolSize: config.pool.min,
+            dbName: config.dbName,
+            retryWrites: true,
         })
         writeClient.on('open', () => {
-            console.log('Connected to database')
+            console.log('Connected to database. selected db of', writeClient.name)
         })
         writeClient.on('error', () => {
             console.log('Unable to connect to database')
@@ -57,13 +60,14 @@ const getReadReplicaConfig = () => {
             max: Config.MONGO_RR_MAX_POOL_SIZE,
         },
         tag: mongoose.mongo.ReadPreference.SECONDARY,
+        dbName: Config.MONGO_DB_NAME,
     }
 }
 
 let readClient: mongoose.Connection
 
 export const getReadReplicaDbClient = () => {
-    if (!Config.MONGO_READ_REPLICA_ENABLED) {
+    if (!Config.MONGO_RR_ENABLED) {
         return getMasterDbClient()
     }
 
@@ -75,9 +79,11 @@ export const getReadReplicaDbClient = () => {
             readPreference: config.tag,
             maxPoolSize: config.pool.max,
             minPoolSize: config.pool.min,
+            dbName: config.dbName,
+            retryReads: true,
         })
         readClient.on('open', () => {
-            console.log('Connected to secondary database')
+            console.log('Connected to secondary database. selected db of', readClient.name)
         })
         readClient.on('error', () => {
             console.log('Unable to connect to secondary database')

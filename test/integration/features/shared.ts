@@ -136,7 +136,7 @@ export const startTest = async (pathUrl: string, registerEvent: Function) => {
                 Config.RELAY_PORT = '18808'
                 Config.SECRET = Math.random().toString().repeat(6)
 
-                if (!Config.MONGO_READ_REPLICA_ENABLED) {
+                if (!Config.MONGO_RR_ENABLED) {
                     rrDbClient = dbClient
                 } else {
                     rrDbClient = getReadReplicaDbClient()
@@ -177,7 +177,7 @@ export const startTest = async (pathUrl: string, registerEvent: Function) => {
                         }
                         await watcher.close()
                         await dbClient.destroy()
-                        if (Config.MONGO_READ_REPLICA_ENABLED) {
+                        if (Config.MONGO_RR_ENABLED) {
                             await rrDbClient.destroy()
                         }
                     } catch (e) {

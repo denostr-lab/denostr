@@ -92,38 +92,38 @@ Todo
    - Choose one of the following payment processors: `lnbits`, `lnurl`, `zebedee`
 
 2. [LNbits](https://lnbits.com/)
-    - Complete the step "Before you begin"
-    - Create a new wallet on you public LNbits instance
-      - [Demo](https://legend.lnbits.com/) server must not be used for production
-      - Your instance must be accessible from the internet and have a valid SSL/TLS certificate
-    - Get wallet "Invoice/read key" (in Api docs section of your wallet)
-    - set `LNBITS_API_KEY` environment variable with the "Invoice/read key" Key above on your `.env` file
+   - Complete the step "Before you begin"
+   - Create a new wallet on you public LNbits instance
+     - [Demo](https://legend.lnbits.com/) server must not be used for production
+     - Your instance must be accessible from the internet and have a valid SSL/TLS certificate
+   - Get wallet "Invoice/read key" (in Api docs section of your wallet)
+   - set `LNBITS_API_KEY` environment variable with the "Invoice/read key" Key above on your `.env` file
 
-      ```
-      LNBITS_API_KEY={YOUR_LNBITS_API_KEY_HERE}
-      ```
-    - On your `.nostr/settings.yaml` file make the following changes:
-      - Set `payments.processor` to `lnbits`
-      - set `lnbits.baseURL` to your LNbits instance URL (e.g. `https://{YOUR_LNBITS_DOMAIN_HERE}/`)
-      - Set `paymentsProcessors.lnbits.callbackBaseURL` to match your callbcak URL (e.g. `https://{YOUR_DOMAIN_HERE}/callbacks/lnbits`)
-    - Restart Denostr
+     ```
+     LNBITS_API_KEY={YOUR_LNBITS_API_KEY_HERE}
+     ```
+   - On your `.nostr/settings.yaml` file make the following changes:
+     - Set `payments.processor` to `lnbits`
+     - set `lnbits.baseURL` to your LNbits instance URL (e.g. `https://{YOUR_LNBITS_DOMAIN_HERE}/`)
+     - Set `paymentsProcessors.lnbits.callbackBaseURL` to match your callbcak URL (e.g. `https://{YOUR_DOMAIN_HERE}/callbacks/lnbits`)
+   - Restart Denostr
 
 3. [Alby](https://getalby.com/) or any LNURL Provider with [LNURL-verify](https://github.com/lnurl/luds/issues/182) support
-    - Complete the step "Before you begin"
-    - [Create a new account](https://getalby.com/user/new) if you don't have an LNURL
-    - On your `.nostr/settings.yaml` file make the following changes:
-      - Set `payments.processor` to `lnurl`
-      - Set `lnurl.invoiceURL` to your LNURL (e.g. `https://getalby.com/lnurlp/your-username`)
-    - Restart Denostr
+   - Complete the step "Before you begin"
+   - [Create a new account](https://getalby.com/user/new) if you don't have an LNURL
+   - On your `.nostr/settings.yaml` file make the following changes:
+     - Set `payments.processor` to `lnurl`
+     - Set `lnurl.invoiceURL` to your LNURL (e.g. `https://getalby.com/lnurlp/your-username`)
+   - Restart Denostr
 
 4. [ZEBEDEE](https://zebedee.io)
    - Complete the step "Before you begin"
    - [Sign up for a ZEBEDEE Developer Dashboard account](https://dashboard.zebedee.io/signup), create a new LIVE Project, and get that Project's API Key
    - Set `ZEBEDEE_API_KEY` environment variable with the API Key above on your `.env` file
 
-    ```
-    ZEBEDEE_API_KEY={YOUR_ZEBEDEE_API_KEY_HERE}
-    ```
+   ```
+   ZEBEDEE_API_KEY={YOUR_ZEBEDEE_API_KEY_HERE}
+   ```
 
    - Follow the required steps for all payments processors
    - On `.nostr/settings.yaml` file make the following changes:
@@ -142,7 +142,6 @@ Todo
    - Convert your npub to hexadecimal using a [Key Converter](https://damus.io/key/)
    - Send the following JSON message: `["REQ", "payment-test", {"authors":["your-pubkey-in-hexadecimal"]}]`
    - You should get back the few notes you sent earlier
-
 
 ### Quick Start (Standalone)
 
