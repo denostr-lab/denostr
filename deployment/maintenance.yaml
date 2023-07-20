@@ -3,34 +3,39 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   namespace: denostr
-  name: denostr-maintenance-statefulset
+  name: denostr-relay-maintenance
   labels:
-    component: denostr
+    app: denostr
+    component: relay-maintenance
 spec:
-  serviceName: denostr-svc
-  replicas: 3
+  serviceName: denostr-relay-maintenance-svc
+  replicas: 1
   selector:
     matchLabels:
-      component: denostr
+      app: denostr
+      component: relay-maintenance
   template:
     metadata:
       labels:
-        component: denostr
+        app: denostr
+        component: relay-maintenance
     spec:
       imagePullSecrets:
         - name: ghcr
       containers:
         - name: relay
-          image: ghcr.io/denostr-lab/denostr:v0.2.3-maintenance
+          image: ghcr.io/denostr-lab/denostr:v0.2.4-maintenance
           imagePullPolicy: Always
           resources:
             requests:
               cpu: "100m"
               memory: "100Mi"
             limits:
-              cpu: "500m"
+              cpu: "300m"
               memory: "500Mi"
           env:
+            - name: DEBUG
+              value: "*"
             - name: MONGO_URI
               value: "mongodb://user:pass@host:port/db?replicaSet=rs0&authSource=admin"
           ports:
@@ -38,11 +43,11 @@ spec:
               name: ws
           volumeMounts:
             - mountPath: /app/.nostr
-              name: denostr-config-val
+              name: denostr-config-vol
       volumes:
-        - name: denostr-config-val
+        - name: denostr-config-vol
           configMap:
-            name: denostr-worker-config
+            name: denostr-relay-config
             items:
-            - key: settings.yaml
-              path: settings.yaml
+              - key: settings.yaml
+                path: settings.yaml
