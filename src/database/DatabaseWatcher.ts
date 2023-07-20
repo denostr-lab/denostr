@@ -74,7 +74,7 @@ export class DatabaseWatcher extends EventEmitter {
             this.changeStream.on('change', this.onChangeStreamChange)
             this.changeStream.on('error', this.onChangeStreamError)
 
-            console.log('Using change streams')
+            console.log('✅ Using change streams')
         } catch (err: unknown) {
             console.error(err, 'Change stream error')
 

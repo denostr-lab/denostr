@@ -6,7 +6,7 @@ import { createLogger } from '../factories/logger-factory.ts'
 const getMasterConfig = () => {
     const mongoUri = Config.MONGO_URI
     if (!mongoUri) {
-        console.error('mongoUri not exit please export MONGO_URI env')
+        console.error('🚨 You may have entered an incorrect MONGO_URI environment variable.')
         return Deno.exit(1)
     }
 
@@ -36,10 +36,10 @@ export const getMasterDbClient = () => {
             retryWrites: true,
         })
         writeClient.on('open', () => {
-            console.log('Connected to database. selected db of', writeClient.name)
+            console.log('🚀 Connecting to database. selected db of', writeClient.name)
         })
         writeClient.on('error', () => {
-            console.log('Unable to connect to database')
+            console.log('💥 Unable to connect to database')
         })
     }
 
@@ -49,7 +49,7 @@ export const getMasterDbClient = () => {
 const getReadReplicaConfig = () => {
     const mongoUri = Config.MONGO_URI
     if (!mongoUri) {
-        console.error('mongoUri not exit please export MONGO_URI env')
+        console.error('🚨 You may have entered an incorrect MONGO_URI environment variable.')
         return Deno.exit(1)
     }
 
@@ -83,10 +83,10 @@ export const getReadReplicaDbClient = () => {
             retryReads: true,
         })
         readClient.on('open', () => {
-            console.log('Connected to secondary database. selected db of', readClient.name)
+            console.log('🚀 Connected to secondary database. selected db of', readClient.name)
         })
         readClient.on('error', () => {
-            console.log('Unable to connect to secondary database')
+            console.log('💥 Unable to connect to secondary database')
         })
     }
 

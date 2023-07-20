@@ -16,22 +16,26 @@ export const getCacheConfig = (): RedisConnectOptions => ({
     tls: Config.REDIS_TLS,
 })
 
-let instance: CacheClient | undefined = undefined
+let mainInstance: CacheClient
+let cacheInstance: CacheClient
 
-export const getCacheClient = async (): Promise<CacheClient> => {
-    if (!instance) {
+export const getCacheClient = async (useCache?: boolean): Promise<CacheClient> => {
+    if (!mainInstance) {
         const config = getCacheConfig()
         const { password: _, ...loggableConfig } = config
         debug('config: %o', loggableConfig)
         if (config.hostname) {
-            instance = await connect(config)
+            console.log('🚀 Connecting to Cache Client...')
+            mainInstance = await connect(config)
+            cacheInstance = await connect(config)
+            console.log('🚀 Connected to Cache Client.')
         }
     }
 
-    return instance
+    return useCache ? cacheInstance : mainInstance
 }
 
 export async function publish(channel: string, message: RedisValue) {
-    const client = await getCacheClient()
+    const client = await getCacheClient(true)
     return client.publish(channel, message)
 }
