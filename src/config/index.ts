@@ -31,7 +31,13 @@ const Config = {
     REDIS_DB: Number(Deno.env.get('REDIS_DB') || 0),
     REDIS_USER: Deno.env.get('REDIS_USER'),
     REDIS_PASS: Deno.env.get('REDIS_PASS'),
-    REDIS_TLS: Boolean(Deno.env.get('REDIS_TLS')),
+    REDIS_TLS: (() => {
+        const tlsEnable = Deno.env.get('REDIS_TLS') as unknown as string
+        if (tlsEnable && ['true', 'false'].includes(tlsEnable)) {
+            return tlsEnable === 'true'
+        }
+        return false
+    })(),
 }
 
 export default Config
