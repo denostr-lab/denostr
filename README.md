@@ -29,7 +29,7 @@
   </a>
 </p>
 
-💪🏻 Deno-based, cloud-native Nostr relay forked from `nostream`. Sponsored by ByteTrade and Revo.
+💪🏻 Deno-based, cloud-native Nostr relay forked from `nostream`.
 
 This is a [nostr](https://github.com/fiatjaf/nostr) relay, written in Typescript.
 
