@@ -56,7 +56,7 @@ NIPs with a relay-specific implementation are listed here.
 - [x] NIP-26: Delegated Event Signing
 - [x] NIP-28: Public Chat
 - [x] NIP-33: Parameterized Replaceable Events
-- [x] NIP-38: [Encrypted Group Chat with Megolm group ratchet (Draft)](https://oi5l5umbjx.feishu.cn/docx/TW7Ndb6Imoj3n7x08MTcleqanad)
+- [x] NIP-38: [Encrypted Group Chat with Megolm group ratchet (Draft)](https://www.notion.so/NIP-38-Encrypted-Group-Chat-with-Megolm-group-ratchet-Draft-a4248bf444ff465daac1d992ecfdce24?pvs=4)
 - [x] NIP-40: Expiration Timestamp
 - [ ] NIP-42: Authentication of clients to relays
 - [ ] NIP-45: Event Counts
